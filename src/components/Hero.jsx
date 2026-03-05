@@ -66,7 +66,7 @@ export default function Hero() {
           <div className="mt-16 pt-8 border-t border-white/[0.08] flex flex-wrap gap-6 sm:gap-12">
             {[
               { value: '$399', label: 'Starting price', sub: 'flat rate, no surprises' },
-              { value: '3 days', label: 'Avg. site launch', sub: 'from first conversation' },
+              { value: '2 wks', label: 'Avg. site launch', sub: 'from first conversation' },
               { value: 'Local', label: 'Based in Ellensburg', sub: 'easy to meet up' },
             ].map(s => (
               <div key={s.label} className="flex flex-col">
