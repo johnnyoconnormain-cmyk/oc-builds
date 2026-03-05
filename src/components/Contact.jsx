@@ -34,12 +34,28 @@ export default function Contact() {
     setErrorMsg('')
     setStatus('submitting')
     try {
-      await submit({
+      const data = {
         name: form.name.trim(),
         business: form.business.trim(),
         email: form.email.trim(),
         phone: form.phone.trim() || undefined,
         message: form.message.trim(),
+      }
+      // Save to Convex DB
+      await submit(data)
+      // Send email notification via Web3Forms
+      await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: '9283ffa2-7690-473f-a770-70010c6d24ef',
+          subject: `New lead: ${data.name} — ${data.business}`,
+          from_name: 'OC Builds Contact Form',
+          replyto: data.email,
+          name: data.name,
+          email: data.email,
+          message: `Business: ${data.business}\nPhone: ${data.phone || 'Not provided'}\n\n${data.message}`,
+        }),
       })
       setStatus('success')
     } catch {
