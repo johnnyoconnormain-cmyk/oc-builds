@@ -7,14 +7,15 @@ export default function Footer() {
         <div className="grid sm:grid-cols-3 gap-8 mb-10">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-7 h-7 bg-[#FF6B2B] rounded-md flex items-center justify-center">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                  <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-              </div>
-              <span className="font-display font-bold text-white text-base">OC Builds</span>
+            <div className="mb-3">
+              <svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="5" width="13" height="13" rx="2" fill="#FF6B2B"/>
+                <rect x="0" y="20" width="13" height="7" rx="2" fill="#FF6B2B" opacity="0.45"/>
+                <rect x="6" y="0" width="13" height="7" rx="2" fill="#FF6B2B" opacity="0.45"/>
+                <rect x="6" y="9" width="13" height="13" rx="2" fill="#FF6B2B" opacity="0.7"/>
+                <text x="26" y="17" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="14" fill="white" letterSpacing="-0.3">OC</text>
+                <text x="26" y="29" fontFamily="'Clash Display', sans-serif" fontWeight="600" fontSize="8" fill="rgba(255,255,255,0.4)" letterSpacing="3">BUILDS</text>
+              </svg>
             </div>
             <p className="text-white/40 text-xs leading-relaxed max-w-[200px]">
               Websites, chatbots, and automations for small businesses who just need it done.
