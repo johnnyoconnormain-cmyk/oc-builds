@@ -10,6 +10,7 @@ const PLACEHOLDERS = [
     description: 'Full website build + Google Business profile setup. Customers can now find them on Maps and book online.',
     services: ['Website Build', 'Google Business Setup'],
     quote: 'Finally started getting calls from people who found us on Google. Worth every penny.',
+    url: '/demos/barbershop.html',
   },
   {
     _id: 'p2',
@@ -17,13 +18,15 @@ const PLACEHOLDERS = [
     description: 'New website with class schedule, an AI chatbot for FAQs, and a 30-day social content pack.',
     services: ['Website Build', 'AI Chatbot', 'Social Media Pack'],
     quote: 'Johnny had the whole thing done in two weeks. Our Instagram went from 80 to 400 followers.',
+    url: '/demos/fitness.html',
   },
   {
     _id: 'p3',
-    name: 'Cascade Valley Hardware',
-    description: 'Full rebrand: new logo, color system, and a clean landing page that matches the new look.',
-    services: ['Branding Package', 'Website Build'],
-    quote: 'Looks like we finally caught up with the times. Customers notice it.',
+    name: 'Afterzz',
+    description: 'Campus social events platform built for college students. Find what\'s happening on and around campus, tonight.',
+    services: ['Web App', 'Branding', 'Launch Strategy'],
+    quote: 'Built from scratch in Ellensburg. Real product, real users.',
+    url: 'https://afterzz.com',
   },
 ]
 
@@ -45,7 +48,6 @@ function PortfolioInner() {
   const [ref, inView] = useInView()
   const projects = useQuery(api.projects.list)
   const items = (projects && projects.length > 0) ? projects : PLACEHOLDERS
-  const isPlaceholder = !projects || projects.length === 0
 
   return (
     <section id="portfolio" className="bg-[#141414] py-24">
@@ -57,11 +59,6 @@ function PortfolioInner() {
               Real businesses.<br />Real results.
             </h2>
           </div>
-          {isPlaceholder && (
-            <p className="text-white/30 text-sm max-w-xs text-right hidden sm:block">
-              Sample projects shown. Real work added as it ships.
-            </p>
-          )}
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -103,10 +100,12 @@ function PortfolioFallback() {
 
 function ProjectCard({ project, gradient, delay }) {
   const [ref, inView] = useInView()
+  const url = project.url || null
+
   return (
     <div
       ref={ref}
-      className={`reveal ${inView ? 'in-view' : ''} card-dark overflow-hidden group`}
+      className={`reveal ${inView ? 'in-view' : ''} card-dark overflow-hidden group flex flex-col`}
       style={{ transitionDelay: `${delay}ms` }}
     >
       <div className={`h-44 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
@@ -120,7 +119,7 @@ function ProjectCard({ project, gradient, delay }) {
         )}
       </div>
 
-      <div className="p-5">
+      <div className="p-5 flex flex-col flex-1">
         <h3 className="font-display font-bold text-white text-lg mb-1">{project.name}</h3>
         <p className="text-white/50 text-sm leading-relaxed mb-4">{project.description}</p>
         <div className="flex flex-wrap gap-1.5 mb-4">
@@ -131,9 +130,26 @@ function ProjectCard({ project, gradient, delay }) {
           ))}
         </div>
         {project.quote && (
-          <blockquote className="border-l-2 border-[#FF6B2B] pl-3 text-white/40 text-xs italic leading-relaxed">
+          <blockquote className="border-l-2 border-[#FF6B2B] pl-3 text-white/40 text-xs italic leading-relaxed mb-4">
             "{project.quote}"
           </blockquote>
+        )}
+        {url && (
+          <div className="mt-auto pt-3 border-t border-white/[0.06]">
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#FF6B2B] hover:text-[#FF8C5A] transition-colors"
+            >
+              View Site
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+          </div>
         )}
       </div>
     </div>
