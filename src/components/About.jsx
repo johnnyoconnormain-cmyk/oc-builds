@@ -17,24 +17,10 @@ export default function About() {
           ref={ref}
           className={`reveal ${inView ? 'in-view' : ''} grid md:grid-cols-2 gap-12 lg:gap-20 items-center`}
         >
-          {/* Photo placeholder */}
+          {/* Photo */}
           <div className="relative order-2 md:order-1">
             <div className="aspect-[4/5] bg-[#242424] border border-white/[0.07] rounded-2xl overflow-hidden relative">
-              <div
-                className="absolute inset-0 opacity-[0.04]"
-                style={{
-                  backgroundImage: 'repeating-linear-gradient(45deg, #FF6B2B 0, #FF6B2B 20px, transparent 0, transparent 50%)',
-                  backgroundSize: '40px 40px',
-                }}
-              />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <div className="w-24 h-24 bg-[#FF6B2B]/10 rounded-full flex items-center justify-center">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FF6B2B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                  </svg>
-                </div>
-                <p className="text-white/20 text-xs font-medium tracking-wide">Photo coming soon</p>
-              </div>
+              <img src="/johnny.png" alt="Johnny O'Connor" className="w-full h-full object-cover object-top" />
             </div>
             <div className="absolute -bottom-4 -right-4 hidden sm:flex bg-[#FF6B2B] text-white text-xs font-bold px-4 py-3 rounded-xl shadow-2xl items-center gap-2">
               <span>🏈</span> CWU Wildcats
