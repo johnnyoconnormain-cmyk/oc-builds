@@ -73,10 +73,10 @@ export default function Services() {
           <div>
             <p className="section-eyebrow text-[#FF6B2B]">What I Do</p>
             <h2 className="font-display font-bold text-4xl sm:text-5xl text-[#1a1a1a] tracking-tight mb-4">
-              Six ways I can help<br className="hidden sm:block" /> your business right now.
+              Everything your business<br className="hidden sm:block" /> needs to grow online.
             </h2>
             <p className="text-[#666] text-base max-w-lg leading-relaxed">
-              Pick one or stack a few. No retainers. No contracts. Just work that gets done.
+              Pick one thing or stack a few. No retainers, no contracts. You get exactly what you pay for, nothing you don't.
             </p>
           </div>
           <a href="#contact" className="flex-shrink-0 btn-orange px-6 py-3 text-sm">

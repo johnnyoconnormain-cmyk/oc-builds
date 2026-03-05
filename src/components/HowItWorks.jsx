@@ -51,12 +51,12 @@ export default function HowItWorks() {
     <section className="bg-[#1a1a1a] py-24 overflow-hidden">
       <div className="container-xl">
         <div ref={ref} className={`reveal ${inView ? 'in-view' : ''} text-center mb-16`}>
-          <p className="section-eyebrow">The Process</p>
+          <p className="section-eyebrow">How It Works</p>
           <h2 className="font-display font-bold text-4xl sm:text-5xl text-white tracking-tight">
-            Simple. Fast. Done right.
+            Straightforward from<br />start to finish.
           </h2>
           <p className="text-white/50 text-lg mt-4 max-w-lg mx-auto">
-            Four steps from "I need a website" to "customers are calling."
+            No confusing process, no surprise invoices. Here's exactly what working with me looks like.
           </p>
         </div>
 

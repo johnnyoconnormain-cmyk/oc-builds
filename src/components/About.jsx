@@ -1,9 +1,9 @@
 import { useInView } from '../hooks/useInView'
 
 const badges = [
-  { icon: '🏈', label: 'CWU Wildcat Football' },
+  { icon: '🏈', label: 'CWU Wildcats D-Line' },
   { icon: '🏗️', label: 'Construction Management' },
-  { icon: '📍', label: 'From Bellevue, WA' },
+  { icon: '📍', label: 'Ellensburg, WA' },
   { icon: '👨‍👧‍👦', label: 'Oldest of 7' },
 ]
 
@@ -26,34 +26,40 @@ export default function About() {
               <span>🏈</span> CWU Wildcats
             </div>
             <div className="absolute -top-4 -left-4 hidden sm:flex bg-[#242424] border border-white/10 text-white text-xs font-medium px-4 py-3 rounded-xl shadow-xl items-center gap-2">
-              <span className="text-[#FF6B2B]">📍</span> Bellevue → Ellensburg
+              <span className="text-[#FF6B2B]">📍</span> Ellensburg, WA
             </div>
           </div>
 
           {/* Text */}
           <div className="order-1 md:order-2">
-            <p className="section-eyebrow">Who's Behind This</p>
+            <p className="section-eyebrow">Who You're Working With</p>
             <h2 className="font-display font-bold text-4xl sm:text-5xl text-white tracking-tight mb-6">
-              I'm Johnny.<br />
-              <span className="text-orange-gradient">First year. All in.</span>
+              Hey, I'm Johnny.<br />
+              <span className="text-orange-gradient">Nice to meet you.</span>
             </h2>
 
             <div className="space-y-4 text-white/55 text-base leading-relaxed mb-8">
               <p>
-                I'm from Bellevue, Washington. I grew up playing football and being the oldest of seven kids.
-                When you're the oldest of seven, you learn to figure things out fast. That's just how it goes.
+                I'm a Construction Management student at CWU and I play D-line
+                for the Wildcats. I grew up in Bellevue as the oldest of seven
+                kids — you learn to figure things out fast when you're running
+                point for that many people.
               </p>
               <p>
-                Now I'm a first-year Construction Management student at CWU and I play D-line for the Wildcats.
-                Between practice and class, I started learning AI tools like Claude, Cursor, and Bolt.new. Turns out
-                I can build real websites and automations for local businesses faster and cheaper than any agency out there.
+                I started OC Builds because I kept running into great local
+                businesses that had zero online presence, or a website that
+                looked like it was built in 2009. The work these people do is
+                good — they just weren't showing up when customers searched for
+                them. That felt like a problem I could actually solve.
               </p>
               <p>
-                I started OC Builds because small businesses around here deserve to be found online.
-                Not six months from now. Not after a five-thousand-dollar invoice. Now.
+                I'm not an agency. There's no account manager, no sales team,
+                no one passing you off. You deal with me directly from the first
+                conversation to launch day and beyond.
               </p>
               <p className="text-white/80 font-semibold">
-                I'm not a faceless company. I'm a real person right here in Ellensburg and I actually pick up the phone.
+                I answer my phone. I meet deadlines. And I actually care whether
+                your business grows.
               </p>
             </div>
 
@@ -66,7 +72,7 @@ export default function About() {
             </div>
 
             <a href="#contact" className="btn-orange px-8 py-4 text-sm">
-              Let's Work Together
+              Let's Talk
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>

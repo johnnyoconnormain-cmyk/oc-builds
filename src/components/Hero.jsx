@@ -4,23 +4,15 @@ export default function Hero() {
       id="home"
       className="relative min-h-screen flex items-center overflow-hidden bg-[#1a1a1a] noise-overlay"
     >
-      {/* Orange diagonal accent — like a caution stripe in the top-right */}
+      {/* Warm glow top-right */}
       <div
-        className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none"
-        style={{
-          background: 'linear-gradient(135deg, transparent 50%, rgba(255,107,43,0.06) 50%)',
-        }}
-      />
-      <div
-        className="absolute top-0 right-0 w-[400px] h-[400px] pointer-events-none"
-        style={{
-          background: 'linear-gradient(135deg, transparent 50%, rgba(255,107,43,0.04) 50%)',
-        }}
+        className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at top right, rgba(255,107,43,0.07) 0%, transparent 65%)' }}
       />
 
-      {/* Grid pattern overlay */}
+      {/* Subtle grid */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        className="absolute inset-0 pointer-events-none opacity-[0.025]"
         style={{
           backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
           backgroundSize: '80px 80px',
@@ -29,33 +21,36 @@ export default function Hero() {
 
       <div className="container-xl relative z-10 pt-28 pb-20 w-full">
         <div className="max-w-3xl">
+
           {/* Location badge */}
-          <div className="h1 inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white/60 text-xs font-semibold px-4 py-2 rounded-full mb-8 tracking-wide">
+          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white/60 text-xs font-semibold px-4 py-2 rounded-full mb-8 tracking-wide">
             <span className="w-1.5 h-1.5 bg-[#FF6B2B] rounded-full animate-pulse" />
-            Ellensburg, WA &nbsp;·&nbsp; CWU Football &nbsp;·&nbsp; Construction Management
+            Serving Ellensburg &amp; the CWU community
           </div>
 
           {/* Headline */}
-          <h1 className="h2 font-display font-bold leading-[1.0] tracking-tight mb-6">
-            <span className="block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-white">
-              I build things.
+          <h1 className="font-display font-bold leading-[1.05] tracking-tight mb-6">
+            <span className="block text-5xl sm:text-6xl lg:text-7xl text-white">
+              Your business
             </span>
-            <span className="block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-white/40 mt-1">
-              Still in the trenches.
+            <span className="block text-5xl sm:text-6xl lg:text-7xl text-white">
+              should be easy
             </span>
-            <span className="block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-orange-gradient mt-1">
-              Now it's websites.
+            <span className="block text-5xl sm:text-6xl lg:text-7xl text-orange-gradient">
+              to find online.
             </span>
           </h1>
 
           {/* Subtext */}
-          <p className="h3 text-lg sm:text-xl text-white/55 leading-relaxed max-w-xl mb-10 font-body">
-            I help small businesses in CWU country get online, get found, and get
-            customers. No agency markup, no tech headache.
+          <p className="text-lg sm:text-xl text-white/55 leading-relaxed max-w-xl mb-10 font-body">
+            I'm Johnny — I build websites, set up Google listings, and create
+            digital tools that help local businesses in Ellensburg get found and
+            get more customers. Flat rates. Fast turnaround. One person you can
+            actually call.
           </p>
 
           {/* CTAs */}
-          <div className="h4 flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4">
             <a href="#contact" className="btn-orange px-8 py-4 text-base">
               Get Your Free Audit
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -68,11 +63,11 @@ export default function Hero() {
           </div>
 
           {/* Stats */}
-          <div className="mt-16 pt-8 border-t border-white/[0.08] flex flex-wrap gap-6 sm:gap-10">
+          <div className="mt-16 pt-8 border-t border-white/[0.08] flex flex-wrap gap-6 sm:gap-12">
             {[
-              { value: '$399', label: 'Starting price', sub: 'flat rate' },
-              { value: '48h', label: 'Avg. turnaround', sub: 'from kickoff' },
-              { value: '1 person', label: 'Who you deal with', sub: 'no handoffs' },
+              { value: '$399', label: 'Starting price', sub: 'flat rate, no surprises' },
+              { value: '2 wks', label: 'Avg. site launch', sub: 'from first conversation' },
+              { value: 'Local', label: 'Based in Ellensburg', sub: 'easy to meet up' },
             ].map(s => (
               <div key={s.label} className="flex flex-col">
                 <div className="font-display font-bold text-[28px] text-[#FF6B2B] leading-none">{s.value}</div>
