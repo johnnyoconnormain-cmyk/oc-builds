@@ -1,6 +1,7 @@
 import { useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { useInView } from '../hooks/useInView'
+import ErrorBoundary from './ErrorBoundary'
 
 const PLACEHOLDERS = [
   {
@@ -33,6 +34,14 @@ const GRADIENTS = [
 ]
 
 export default function Portfolio() {
+  return (
+    <ErrorBoundary fallback={<PortfolioFallback />}>
+      <PortfolioInner />
+    </ErrorBoundary>
+  )
+}
+
+function PortfolioInner() {
   const [ref, inView] = useInView()
   const projects = useQuery(api.projects.list)
   const items = (projects && projects.length > 0) ? projects : PLACEHOLDERS
@@ -74,6 +83,24 @@ export default function Portfolio() {
   )
 }
 
+function PortfolioFallback() {
+  return (
+    <section id="portfolio" className="bg-[#141414] py-24">
+      <div className="container-xl">
+        <p className="section-eyebrow">My Work</p>
+        <h2 className="font-display font-bold text-4xl sm:text-5xl text-white tracking-tight mb-12">
+          Real businesses.<br />Real results.
+        </h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {PLACEHOLDERS.map((p, i) => (
+            <ProjectCard key={p._id} project={p} gradient={GRADIENTS[i % GRADIENTS.length]} delay={0} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function ProjectCard({ project, gradient, delay }) {
   const [ref, inView] = useInView()
   return (
@@ -82,7 +109,6 @@ function ProjectCard({ project, gradient, delay }) {
       className={`reveal ${inView ? 'in-view' : ''} card-dark overflow-hidden group`}
       style={{ transitionDelay: `${delay}ms` }}
     >
-      {/* Image / gradient placeholder */}
       <div className={`h-44 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="font-display font-bold text-4xl text-white/10">
@@ -97,8 +123,6 @@ function ProjectCard({ project, gradient, delay }) {
       <div className="p-5">
         <h3 className="font-display font-bold text-white text-lg mb-1">{project.name}</h3>
         <p className="text-white/50 text-sm leading-relaxed mb-4">{project.description}</p>
-
-        {/* Service tags */}
         <div className="flex flex-wrap gap-1.5 mb-4">
           {project.services.map(s => (
             <span key={s} className="text-xs bg-white/[0.06] text-white/60 px-2.5 py-1 rounded-full border border-white/[0.06]">
@@ -106,8 +130,6 @@ function ProjectCard({ project, gradient, delay }) {
             </span>
           ))}
         </div>
-
-        {/* Quote */}
         {project.quote && (
           <blockquote className="border-l-2 border-[#FF6B2B] pl-3 text-white/40 text-xs italic leading-relaxed">
             "{project.quote}"
