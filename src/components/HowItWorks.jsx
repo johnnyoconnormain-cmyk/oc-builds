@@ -14,7 +14,7 @@ const steps = [
   {
     num: '02',
     title: 'Pick Your Package',
-    desc: "Choose what fits your budget and goals. No pressure — I'll tell you exactly what you get and what it costs before we start.",
+    desc: "Choose what fits your budget and goals. No pressure. I'll tell you exactly what you get and what it costs before we start.",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
@@ -25,7 +25,7 @@ const steps = [
   {
     num: '03',
     title: 'We Build It',
-    desc: "I handle everything — design, copy, tech setup — while you stay focused on running your business. I'll keep you posted without drowning you in details.",
+    desc: "I handle design, copy, and tech setup while you stay focused on running your business. I'll keep you posted without drowning you in details.",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>

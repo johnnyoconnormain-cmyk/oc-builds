@@ -41,7 +41,7 @@ export default function Hero() {
               I build things.
             </span>
             <span className="block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-white/40 mt-1">
-              Used to be touchdowns.
+              Still in the trenches.
             </span>
             <span className="block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-orange-gradient mt-1">
               Now it's websites.
@@ -51,7 +51,7 @@ export default function Hero() {
           {/* Subtext */}
           <p className="h3 text-lg sm:text-xl text-white/55 leading-relaxed max-w-xl mb-10 font-body">
             I help small businesses in CWU country get online, get found, and get
-            customers — without the agency price tag or the tech headache.
+            customers. No agency markup, no tech headache.
           </p>
 
           {/* CTAs */}

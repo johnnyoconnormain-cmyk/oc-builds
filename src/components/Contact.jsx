@@ -10,7 +10,7 @@ const helpOptions = [
   'Social Media Content',
   'Automation / Workflows',
   'Branding Package',
-  'Not sure yet — just exploring',
+  'Not sure yet, just exploring',
 ]
 
 export default function Contact() {
@@ -61,14 +61,14 @@ export default function Contact() {
               <span className="text-orange-gradient">we can build.</span>
             </h2>
             <p className="text-[#555] text-base leading-relaxed mb-8 max-w-sm">
-              Fill this out and I'll get back to you within one business day with a free audit of your online presence and a clear recommendation — no fluff, no upsell.
+              Fill this out and I'll get back to you within one business day with a free audit of your online presence and a clear recommendation. No fluff, no upsell.
             </p>
 
             <div className="space-y-4">
               {[
                 { icon: '⚡', text: 'Free, no-obligation audit' },
                 { icon: '📞', text: 'Response within 24 hours' },
-                { icon: '📍', text: 'Local to Ellensburg — easy to meet up' },
+                { icon: '📍', text: 'Local to Ellensburg, easy to meet up' },
               ].map(item => (
                 <div key={item.text} className="flex items-center gap-3 text-[#444] text-sm font-medium">
                   <span className="text-base">{item.icon}</span>

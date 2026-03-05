@@ -28,7 +28,7 @@ const services = [
       </svg>
     ),
     title: 'Google Business Setup',
-    desc: 'Get your business showing up on Google Maps when locals search. Photos, hours, reviews — set up right the first time.',
+    desc: 'Get your business showing up on Google Maps when locals search. Photos, hours, reviews. Set up right the first time.',
     price: 'From $100',
   },
   {
@@ -38,7 +38,7 @@ const services = [
       </svg>
     ),
     title: 'Social Media Content Pack',
-    desc: '30 days of ready-to-post content for Instagram or Facebook — captions, graphics, and hashtags. Just copy, paste, post.',
+    desc: '30 days of ready-to-post content for Instagram or Facebook — captions, graphics, and hashtags. Copy, paste, post.',
     price: 'From $100/mo',
   },
   {
@@ -58,7 +58,7 @@ const services = [
       </svg>
     ),
     title: 'Branding Package',
-    desc: 'Logo, colors, and fonts that make your business look like you actually mean it. Consistent across everything — print, digital, signage.',
+    desc: 'Logo, colors, and fonts that make your business look like you actually mean it. Consistent across print, digital, and signage.',
     price: 'From $150',
   },
 ]

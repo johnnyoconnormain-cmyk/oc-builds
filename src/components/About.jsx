@@ -54,21 +54,20 @@ export default function About() {
 
             <div className="space-y-4 text-white/55 text-base leading-relaxed mb-8">
               <p>
-                I'm from Bellevue, Washington — grew up playing football and being the oldest of seven kids.
-                When you're the oldest of seven, you learn to figure things out fast and get stuff done. That's just how it goes.
+                I'm from Bellevue, Washington. I grew up playing football and being the oldest of seven kids.
+                When you're the oldest of seven, you learn to figure things out fast. That's just how it goes.
               </p>
               <p>
-                Now I'm a first-year Construction Management student at CWU, playing football for the Wildcats.
-                Between practice and class, I taught myself AI tools — Claude, Cursor, Bolt.new — and realized
-                I could build real websites and automations for local businesses, faster and cheaper than any agency.
+                Now I'm a first-year Construction Management student at CWU and I play D-line for the Wildcats.
+                Between practice and class, I started learning AI tools like Claude, Cursor, and Bolt.new. Turns out
+                I can build real websites and automations for local businesses faster and cheaper than any agency out there.
               </p>
               <p>
                 I started OC Builds because small businesses around here deserve to be found online.
                 Not six months from now. Not after a five-thousand-dollar invoice. Now.
               </p>
               <p className="text-white/80 font-semibold">
-                I'm not a faceless company. I'm a real person right here in Ellensburg —
-                and I actually pick up the phone.
+                I'm not a faceless company. I'm a real person right here in Ellensburg and I actually pick up the phone.
               </p>
             </div>
 

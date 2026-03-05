@@ -21,7 +21,7 @@ const PLACEHOLDERS = [
   {
     _id: 'p3',
     name: 'Cascade Valley Hardware',
-    description: 'Full rebrand — new logo, color system, and a clean landing page that matches the new look.',
+    description: 'Full rebrand: new logo, color system, and a clean landing page that matches the new look.',
     services: ['Branding Package', 'Website Build'],
     quote: 'Looks like we finally caught up with the times. Customers notice it.',
   },
@@ -59,7 +59,7 @@ function PortfolioInner() {
           </div>
           {isPlaceholder && (
             <p className="text-white/30 text-sm max-w-xs text-right hidden sm:block">
-              Sample projects shown — real work added as it ships.
+              Sample projects shown. Real work added as it ships.
             </p>
           )}
         </div>
