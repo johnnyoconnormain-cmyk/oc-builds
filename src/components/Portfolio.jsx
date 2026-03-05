@@ -135,14 +135,17 @@ function PortfolioInner() {
   const items = (projects && projects.length > 0) ? projects : PLACEHOLDERS
 
   return (
-    <section id="portfolio" className="bg-[#141414] py-24">
+    <section id="portfolio" className="bg-[#1C1814] py-24">
       <div className="container-xl">
         <div ref={ref} className={`reveal ${inView ? 'in-view' : ''} flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12`}>
           <div>
             <p className="section-eyebrow">My Work</p>
             <h2 className="font-display font-bold text-4xl sm:text-5xl text-white tracking-tight">
-              Real businesses.<br />Real results.
+              Here's what<br />I've built.
             </h2>
+            <p className="text-white/45 text-base mt-3 max-w-sm leading-relaxed">
+              Real sites for real businesses. Yours could be next.
+            </p>
           </div>
         </div>
 
@@ -216,11 +219,6 @@ function ProjectCard({ project, index, delay }) {
             </span>
           ))}
         </div>
-        {project.quote && (
-          <blockquote className="border-l-2 border-[#FF6B2B] pl-3 text-white/40 text-xs italic leading-relaxed mb-4">
-            "{project.quote}"
-          </blockquote>
-        )}
         {url && (
           <div className="mt-auto pt-3 border-t border-white/[0.06] space-y-2">
             {project.demoEmail && (

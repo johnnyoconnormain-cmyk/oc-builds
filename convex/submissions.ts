@@ -1,5 +1,6 @@
 import { mutation, query } from './_generated/server'
 import { v } from 'convex/values'
+import { internal } from './_generated/api'
 
 export const submit = mutation({
   args: {
@@ -10,11 +11,16 @@ export const submit = mutation({
     message: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert('submissions', {
+    await ctx.db.insert('submissions', {
       ...args,
       createdAt: Date.now(),
       read: false,
     })
+    try {
+      await ctx.scheduler.runAfter(0, internal.email.sendNotification, args)
+    } catch {
+      // email scheduling unavailable — submission still saved
+    }
   },
 })
 

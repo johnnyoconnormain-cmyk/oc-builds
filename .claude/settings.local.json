@@ -9,7 +9,23 @@
       "Bash(gh auth status)",
       "Bash(gh repo list --limit 5)",
       "Bash(npm install -D tailwindcss postcss autoprefixer)",
-      "Bash(npm install -D tailwindcss@3)"
+      "Bash(npm install -D tailwindcss@3)",
+      "WebFetch(domain:afterzz.com)",
+      "Bash(curl -s -X POST https://api.clerk.com/v1/users -H \"Authorization: Bearer sk_test_OqO2FnBoefm1dWxyphJvN6TUabbQrfGw1FIMUjea04\" -H \"Content-Type: application/json\" -d '{:*)",
+      "Bash(curl -s https://api.clerk.com/v1/instance -H \"Authorization: Bearer sk_test_OqO2FnBoefm1dWxyphJvN6TUabbQrfGw1FIMUjea04\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\(''user_settings'', {}\\).get\\(''attributes'', {}\\), indent=2\\)\\)\")",
+      "Bash(npx convex run seedDemo:createDemoUser --url https://intent-gorilla-32.convex.cloud)",
+      "Bash(npx convex run --help)",
+      "Bash(CONVEX_DEPLOY_KEY=\"\" npx convex run seedDemo:createDemoUser --admin-key)",
+      "Bash(npx convex run seedDemo:createDemoUser --admin-key \"dev:limitless-lark-800|eyJ2MiI6ImFiZDhmMjU1MzQzMzRjMmRiZDJjMzUyOTBmMzRjMjgxIn0=\")",
+      "Bash(CONVEX_DEPLOY_KEY=\"dev:limitless-lark-800|eyJ2MiI6ImFiZDhmMjU1MzQzMzRjMmRiZDJjMzUyOTBmMzRjMjgxIn0=\" npx convex run seedDemo:createDemoUser)",
+      "Bash(CONVEX_DEPLOY_KEY=\"dev:limitless-lark-800|eyJ2MiI6ImFiZDhmMjU1MzQzMzRjMmRiZDJjMzUyOTBmMzRjMjgxIn0=\" npx convex run onboarding:completeOnboarding '{\"\"username\"\":\"\"demo_viewer\"\",\"\"birthYear\"\":2000,\"\"acceptedTerms\"\":true,\"\"displayName\"\":\"\"Demo Account\"\",\"\"userType\"\":\"\"college\"\"}' --identity '{\"\"tokenIdentifier\"\":\"\"https://intent-gorilla-32.clerk.accounts.dev|user_3AVtIeX9ltdbwdpUHR2uxUODNkJ\"\",\"\"email\"\":\"\"demo@ocbuilds.com\"\",\"\"givenName\"\":\"\"Demo\"\",\"\"familyName\"\":\"\"User\"\"}')",
+      "Bash(CONVEX_DEPLOY_KEY=\"dev:limitless-lark-800|eyJ2MiI6ImFiZDhmMjU1MzQzMzRjMmRiZDJjMzUyOTBmMzRjMjgxIn0=\" npx convex run admin:adminFindUser '{\"\"searchTerm\"\":\"\"demo@ocbuilds.com\"\"}')",
+      "Bash(CONVEX_DEPLOY_KEY=\"dev:limitless-lark-800|eyJ2MiI6ImFiZDhmMjU1MzQzMzRjMmRiZDJjMzUyOTBmMzRjMjgxIn0=\" npx convex run users:updatePrivacySettings '{\"\"isPrivate\"\":true,\"\"showInStudentList\"\":false}' --identity '{\"\"tokenIdentifier\"\":\"\"https://intent-gorilla-32.clerk.accounts.dev|user_3AVtIeX9ltdbwdpUHR2uxUODNkJ\"\",\"\"email\"\":\"\"demo@ocbuilds.com\"\",\"\"givenName\"\":\"\"Demo\"\",\"\"familyName\"\":\"\"User\"\"}')",
+      "Bash(CONVEX_DEPLOY_KEY=\"dev:limitless-lark-800|eyJ2MiI6ImFiZDhmMjU1MzQzMzRjMmRiZDJjMzUyOTBmMzRjMjgxIn0=\" npx convex run seedDemo:restrictDemo)",
+      "Bash(CONVEX_DEPLOY_KEY=\"dev:limitless-lark-800|eyJ2MiI6ImFiZDhmMjU1MzQzMzRjMmRiZDJjMzUyOTBmMzRjMjgxIn0=\" npx convex env set RESEND_API_KEY re_U47vi3wV_JtEeTJFL1bx77JXMgZBPQoBK)",
+      "Bash(CONVEX_DEPLOY_KEY=\"dev:limitless-lark-800|eyJ2MiI6ImFiZDhmMjU1MzQzMzRjMmRiZDJjMzUyOTBmMzRjMjgxIn0=\" npx convex deploy --cmd \"echo skip\")",
+      "Bash(CONVEX_DEPLOY_KEY=\"dev:pastel-platypus-913|eyJ2MiI6IjkyODJmNmYxMmM3YjRlZmY4YjgwNDdmN2E2MmMzOTlkIn0=\" npx convex deploy --cmd \"echo skip\")"
     ]
   }
 }

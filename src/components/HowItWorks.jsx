@@ -48,7 +48,7 @@ export default function HowItWorks() {
   const [ref, inView] = useInView()
 
   return (
-    <section className="bg-[#1a1a1a] py-24 overflow-hidden">
+    <section className="bg-[#1C1814] py-24 overflow-hidden">
       <div className="container-xl">
         <div ref={ref} className={`reveal ${inView ? 'in-view' : ''} text-center mb-16`}>
           <p className="section-eyebrow">How It Works</p>

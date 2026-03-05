@@ -48,6 +48,11 @@ export default function Footer() {
                   hello@ocbuilds.com
                 </a>
               </li>
+              <li>
+                <a href="tel:+14253246506" className="hover:text-white transition-colors">
+                  (425) 324-6506
+                </a>
+              </li>
               <li>Ellensburg, WA</li>
             </ul>
 

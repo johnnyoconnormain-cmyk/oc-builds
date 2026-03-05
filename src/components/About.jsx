@@ -11,7 +11,7 @@ export default function About() {
   const [ref, inView] = useInView()
 
   return (
-    <section id="about" className="bg-[#1a1a1a] py-24 overflow-hidden">
+    <section id="about" className="bg-[#1C1814] py-24 overflow-hidden">
       <div className="container-xl">
         <div
           ref={ref}
