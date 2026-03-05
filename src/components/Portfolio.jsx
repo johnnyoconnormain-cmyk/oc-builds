@@ -26,7 +26,9 @@ const PLACEHOLDERS = [
     description: 'Campus social events platform built for college students. Find what\'s happening on and around campus, tonight.',
     services: ['Web App', 'Branding', 'Launch Strategy'],
     quote: 'Built from scratch in Ellensburg. Real product, real users.',
-    url: '/demos/afterzz.html',
+    url: 'https://afterzz.com',
+    demoEmail: 'demo@ocbuilds.com',
+    demoPassword: 'OcBuilds2025!',
   },
 ]
 
@@ -135,14 +137,21 @@ function ProjectCard({ project, gradient, delay }) {
           </blockquote>
         )}
         {url && (
-          <div className="mt-auto pt-3 border-t border-white/[0.06]">
+          <div className="mt-auto pt-3 border-t border-white/[0.06] space-y-2">
+            {project.demoEmail && (
+              <div className="bg-white/[0.04] rounded-lg px-3 py-2 text-xs text-white/40 space-y-0.5">
+                <div className="text-white/25 text-[10px] font-semibold uppercase tracking-wider mb-1">Demo Login</div>
+                <div><span className="text-white/30">Email:</span> <span className="text-white/60 font-mono">{project.demoEmail}</span></div>
+                <div><span className="text-white/30">Pass:</span> <span className="text-white/60 font-mono">{project.demoPassword}</span></div>
+              </div>
+            )}
             <a
               href={url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#FF6B2B] hover:text-[#FF8C5A] transition-colors"
             >
-              View Site
+              View Live Site
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                 <polyline points="15 3 21 3 21 9"/>
