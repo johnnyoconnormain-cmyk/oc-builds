@@ -1,47 +1,77 @@
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Outfit', system-ui, sans-serif;
+    background-color: #1a1a1a;
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  * { box-sizing: border-box; }
 }
 
-:root {
-  --color-bg: #0d0d1a;
-  --color-surface: #14142b;
-  --color-surface2: #1c1c38;
-  --color-accent: #e8c547;
-  --color-accent-dark: #c9a832;
-  --color-text: #f0f0f5;
-  --color-muted: #9090b0;
-  --color-border: rgba(255,255,255,0.08);
-  --radius: 12px;
-  --font: 'Inter', system-ui, sans-serif;
+@layer components {
+  /* Noise grain overlay */
+  .noise-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    background-repeat: repeat;
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container-xl {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-orange {
+    @apply inline-flex items-center gap-2 bg-[#FF6B2B] hover:bg-[#E55A1B] text-white font-bold rounded-lg transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 border border-white/20 hover:border-white/40 text-white/80 hover:text-white font-semibold rounded-lg transition-all duration-200;
+  }
+
+  .card-dark {
+    @apply bg-[#242424] border border-white/[0.07] rounded-xl transition-all duration-200 hover:-translate-y-1 hover:border-orange/30;
+  }
+
+  .section-eyebrow {
+    @apply text-[#FF6B2B] text-sm font-bold tracking-widest uppercase mb-3;
+  }
+
+  .text-orange-gradient {
+    background: linear-gradient(135deg, #FF6B2B 0%, #FF8C5A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-body {
-  font-family: var(--font);
-  background: var(--color-bg);
-  color: var(--color-text);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-button {
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
-  outline: none;
-}
+.h1 { animation: heroFadeUp 0.7s 0.05s ease both; }
+.h2 { animation: heroFadeUp 0.7s 0.2s ease both; }
+.h3 { animation: heroFadeUp 0.7s 0.35s ease both; }
+.h4 { animation: heroFadeUp 0.7s 0.5s ease both; }

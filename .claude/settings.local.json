@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create vite@latest . -- --template react-ts --yes)",
+      "Bash(npm create vite@latest . -- --template react-ts)",
+      "Bash(npm install)",
+      "Bash(npx convex codegen)",
+      "Bash(npm run build)",
+      "Bash(gh auth status)",
+      "Bash(gh repo list --limit 5)",
+      "Bash(npm install -D tailwindcss postcss autoprefixer)",
+      "Bash(npm install -D tailwindcss@3)"
+    ]
+  }
+}

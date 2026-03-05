@@ -4,9 +4,9 @@ import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import App from './App'
 import './index.css'
 
-const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string)
+const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL)
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ConvexProvider client={convex}>
       <App />

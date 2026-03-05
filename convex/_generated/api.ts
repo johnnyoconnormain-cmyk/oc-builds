@@ -14,10 +14,14 @@ import type {
   FunctionReference,
 } from "convex/server";
 import { anyApi } from "convex/server";
-import type * as contacts from "../contacts.js";
+import type * as projects from "../projects.js";
+import type * as submissions from "../submissions.js";
+import type * as seed from "../seed.js";
 
 declare const fullApi: ApiFromModules<{
-  contacts: typeof contacts;
+  projects: typeof projects;
+  submissions: typeof submissions;
+  seed: typeof seed;
 }>;
 
 export const api: FilterApi<
