@@ -26,7 +26,7 @@ const PLACEHOLDERS = [
     description: 'Campus social events platform built for college students. Find what\'s happening on and around campus, tonight.',
     services: ['Web App', 'Branding', 'Launch Strategy'],
     quote: 'Built from scratch in Ellensburg. Real product, real users.',
-    url: 'https://afterzz.com',
+    url: '/demos/afterzz.html',
   },
 ]
 
