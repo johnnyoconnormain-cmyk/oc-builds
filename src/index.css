@@ -36,13 +36,21 @@
 
   .btn-orange {
     @apply inline-flex items-center gap-2 bg-[#FF6B2B] hover:bg-[#E55A1B] text-white font-bold rounded-lg transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .btn-orange:hover {
+    box-shadow: 0 4px 20px rgba(255,107,43,0.35);
   }
   .btn-ghost {
-    @apply inline-flex items-center gap-2 border border-white/20 hover:border-white/40 text-white/80 hover:text-white font-semibold rounded-lg transition-all duration-200;
+    @apply inline-flex items-center gap-2 border border-white/20 hover:border-white/40 text-white/80 hover:text-white font-semibold rounded-lg transition-all duration-200 hover:bg-white/[0.04];
   }
 
   .card-dark {
-    @apply bg-[#242424] border border-white/[0.07] rounded-xl transition-all duration-200 hover:-translate-y-1 hover:border-orange/30;
+    @apply bg-[#242424] border border-white/[0.07] rounded-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-[#FF6B2B]/25;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .card-dark:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,107,43,0.1);
   }
 
   .section-eyebrow {

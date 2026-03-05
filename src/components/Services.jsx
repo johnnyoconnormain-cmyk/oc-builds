@@ -69,14 +69,19 @@ export default function Services() {
   return (
     <section id="services" className="bg-[#F5F0EB] py-24">
       <div className="container-xl">
-        <div ref={ref} className={`reveal ${inView ? 'in-view' : ''}`}>
-          <p className="section-eyebrow text-[#FF6B2B]">What I Do</p>
-          <h2 className="font-display font-bold text-4xl sm:text-5xl text-[#1a1a1a] tracking-tight mb-4">
-            Six ways I can help<br className="hidden sm:block" /> your business right now.
-          </h2>
-          <p className="text-[#555] text-lg max-w-xl mb-12 leading-relaxed">
-            Pick one or stack a few. No retainers required. No contracts. Just work that gets done.
-          </p>
+        <div ref={ref} className={`reveal ${inView ? 'in-view' : ''} flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12`}>
+          <div>
+            <p className="section-eyebrow text-[#FF6B2B]">What I Do</p>
+            <h2 className="font-display font-bold text-4xl sm:text-5xl text-[#1a1a1a] tracking-tight mb-4">
+              Six ways I can help<br className="hidden sm:block" /> your business right now.
+            </h2>
+            <p className="text-[#666] text-base max-w-lg leading-relaxed">
+              Pick one or stack a few. No retainers. No contracts. Just work that gets done.
+            </p>
+          </div>
+          <a href="#contact" className="flex-shrink-0 btn-orange px-6 py-3 text-sm">
+            Get a Free Quote
+          </a>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

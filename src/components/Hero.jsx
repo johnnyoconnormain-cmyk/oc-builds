@@ -41,7 +41,7 @@ export default function Hero() {
               I build things.
             </span>
             <span className="block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-white/40 mt-1">
-              Used to be houses.
+              Used to be touchdowns.
             </span>
             <span className="block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-orange-gradient mt-1">
               Now it's websites.
@@ -68,15 +68,16 @@ export default function Hero() {
           </div>
 
           {/* Stats */}
-          <div className="mt-16 flex flex-wrap gap-8 border-t border-white/[0.08] pt-8">
+          <div className="mt-16 pt-8 border-t border-white/[0.08] flex flex-wrap gap-6 sm:gap-10">
             {[
-              { value: '$399', label: 'Starting price' },
-              { value: '48h', label: 'Avg. turnaround' },
-              { value: '100%', label: 'Local & reachable' },
+              { value: '$399', label: 'Starting price', sub: 'flat rate' },
+              { value: '48h', label: 'Avg. turnaround', sub: 'from kickoff' },
+              { value: '1 person', label: 'Who you deal with', sub: 'no handoffs' },
             ].map(s => (
-              <div key={s.label}>
-                <div className="font-display font-bold text-2xl text-[#FF6B2B]">{s.value}</div>
-                <div className="text-xs text-white/40 font-medium mt-0.5 tracking-wide uppercase">{s.label}</div>
+              <div key={s.label} className="flex flex-col">
+                <div className="font-display font-bold text-[28px] text-[#FF6B2B] leading-none">{s.value}</div>
+                <div className="text-sm text-white/70 font-medium mt-1">{s.label}</div>
+                <div className="text-xs text-white/30 mt-0.5">{s.sub}</div>
               </div>
             ))}
           </div>
