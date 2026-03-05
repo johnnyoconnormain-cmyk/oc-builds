@@ -5,138 +5,297 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>El Rancho Barbershop — Ellensburg, WA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Outfit', system-ui, sans-serif; background: #111; color: #fff; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: 'Source Sans 3', system-ui, sans-serif;
+      background: #F5EFE6;
+      color: #1C1410;
+      -webkit-font-smoothing: antialiased;
+    }
     a { color: inherit; text-decoration: none; }
 
-    /* Nav */
+    /* ===== NAV ===== */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      background: #1C1410;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 5%; height: 64px;
-      background: rgba(17,17,17,0.85); backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 6%; height: 68px;
     }
-    .logo { font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em; }
-    .logo span { color: #c8a96e; }
-    .nav-links { display: flex; gap: 2rem; font-size: 0.85rem; color: rgba(255,255,255,0.6); }
-    .nav-links a:hover { color: #fff; }
-    .nav-cta {
-      background: #c8a96e; color: #111; font-weight: 700; font-size: 0.8rem;
-      padding: 0.5rem 1.25rem; border-radius: 6px;
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900; font-size: 1.2rem;
+      color: #F5EFE6; letter-spacing: 0.04em;
+    }
+    .logo span { color: #C9963B; }
+    .nav-links { display: flex; gap: 2.5rem; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,239,230,0.5); }
+    .nav-links a:hover { color: #F5EFE6; }
+    .nav-book {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #1C1410; background: #C9963B;
+      padding: 0.55rem 1.4rem; border-radius: 2px;
     }
 
-    /* Hero */
+    /* ===== HERO ===== */
     .hero {
-      min-height: 100vh; display: flex; align-items: center;
-      padding: 80px 5% 60px;
-      background: radial-gradient(ellipse at 70% 50%, rgba(200,169,110,0.08) 0%, transparent 60%), #111;
+      background: #1C1410;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
     }
-    .hero-inner { max-width: 680px; }
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      background: rgba(200,169,110,0.1); border: 1px solid rgba(200,169,110,0.2);
-      color: #c8a96e; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-      padding: 0.4rem 1rem; border-radius: 100px; margin-bottom: 1.5rem;
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 120px 8% 80px;
     }
-    .eyebrow::before { content: ''; width: 6px; height: 6px; background: #c8a96e; border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 1.25rem; }
-    h1 span { color: #c8a96e; }
-    .hero-sub { font-size: 1.1rem; color: rgba(255,255,255,0.5); line-height: 1.7; max-width: 480px; margin-bottom: 2rem; }
+    .hero-tag {
+      display: inline-block;
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #C9963B; margin-bottom: 1.5rem;
+    }
+    .hero-left h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 5vw, 5.5rem);
+      font-weight: 900; line-height: 1.0;
+      color: #F5EFE6; letter-spacing: -0.02em; margin-bottom: 1.5rem;
+    }
+    .hero-left h1 em { color: #C9963B; font-style: italic; }
+    .hero-sub { font-size: 1rem; color: rgba(245,239,230,0.45); line-height: 1.8; max-width: 360px; margin-bottom: 2.5rem; font-weight: 300; }
     .btn-gold {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      background: #c8a96e; color: #111; font-weight: 700; font-size: 0.95rem;
-      padding: 0.9rem 2rem; border-radius: 8px;
-      transition: background 0.2s, transform 0.2s;
-    }
-    .btn-gold:hover { background: #d4b87a; transform: translateY(-2px); }
-    .btn-outline {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7);
-      font-weight: 600; font-size: 0.95rem;
-      padding: 0.9rem 2rem; border-radius: 8px;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .btn-outline:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
-    .btns { display: flex; flex-wrap: wrap; gap: 1rem; }
-    .stats { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.07); }
-    .stat-val { font-size: 1.75rem; font-weight: 800; color: #c8a96e; }
-    .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.45); margin-top: 2px; }
-
-    /* Services */
-    .section { padding: 6rem 5%; }
-    .section.alt { background: #161616; }
-    .section-wrap { max-width: 1100px; margin: 0 auto; }
-    .section-eye { color: #c8a96e; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.75rem; }
-    h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 1rem; }
-    .sub { color: rgba(255,255,255,0.45); font-size: 1rem; line-height: 1.7; max-width: 520px; margin-bottom: 3rem; }
-    .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
-    .card {
-      background: #1c1c1c; border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 14px; padding: 1.75rem;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .card:hover { border-color: rgba(200,169,110,0.3); transform: translateY(-4px); }
-    .card-icon { font-size: 1.75rem; margin-bottom: 1rem; }
-    .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .card p { font-size: 0.875rem; color: rgba(255,255,255,0.45); line-height: 1.6; }
-    .price { color: #c8a96e; font-weight: 700; margin-top: 0.75rem; font-size: 0.9rem; }
-
-    /* Reviews */
-    .reviews { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
-    .review-card {
-      background: #1c1c1c; border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 14px; padding: 1.5rem;
-    }
-    .stars { color: #c8a96e; font-size: 0.9rem; margin-bottom: 0.75rem; }
-    .review-text { font-size: 0.875rem; color: rgba(255,255,255,0.6); line-height: 1.6; margin-bottom: 1rem; }
-    .reviewer { font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.85); }
-
-    /* Hours */
-    .hours-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; align-items: start; }
-    .hours-table { width: 100%; border-collapse: collapse; }
-    .hours-table tr { border-bottom: 1px solid rgba(255,255,255,0.06); }
-    .hours-table td { padding: 0.65rem 0; font-size: 0.875rem; }
-    .hours-table td:last-child { text-align: right; color: rgba(255,255,255,0.5); }
-    .hours-table tr:last-child { border-bottom: none; }
-    .map-placeholder {
-      background: #1c1c1c; border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 14px; height: 220px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
-      color: rgba(255,255,255,0.3); font-size: 0.875rem;
-    }
-    .map-placeholder span { font-size: 2rem; }
-
-    /* CTA strip */
-    .cta-strip {
-      background: #c8a96e; padding: 4rem 5%;
-      text-align: center;
-    }
-    .cta-strip h2 { color: #111; font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 0.75rem; }
-    .cta-strip p { color: rgba(17,17,17,0.65); margin-bottom: 2rem; font-size: 1rem; }
-    .btn-dark {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      background: #111; color: #fff; font-weight: 700; font-size: 0.95rem;
-      padding: 0.9rem 2rem; border-radius: 8px;
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      background: #C9963B; color: #1C1410;
+      font-weight: 600; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 1rem 2.5rem; border-radius: 2px;
       transition: background 0.2s;
     }
-    .btn-dark:hover { background: #222; }
+    .btn-gold:hover { background: #D4A84A; }
+    .hero-divider { width: 48px; height: 2px; background: #C9963B; margin: 2.5rem 0; }
 
-    /* Footer */
-    footer {
-      background: #0d0d0d; padding: 2.5rem 5%;
-      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
-      gap: 1rem; border-top: 1px solid rgba(255,255,255,0.06);
+    .hero-meta { display: flex; gap: 2.5rem; }
+    .meta-item { }
+    .meta-val { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: #F5EFE6; }
+    .meta-label { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,239,230,0.35); margin-top: 2px; }
+
+    /* Hero right - visual collage */
+    .hero-right {
+      position: relative; overflow: hidden;
+      background: #2A1E15;
     }
-    footer p { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
-    .footer-built { font-size: 0.75rem; color: rgba(255,255,255,0.2); }
-    .footer-built a { color: #c8a96e; }
+    .stripe-bg {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 40px,
+        rgba(201,150,59,0.04) 40px,
+        rgba(201,150,59,0.04) 41px
+      );
+    }
+    .hero-photo-grid {
+      position: absolute; inset: 0;
+      display: grid; grid-template-rows: 1fr 1fr; gap: 2px;
+    }
+    .photo-block {
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .photo-block.top { background: #1C1410; }
+    .photo-block.bottom { background: #251A12; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .photo-block.bottom-left { background: #2A1E15; display: flex; align-items: center; justify-content: center; }
+    .photo-block.bottom-right { background: #1E1510; display: flex; align-items: center; justify-content: center; }
 
-    @media (max-width: 600px) {
+    /* Illustrated scissors / pole icons */
+    .pole {
+      width: 28px; height: 180px;
+      border-radius: 14px; overflow: hidden;
+      background: repeating-linear-gradient(180deg, #fff 0, #fff 18px, #C9963B 18px, #C9963B 36px, #c0392b 36px, #c0392b 54px);
+      opacity: 0.25;
+      position: absolute; right: 14%; top: 20%;
+    }
+    .scissors-icon { font-size: 5rem; opacity: 0.08; }
+    .razor-icon { font-size: 4rem; opacity: 0.08; }
+    .chair-label {
+      position: absolute; bottom: 2rem; left: 2rem;
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(245,239,230,0.2);
+    }
+
+    /* Photo placeholders that look real */
+    .img-placeholder {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.75rem;
+      background: #1C1410;
+    }
+    .img-placeholder-icon { font-size: 3.5rem; opacity: 0.15; }
+    .img-placeholder-label {
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: rgba(245,239,230,0.15);
+    }
+
+    /* ===== STRIP ===== */
+    .strip {
+      background: #C9963B;
+      display: flex; align-items: center; justify-content: center;
+      gap: 3rem; padding: 1.1rem 6%;
+      overflow: hidden;
+      flex-wrap: wrap;
+    }
+    .strip-item {
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+      color: #1C1410; display: flex; align-items: center; gap: 0.6rem;
+    }
+    .strip-dot { width: 4px; height: 4px; background: rgba(28,20,16,0.4); border-radius: 50%; }
+
+    /* ===== SERVICES ===== */
+    .section { padding: 6rem 6%; }
+    .section-wrap { max-width: 1140px; margin: 0 auto; }
+    .section.dark { background: #1C1410; }
+    .section.warm { background: #EDE4D8; }
+
+    .label {
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #C9963B; margin-bottom: 1rem; display: block;
+    }
+    .section.dark .label { color: #C9963B; }
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900;
+      line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1rem;
+    }
+    .section.dark h2 { color: #F5EFE6; }
+    .section-sub { font-size: 1rem; color: rgba(28,20,16,0.5); line-height: 1.8; max-width: 440px; margin-bottom: 3rem; }
+    .section.dark .section-sub { color: rgba(245,239,230,0.4); }
+
+    /* Service list */
+    .service-list { }
+    .service-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.6rem 0;
+      border-bottom: 1px solid rgba(28,20,16,0.1);
+      gap: 1rem;
+    }
+    .section.dark .service-row { border-color: rgba(245,239,230,0.07); }
+    .service-row:first-child { border-top: 1px solid rgba(28,20,16,0.1); }
+    .section.dark .service-row:first-child { border-color: rgba(245,239,230,0.07); }
+    .service-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 700;
+    }
+    .section.dark .service-name { color: #F5EFE6; }
+    .service-desc { font-size: 0.875rem; color: rgba(28,20,16,0.5); margin-top: 0.2rem; }
+    .section.dark .service-desc { color: rgba(245,239,230,0.35); }
+    .service-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 700; color: #C9963B;
+      white-space: nowrap;
+    }
+    .service-duration {
+      font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(28,20,16,0.35); text-align: right; margin-top: 2px;
+    }
+    .section.dark .service-duration { color: rgba(245,239,230,0.25); }
+
+    /* ===== ABOUT SPLIT ===== */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; align-items: center;
+    }
+    .about-img-col { position: relative; }
+    .about-img {
+      aspect-ratio: 3/4;
+      background: #2A1E15;
+      border-radius: 4px; overflow: hidden;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .about-img-inner { font-size: 6rem; opacity: 0.08; }
+    .about-badge {
+      position: absolute; bottom: -1.5rem; right: -1.5rem;
+      background: #C9963B; color: #1C1410;
+      width: 110px; height: 110px; border-radius: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+    }
+    .about-badge-val { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; }
+    .about-badge-label { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
+    .about-text h2 { margin-bottom: 1.5rem; color: #F5EFE6; }
+    .about-text p { font-size: 0.95rem; color: rgba(245,239,230,0.45); line-height: 1.9; margin-bottom: 1.25rem; font-weight: 300; }
+    .about-text p strong { color: rgba(245,239,230,0.8); font-weight: 600; }
+
+    /* ===== REVIEWS ===== */
+    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .review-card {
+      background: #fff; border-radius: 4px; padding: 2rem;
+      border-left: 3px solid #C9963B;
+    }
+    .stars { color: #C9963B; font-size: 0.85rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
+    .review-text { font-size: 0.95rem; color: #3A2E26; line-height: 1.75; margin-bottom: 1.25rem; font-style: italic; font-family: 'Playfair Display', serif; }
+    .reviewer { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(28,20,16,0.4); }
+
+    /* ===== HOURS ===== */
+    .hours-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .hours-table { width: 100%; }
+    .hours-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 0.9rem 0; border-bottom: 1px solid rgba(245,239,230,0.07);
+      font-size: 0.9rem;
+    }
+    .hours-day { color: rgba(245,239,230,0.6); }
+    .hours-time { color: #F5EFE6; font-weight: 600; }
+    .hours-time.closed { color: rgba(245,239,230,0.25); }
+    .location-box {
+      background: #2A1E15; border: 1px solid rgba(245,239,230,0.07);
+      border-radius: 4px; padding: 2rem;
+    }
+    .location-box h3 { font-family: 'Playfair Display', serif; color: #F5EFE6; font-size: 1.25rem; margin-bottom: 1.25rem; }
+    .loc-row { display: flex; gap: 0.75rem; margin-bottom: 1rem; align-items: flex-start; }
+    .loc-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .loc-text { font-size: 0.875rem; color: rgba(245,239,230,0.45); line-height: 1.6; }
+    .loc-text strong { color: rgba(245,239,230,0.8); display: block; }
+    .walkin-badge {
+      display: inline-block; margin-top: 1.5rem;
+      background: rgba(201,150,59,0.15); border: 1px solid rgba(201,150,59,0.3);
+      color: #C9963B; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 0.5rem 1rem; border-radius: 2px;
+    }
+
+    /* ===== CTA ===== */
+    .cta-full {
+      background: #C9963B;
+      padding: 5rem 6%; text-align: center;
+    }
+    .cta-full h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; color: #1C1410;
+      margin-bottom: 0.75rem;
+    }
+    .cta-full p { color: rgba(28,20,16,0.6); font-size: 1rem; margin-bottom: 2.5rem; }
+    .btn-dark {
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      background: #1C1410; color: #F5EFE6;
+      font-weight: 600; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 1rem 2.5rem; border-radius: 2px;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: #110D09; padding: 2.5rem 6%;
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-weight: 900; color: #F5EFE6; font-size: 1rem; }
+    .footer-logo span { color: #C9963B; }
+    footer p { font-size: 0.75rem; color: rgba(245,239,230,0.2); }
+    footer a { color: #C9963B; }
+
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-img-col { display: none; }
+      .hours-layout { grid-template-columns: 1fr; gap: 2rem; }
       .nav-links { display: none; }
     }
   </style>
@@ -147,149 +306,239 @@
     <div class="logo">El Rancho <span>Barbershop</span></div>
     <div class="nav-links">
       <a href="#services">Services</a>
-      <a href="#reviews">Reviews</a>
+      <a href="#about">About</a>
       <a href="#hours">Hours</a>
     </div>
-    <a href="#book" class="btn-gold nav-cta">Book Now</a>
+    <a href="#book" class="nav-book">Book Now</a>
   </nav>
 
   <section class="hero">
-    <div class="hero-inner">
-      <div class="eyebrow">Ellensburg, WA &nbsp;·&nbsp; Walk-ins Welcome</div>
-      <h1>Sharp cuts.<br /><span>No wait list.</span></h1>
+    <div class="hero-left">
+      <span class="hero-tag">Ellensburg, WA &nbsp;&mdash;&nbsp; Est. 2011</span>
+      <h1>
+        The cleanest<br />
+        cut in<br />
+        <em>Ellensburg.</em>
+      </h1>
+      <div class="hero-divider"></div>
       <p class="hero-sub">
-        El Rancho Barbershop has been cutting hair in Ellensburg for years. Classic fades, beard trims, hot towel shaves. Real barbers, real results.
+        Old school craft, no wait. Walk in, sit down, walk out looking right. That's El Rancho.
       </p>
-      <div class="btns">
-        <a href="#book" class="btn-gold">Book an Appointment &rarr;</a>
-        <a href="#services" class="btn-outline">See Services</a>
+      <a href="#book" class="btn-gold">
+        Book Your Chair
+        <span>&rarr;</span>
+      </a>
+      <div style="margin-top:3rem; display:flex; gap:2.5rem;">
+        <div class="meta-item">
+          <div class="meta-val">4.9</div>
+          <div class="meta-label">Google Stars</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-val">500+</div>
+          <div class="meta-label">Happy Clients</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-val">13yr</div>
+          <div class="meta-label">In Business</div>
+        </div>
       </div>
-      <div class="stats">
-        <div>
-          <div class="stat-val">500+</div>
-          <div class="stat-label">Happy clients</div>
-        </div>
-        <div>
-          <div class="stat-val">4.9★</div>
-          <div class="stat-label">Google rating</div>
-        </div>
-        <div>
-          <div class="stat-val">Same day</div>
-          <div class="stat-label">Walk-ins available</div>
-        </div>
+    </div>
+    <div class="hero-right">
+      <div class="stripe-bg"></div>
+      <div class="pole"></div>
+      <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2rem;">
+        <div style="font-size:9rem; opacity:0.07; line-height:1;">✂</div>
+        <div style="font-size:0.65rem; letter-spacing:0.25em; text-transform:uppercase; color:rgba(245,239,230,0.15);">Est. 2011 &mdash; Ellensburg, WA</div>
+      </div>
+      <div style="position:absolute; bottom:3rem; left:3rem; right:3rem;">
+        <div style="font-family:'Playfair Display',serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(245,239,230,0.15); margin-bottom:0.5rem;">Walk-ins always welcome</div>
+        <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:rgba(245,239,230,0.08); line-height:1.2;">Classic cuts.<br/>Modern booking.</div>
       </div>
     </div>
   </section>
 
-  <section id="services" class="section alt">
+  <!-- Ticker strip -->
+  <div class="strip">
+    <div class="strip-item">✂ Classic Cuts</div>
+    <div class="strip-dot"></div>
+    <div class="strip-item">🪒 Hot Towel Shaves</div>
+    <div class="strip-dot"></div>
+    <div class="strip-item">💈 Fades &amp; Tapers</div>
+    <div class="strip-dot"></div>
+    <div class="strip-item">📍 312 N Main St</div>
+    <div class="strip-dot"></div>
+    <div class="strip-item">☎ Walk-ins Welcome</div>
+  </div>
+
+  <!-- Services -->
+  <section id="services" class="section dark">
     <div class="section-wrap">
-      <p class="section-eye">What We Do</p>
+      <span class="label">The Menu</span>
       <h2>Services &amp; Pricing</h2>
-      <p class="sub">No surprises. Flat prices, every time.</p>
-      <div class="grid3">
-        <div class="card">
-          <div class="card-icon">✂️</div>
-          <h3>Classic Cut</h3>
-          <p>Scissor or clipper cut, shampoo, and style. Every time.</p>
-          <div class="price">$25</div>
+      <p class="section-sub">Flat prices. No surprises. Every barber, every time.</p>
+      <div class="service-list">
+        <div class="service-row">
+          <div>
+            <div class="service-name">The Classic</div>
+            <div class="service-desc">Scissor or clipper cut, wash, and style</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="service-price">$25</div>
+            <div class="service-duration">30 &ndash; 45 min</div>
+          </div>
         </div>
-        <div class="card">
-          <div class="card-icon">🪒</div>
-          <h3>Fade + Beard</h3>
-          <p>Full fade with a beard trim and lineup. Looking sharp.</p>
-          <div class="price">$35</div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">Fade + Lineup</div>
+            <div class="service-desc">Full fade with edge and beard line cleanup</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="service-price">$32</div>
+            <div class="service-duration">45 &ndash; 60 min</div>
+          </div>
         </div>
-        <div class="card">
-          <div class="card-icon">🔥</div>
-          <h3>Hot Towel Shave</h3>
-          <p>Old school straight razor shave with hot towel treatment.</p>
-          <div class="price">$30</div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">Beard Trim</div>
+            <div class="service-desc">Shape, line, and condition. Add to any cut or standalone</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="service-price">$18</div>
+            <div class="service-duration">20 min</div>
+          </div>
         </div>
-        <div class="card">
-          <div class="card-icon">👦</div>
-          <h3>Kids Cut</h3>
-          <p>Ages 12 and under. Patient barbers, great results.</p>
-          <div class="price">$18</div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">Hot Towel Shave</div>
+            <div class="service-desc">Straight razor, hot towel, pre-shave oil. Old school, no shortcuts</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="service-price">$30</div>
+            <div class="service-duration">30 min</div>
+          </div>
         </div>
-        <div class="card">
-          <div class="card-icon">💈</div>
-          <h3>Cut + Shave Combo</h3>
-          <p>The full experience. Cut, fade, shave, hot towel finish.</p>
-          <div class="price">$50</div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">The Full Treatment</div>
+            <div class="service-desc">Cut, fade, hot towel shave. The whole experience</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="service-price">$55</div>
+            <div class="service-duration">75 min</div>
+          </div>
         </div>
-        <div class="card">
-          <div class="card-icon">📅</div>
-          <h3>Monthly Member</h3>
-          <p>Two cuts a month, priority booking, member price locked in.</p>
-          <div class="price">$40/mo</div>
+        <div class="service-row">
+          <div>
+            <div class="service-name">Kids Cut</div>
+            <div class="service-desc">12 and under. Patient barbers, no rush</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="service-price">$18</div>
+            <div class="service-duration">20 &ndash; 30 min</div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="reviews" class="section">
+  <!-- About -->
+  <section id="about" class="section dark">
     <div class="section-wrap">
-      <p class="section-eye">Google Reviews</p>
-      <h2>What people are saying</h2>
-      <p class="sub">Don't take our word for it.</p>
-      <div class="reviews">
-        <div class="review-card">
-          <div class="stars">★★★★★</div>
-          <p class="review-text">"Finally started getting calls from people who found us on Google. Worth every penny. Best shop in Ellensburg hands down."</p>
-          <div class="reviewer">Marcus T. — Ellensburg</div>
+      <div class="about-grid">
+        <div class="about-img-col">
+          <div class="about-img">
+            <div class="about-img-inner">💈</div>
+          </div>
+          <div class="about-badge">
+            <div class="about-badge-val">13</div>
+            <div class="about-badge-label">Years Open</div>
+          </div>
         </div>
-        <div class="review-card">
-          <div class="stars">★★★★★</div>
-          <p class="review-text">"Clean cuts, great vibes. I drive 20 minutes to come here because nobody else fades like they do."</p>
-          <div class="reviewer">Derek M. — Cle Elum</div>
-        </div>
-        <div class="review-card">
-          <div class="stars">★★★★★</div>
-          <p class="review-text">"Brought my son in for the first time. Dude was nervous but they made it easy. We'll be back every month."</p>
-          <div class="reviewer">James R. — Ellensburg</div>
+        <div class="about-text">
+          <span class="label">The Shop</span>
+          <h2>Real barbers.<br />Real craft.</h2>
+          <p>El Rancho has been on North Main Street since 2011. We're not a chain, not a franchise. Just barbers who know their craft and take care of their community.</p>
+          <p>Whether you're coming in for a quick cleanup before a job interview or the full treatment on a Saturday morning, <strong>you'll walk out looking sharp.</strong></p>
+          <p>Walk-ins are always welcome. Appointments get priority.</p>
+          <a href="#book" class="btn-gold" style="margin-top:1rem;">Book an Appointment &rarr;</a>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="hours" class="section alt">
+  <!-- Reviews -->
+  <section class="section warm">
     <div class="section-wrap">
-      <p class="section-eye">Find Us</p>
+      <span class="label" style="color:#9A6F28;">What People Say</span>
+      <h2 style="margin-bottom:2.5rem;">Google Reviews</h2>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">"Best barbershop I've been to in Central Washington. Walked in without an appointment, was in the chair in 10 minutes. Fade was exactly what I asked for."</p>
+          <div class="reviewer">Marcus T. &mdash; Ellensburg, WA</div>
+        </div>
+        <div class="review-card">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">"I drive from Cle Elum because nobody else does a fade like they do. Been coming here three years. Won't go anywhere else."</p>
+          <div class="reviewer">Derek M. &mdash; Cle Elum, WA</div>
+        </div>
+        <div class="review-card">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">"Took my son for his first real haircut here. The barber was patient with him, explained what he was doing. We'll be back every month."</p>
+          <div class="reviewer">James R. &mdash; Ellensburg, WA</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hours -->
+  <section id="hours" class="section dark">
+    <div class="section-wrap">
+      <span class="label">Find Us</span>
       <h2>Hours &amp; Location</h2>
-      <p class="sub">Walk-ins always welcome. Call ahead for same-day guarantee.</p>
-      <div class="hours-grid">
+      <p class="section-sub">Walk-ins welcome all hours. Call ahead to guarantee your spot same day.</p>
+      <div class="hours-layout">
         <div>
-          <table class="hours-table">
-            <tr><td>Monday</td><td>9am – 7pm</td></tr>
-            <tr><td>Tuesday</td><td>9am – 7pm</td></tr>
-            <tr><td>Wednesday</td><td>9am – 7pm</td></tr>
-            <tr><td>Thursday</td><td>9am – 7pm</td></tr>
-            <tr><td>Friday</td><td>9am – 8pm</td></tr>
-            <tr><td>Saturday</td><td>8am – 6pm</td></tr>
-            <tr><td>Sunday</td><td>10am – 4pm</td></tr>
-          </table>
-          <p style="margin-top:1.5rem; font-size:0.875rem; color:rgba(255,255,255,0.4);">📍 312 N Main St, Ellensburg, WA 98926</p>
-          <p style="margin-top:0.5rem; font-size:0.875rem; color:rgba(255,255,255,0.4);">📞 (509) 555-0182</p>
+          <div class="hours-table">
+            <div class="hours-row"><span class="hours-day">Monday &mdash; Thursday</span><span class="hours-time">9am &ndash; 7pm</span></div>
+            <div class="hours-row"><span class="hours-day">Friday</span><span class="hours-time">9am &ndash; 8pm</span></div>
+            <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time">8am &ndash; 6pm</span></div>
+            <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-time">10am &ndash; 4pm</span></div>
+          </div>
         </div>
-        <div class="map-placeholder">
-          <span>📍</span>
-          312 N Main St<br />Ellensburg, WA
+        <div class="location-box">
+          <h3>Get Here</h3>
+          <div class="loc-row">
+            <span class="loc-icon">📍</span>
+            <div class="loc-text"><strong>312 N Main St</strong>Ellensburg, WA 98926</div>
+          </div>
+          <div class="loc-row">
+            <span class="loc-icon">☎</span>
+            <div class="loc-text"><strong>(509) 555-0182</strong>Call or text anytime</div>
+          </div>
+          <div class="loc-row">
+            <span class="loc-icon">🅿</span>
+            <div class="loc-text">Free parking on Main St and in the lot behind the building</div>
+          </div>
+          <span class="walkin-badge">Walk-ins Welcome</span>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="book" class="cta-strip">
+  <!-- CTA -->
+  <section id="book" class="cta-full">
     <div class="section-wrap">
-      <h2>Ready to look good?</h2>
-      <p>Book online or just walk in. We'll take care of you.</p>
-      <a href="tel:5095550182" class="btn-dark">📞 Call to Book</a>
+      <h2>Ready for a fresh cut?</h2>
+      <p>Call us, walk in, or book online. We'll get you right.</p>
+      <a href="tel:5095550182" class="btn-dark">☎ &nbsp;(509) 555-0182</a>
     </div>
   </section>
 
   <footer>
-    <p>© 2025 El Rancho Barbershop — Ellensburg, WA</p>
-    <p class="footer-built">Built by <a href="https://ocbuilds.com">OC Builds</a></p>
+    <div class="footer-logo">El Rancho <span>Barbershop</span></div>
+    <p>312 N Main St, Ellensburg, WA 98926</p>
+    <p>Built by <a href="https://ocbuilds.com">OC Builds</a></p>
   </footer>
 
 </body>
