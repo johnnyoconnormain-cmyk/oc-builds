@@ -7,6 +7,7 @@ import Portfolio from './components/Portfolio'
 import Pricing from './components/Pricing'
 import About from './components/About'
 import Contact from './components/Contact'
+import ChatWidget from "./components/ChatWidget"
 import Footer from './components/Footer'
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
         <Contact />
       </main>
       <Footer />
+        <ChatWidget />
       <Analytics />
     </>
   )

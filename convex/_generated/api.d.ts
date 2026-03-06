@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as chat from "../chat.js";
 import type * as email from "../email.js";
 import type * as projects from "../projects.js";
 import type * as seed from "../seed.js";
@@ -20,6 +21,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  chat: typeof chat;
   email: typeof email;
   projects: typeof projects;
   seed: typeof seed;
