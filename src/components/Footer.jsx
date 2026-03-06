@@ -2,17 +2,17 @@ const year = new Date().getFullYear()
 
 export default function Footer() {
   return (
-    <footer className="bg-[#111] border-t border-white/[0.06] py-12">
+    <footer className="bg-[#0F1A12] border-t border-white/[0.06] py-12">
       <div className="container-xl">
         <div className="grid sm:grid-cols-3 gap-8 mb-10">
           {/* Brand */}
           <div>
             <div className="mb-3">
               <svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="0" y="5" width="13" height="13" rx="2" fill="#FF6B2B"/>
-                <rect x="0" y="20" width="13" height="7" rx="2" fill="#FF6B2B" opacity="0.45"/>
-                <rect x="6" y="0" width="13" height="7" rx="2" fill="#FF6B2B" opacity="0.45"/>
-                <rect x="6" y="9" width="13" height="13" rx="2" fill="#FF6B2B" opacity="0.7"/>
+                <rect x="0" y="5" width="13" height="13" rx="2" fill="#E8722A"/>
+                <rect x="0" y="20" width="13" height="7" rx="2" fill="#E8722A" opacity="0.45"/>
+                <rect x="6" y="0" width="13" height="7" rx="2" fill="#E8722A" opacity="0.45"/>
+                <rect x="6" y="9" width="13" height="13" rx="2" fill="#E8722A" opacity="0.7"/>
                 <text x="26" y="17" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="14" fill="white" letterSpacing="-0.3">OC</text>
                 <text x="26" y="29" fontFamily="'Clash Display', sans-serif" fontWeight="600" fontSize="8" fill="rgba(255,255,255,0.4)" letterSpacing="3">BUILDS</text>
               </svg>
@@ -82,7 +82,7 @@ export default function Footer() {
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  className="w-8 h-8 bg-white/[0.06] hover:bg-white/10 border border-white/[0.07] rounded-lg flex items-center justify-center text-white/50 hover:text-white transition-all duration-150"
+                  className="w-8 h-8 bg-white/[0.06] hover:bg-white/10 border border-white/[0.07] rounded-xl flex items-center justify-center text-white/50 hover:text-white transition-all duration-150"
                 >
                   {s.icon}
                 </a>

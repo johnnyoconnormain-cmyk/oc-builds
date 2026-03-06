@@ -7,20 +7,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        dark: '#1a1a1a',
-        surface: '#242424',
-        'surface-2': '#2e2e2e',
-        warm: '#F5F0EB',
-        'warm-dark': '#E8E3DD',
+        dark: '#1E3329',
+        surface: '#253D30',
+        'surface-2': '#2D4A3A',
+        warm: '#F5EDD8',
+        'warm-dark': '#EDE5CF',
         orange: {
-          DEFAULT: '#FF6B2B',
-          dark: '#E55A1B',
-          light: '#FF8C5A',
+          DEFAULT: '#E8722A',
+          dark: '#D0611A',
+          light: '#F08B4A',
         },
       },
       fontFamily: {
         display: ['"Clash Display"', 'system-ui', 'sans-serif'],
-        body: ['Outfit', 'system-ui', 'sans-serif'],
+        body: ['Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-up': 'fadeUp 0.6s ease forwards',

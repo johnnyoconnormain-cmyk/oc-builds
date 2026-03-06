@@ -11,7 +11,7 @@ export default function About() {
   const [ref, inView] = useInView()
 
   return (
-    <section id="about" className="bg-[#1C1814] py-24 overflow-hidden">
+    <section id="about" className="bg-[#1E3329] py-24 overflow-hidden">
       <div className="container-xl">
         <div
           ref={ref}
@@ -19,14 +19,14 @@ export default function About() {
         >
           {/* Photo */}
           <div className="relative order-2 md:order-1">
-            <div className="aspect-[4/5] bg-[#242424] border border-white/[0.07] rounded-2xl overflow-hidden relative">
+            <div className="aspect-[4/5] bg-[#253D30] border border-white/[0.07] rounded-3xl overflow-hidden relative">
               <img src="/johnny.png" alt="Johnny O'Connor" className="w-full h-full object-cover object-top" />
             </div>
-            <div className="absolute -bottom-4 -right-4 hidden sm:flex bg-[#FF6B2B] text-white text-xs font-bold px-4 py-3 rounded-xl shadow-2xl items-center gap-2">
+            <div className="absolute -bottom-4 -right-4 hidden sm:flex bg-[#E8722A] text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl items-center gap-2">
               <span>🏈</span> CWU Wildcats
             </div>
-            <div className="absolute -top-4 -left-4 hidden sm:flex bg-[#242424] border border-white/10 text-white text-xs font-medium px-4 py-3 rounded-xl shadow-xl items-center gap-2">
-              <span className="text-[#FF6B2B]">📍</span> Ellensburg, WA
+            <div className="absolute -top-4 -left-4 hidden sm:flex bg-[#253D30] border border-white/10 text-white text-xs font-medium px-4 py-3 rounded-2xl shadow-xl items-center gap-2">
+              <span className="text-[#E8722A]">📍</span> Ellensburg, WA
             </div>
           </div>
 
@@ -57,7 +57,7 @@ export default function About() {
                 no one passing you off. You deal with me directly from the first
                 conversation to launch day and beyond.
               </p>
-              <p className="text-white/80 font-semibold">
+              <p className="callout-accent text-white/80 font-semibold">
                 I answer my phone. I meet deadlines. And I actually care whether
                 your business grows.
               </p>

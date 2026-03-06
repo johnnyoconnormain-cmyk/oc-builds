@@ -21,8 +21,8 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-[#FAF8F4]/95 backdrop-blur-md border-b border-[#1A1614]/[0.08] py-3 shadow-sm'
-          : 'bg-[#FAF8F4] py-5'
+          ? 'bg-[#F5EDD8]/95 backdrop-blur-md border-b border-[#1A1209]/[0.08] py-3 shadow-sm'
+          : 'bg-transparent py-5'
       }`}
     >
       <div className="container-xl flex items-center justify-between">
@@ -44,7 +44,7 @@ export default function Navbar() {
             <a
               key={l.href}
               href={l.href}
-              className="px-4 py-2 text-sm font-medium text-[#1A1614]/60 hover:text-[#1A1614] rounded-lg hover:bg-[#1A1614]/5 transition-all duration-150"
+              className="px-4 py-2 text-sm font-medium text-[#1A1209]/60 hover:text-[#1A1209] rounded-full hover:bg-[#1A1209]/5 transition-all duration-150"
             >
               {l.label}
             </a>
@@ -60,20 +60,20 @@ export default function Navbar() {
           onClick={() => setOpen(o => !o)}
           aria-label="Toggle menu"
         >
-          <span className={`block w-6 h-0.5 bg-[#1A1614] transition-all duration-200 origin-center ${open ? 'translate-y-2 rotate-45' : ''}`} />
-          <span className={`block w-6 h-0.5 bg-[#1A1614] transition-all duration-200 ${open ? 'opacity-0' : ''}`} />
-          <span className={`block w-6 h-0.5 bg-[#1A1614] transition-all duration-200 origin-center ${open ? '-translate-y-2 -rotate-45' : ''}`} />
+          <span className={`block w-6 h-0.5 bg-[#1A1209] transition-all duration-200 origin-center ${open ? 'translate-y-2 rotate-45' : ''}`} />
+          <span className={`block w-6 h-0.5 bg-[#1A1209] transition-all duration-200 ${open ? 'opacity-0' : ''}`} />
+          <span className={`block w-6 h-0.5 bg-[#1A1209] transition-all duration-200 origin-center ${open ? '-translate-y-2 -rotate-45' : ''}`} />
         </button>
       </div>
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-[#FAF8F4] border-t border-[#1A1614]/[0.07] px-4 py-4 flex flex-col gap-1">
+        <div className="md:hidden bg-[#F5EDD8]/95 backdrop-blur-md border-t border-[#1A1209]/[0.07] px-4 py-4 flex flex-col gap-1">
           {links.map(l => (
             <a
               key={l.href}
               href={l.href}
-              className="px-4 py-3 text-sm font-medium text-[#1A1614]/70 hover:text-[#1A1614] rounded-lg hover:bg-[#1A1614]/5 transition-all"
+              className="px-4 py-3 text-sm font-medium text-[#1A1209]/70 hover:text-[#1A1209] rounded-full hover:bg-[#1A1209]/5 transition-all"
               onClick={() => setOpen(false)}
             >
               {l.label}

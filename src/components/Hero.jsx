@@ -1,69 +1,94 @@
 export default function Hero() {
   return (
-    <section id="home" className="relative bg-[#FAF8F4] overflow-hidden pt-28 pb-20 min-h-screen flex items-center">
+    <section id="home" className="noise-overlay relative bg-[#F5EDD8] overflow-hidden pt-28 pb-20 min-h-screen flex items-center">
 
-      {/* Subtle warm texture */}
+      {/* Subtle warm radial glow */}
       <div className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, rgba(255,107,43,0.06) 0%, transparent 50%)' }} />
-
-      {/* Orange accent line — left edge */}
-      <div className="absolute left-0 top-24 bottom-24 w-1 rounded-full bg-[#FF6B2B] opacity-30" />
+        style={{ backgroundImage: 'radial-gradient(circle at 70% 30%, rgba(232,114,42,0.07) 0%, transparent 55%)' }} />
 
       <div className="container-xl relative z-10 w-full">
-        <div className="max-w-4xl">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-          {/* Location tag */}
-          <div className="h1 inline-flex items-center gap-2 text-[#1A1614]/50 text-xs font-bold tracking-widest uppercase mb-10">
-            <span className="w-1.5 h-1.5 bg-[#FF6B2B] rounded-full" />
-            Ellensburg, WA
+          {/* Left: content */}
+          <div>
+            {/* Floating location badge */}
+            <div className="h1 inline-flex items-center gap-2.5 bg-white/70 border border-[#1A1209]/10 text-[#1A1209]/60 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full mb-10 shadow-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E8722A] opacity-70" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E8722A]" />
+              </span>
+              Ellensburg, WA
+            </div>
+
+            {/* Headline — plain bold */}
+            <h1 className="h2 font-display font-bold tracking-tight mb-8" style={{ lineHeight: 1.0 }}>
+              <span className="block text-5xl sm:text-6xl lg:text-[76px] text-[#1A1209]">
+                Websites for
+              </span>
+              <span className="block text-5xl sm:text-6xl lg:text-[76px] text-[#1A1209]">
+                Ellensburg's
+              </span>
+              <span className="block text-5xl sm:text-6xl lg:text-[76px] text-[#E8722A]">
+                small businesses.
+              </span>
+            </h1>
+
+            {/* Subtext */}
+            <p className="h3 text-lg sm:text-xl text-[#1A1209]/55 leading-relaxed max-w-xl mb-10">
+              I'm Johnny. I get local businesses online fast — a real website, Google
+              listing, and whatever else you need to show up when customers search for
+              you. Flat rates, no agency markup, one person you can actually reach.
+            </p>
+
+            {/* CTAs */}
+            <div className="h4 flex flex-wrap gap-4">
+              <a href="#contact" className="btn-orange px-8 py-4 text-base">
+                Get Your Free Audit
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+              <a href="#portfolio" className="inline-flex items-center gap-2 border border-[#1A1209]/20 hover:border-[#E8722A]/50 text-[#1A1209]/70 hover:text-[#E8722A] font-semibold rounded-full px-8 py-4 text-base transition-all duration-200 hover:bg-[#E8722A]/5">
+                See My Work
+              </a>
+            </div>
+
+            {/* Stats */}
+            <div className="mt-14 pt-8 border-t border-[#1A1209]/10 flex flex-wrap gap-8 sm:gap-14">
+              {[
+                { value: '$399', label: 'Starting price', sub: 'flat rate, no surprises' },
+                { value: '2 wks', label: 'Avg. site launch', sub: 'from first conversation' },
+                { value: 'Local', label: 'Based in Ellensburg', sub: 'easy to meet up' },
+              ].map(s => (
+                <div key={s.label}>
+                  <div className="font-display font-bold text-[28px] text-[#E8722A] leading-none">{s.value}</div>
+                  <div className="text-sm text-[#1A1209]/70 font-semibold mt-1">{s.label}</div>
+                  <div className="text-xs text-[#1A1209]/35 mt-0.5">{s.sub}</div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Headline — editorial, big, confident */}
-          <h1 className="h2 font-display font-bold tracking-tight mb-8" style={{ lineHeight: 1.0 }}>
-            <span className="block text-5xl sm:text-6xl lg:text-[80px] text-[#1A1614]">
-              Websites for
-            </span>
-            <span className="block text-5xl sm:text-6xl lg:text-[80px] text-[#1A1614]">
-              Ellensburg's
-            </span>
-            <span className="block text-5xl sm:text-6xl lg:text-[80px] text-orange-gradient">
-              small businesses.
-            </span>
-          </h1>
-
-          {/* Subtext */}
-          <p className="h3 text-lg sm:text-xl text-[#1A1614]/55 leading-relaxed max-w-2xl mb-10">
-            I'm Johnny. I get local businesses online fast — a real website, Google
-            listing, and whatever else you need to show up when customers search for
-            you. Flat rates, no agency markup, one person you can actually reach.
-          </p>
-
-          {/* CTAs */}
-          <div className="h4 flex flex-wrap gap-4">
-            <a href="#contact" className="btn-orange px-8 py-4 text-base">
-              Get Your Free Audit
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
-            <a href="#portfolio" className="inline-flex items-center gap-2 border border-[#1A1614]/20 hover:border-[#FF6B2B]/50 text-[#1A1614]/70 hover:text-[#FF6B2B] font-semibold rounded-lg px-8 py-4 text-base transition-all duration-200 hover:bg-[#FF6B2B]/5">
-              See My Work
-            </a>
-          </div>
-
-          {/* Stats */}
-          <div className="mt-16 pt-8 border-t border-[#1A1614]/10 flex flex-wrap gap-8 sm:gap-16">
-            {[
-              { value: '$399', label: 'Starting price', sub: 'flat rate, no surprises' },
-              { value: '2 wks', label: 'Avg. site launch', sub: 'from first conversation' },
-              { value: 'Local', label: 'Based in Ellensburg', sub: 'easy to meet up' },
-            ].map(s => (
-              <div key={s.label}>
-                <div className="font-display font-bold text-[30px] text-[#FF6B2B] leading-none">{s.value}</div>
-                <div className="text-sm text-[#1A1614]/70 font-semibold mt-1">{s.label}</div>
-                <div className="text-xs text-[#1A1614]/35 mt-0.5">{s.sub}</div>
+          {/* Right: Johnny's photo */}
+          <div className="relative hidden lg:flex justify-center">
+            <div className="relative w-full max-w-sm">
+              {/* Photo */}
+              <div className="aspect-[3/4] rounded-3xl overflow-hidden border-2 border-[#1A1209]/10 shadow-2xl">
+                <img
+                  src="/johnny.png"
+                  alt="Johnny O'Connor"
+                  className="w-full h-full object-cover object-top"
+                />
               </div>
-            ))}
+              {/* Floating accent: CWU badge */}
+              <div className="absolute -bottom-5 -left-5 flex items-center gap-2 bg-[#E8722A] text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-xl">
+                <span>🏈</span> CWU Wildcats
+              </div>
+              {/* Floating accent: location */}
+              <div className="absolute -top-4 -right-4 flex items-center gap-2 bg-white border border-[#1A1209]/10 text-[#1A1209] text-xs font-semibold px-4 py-3 rounded-2xl shadow-lg">
+                <span className="text-[#E8722A]">📍</span> Ellensburg, WA
+              </div>
+            </div>
           </div>
 
         </div>

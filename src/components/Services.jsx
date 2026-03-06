@@ -67,15 +67,15 @@ export default function Services() {
   const [ref, inView] = useInView()
 
   return (
-    <section id="services" className="bg-[#F5F0EB] py-24">
-      <div className="container-xl">
+    <section id="services" className="noise-overlay bg-[#F5EDD8] py-24">
+      <div className="container-xl relative z-10">
         <div ref={ref} className={`reveal ${inView ? 'in-view' : ''} flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12`}>
           <div>
-            <p className="section-eyebrow text-[#FF6B2B]">What I Do</p>
-            <h2 className="font-display font-bold text-4xl sm:text-5xl text-[#1a1a1a] tracking-tight mb-4">
+            <p className="section-eyebrow">What I Do</p>
+            <h2 className="font-display font-bold text-4xl sm:text-5xl text-[#1A1209] tracking-tight mb-4">
               Everything your business<br className="hidden sm:block" /> needs to grow online.
             </h2>
-            <p className="text-[#666] text-base max-w-lg leading-relaxed">
+            <p className="text-[#1A1209]/50 text-base max-w-lg leading-relaxed">
               Pick one thing or stack a few. No retainers, no contracts. You get exactly what you pay for, nothing you don't.
             </p>
           </div>
@@ -99,15 +99,15 @@ function ServiceCard({ icon, title, desc, price, delay }) {
   return (
     <div
       ref={ref}
-      className={`reveal ${inView ? 'in-view' : ''} bg-white border border-[#1a1a1a]/[0.07] rounded-xl p-6 group hover:-translate-y-1 hover:shadow-xl hover:shadow-[#FF6B2B]/8 transition-all duration-200 cursor-default`}
+      className={`reveal ${inView ? 'in-view' : ''} bg-white border border-[#1A1209]/[0.07] rounded-3xl p-6 group hover:-translate-y-1 hover:shadow-xl hover:shadow-[#E8722A]/8 transition-all duration-200 cursor-default`}
       style={{ transitionDelay: `${delay}ms` }}
     >
-      <div className="w-11 h-11 bg-[#FF6B2B]/10 rounded-lg flex items-center justify-center text-[#FF6B2B] mb-4 group-hover:bg-[#FF6B2B] group-hover:text-white transition-colors duration-200">
+      <div className="w-11 h-11 bg-[#E8722A]/10 rounded-2xl flex items-center justify-center text-[#E8722A] mb-4 group-hover:bg-[#E8722A] group-hover:text-white transition-colors duration-200">
         {icon}
       </div>
-      <h3 className="font-display font-bold text-[#1a1a1a] text-lg mb-2">{title}</h3>
-      <p className="text-[#666] text-sm leading-relaxed mb-4">{desc}</p>
-      <span className="inline-block text-xs font-bold text-[#FF6B2B] bg-[#FF6B2B]/10 px-3 py-1 rounded-full">
+      <h3 className="font-display font-bold text-[#1A1209] text-lg mb-2">{title}</h3>
+      <p className="text-[#1A1209]/50 text-sm leading-relaxed mb-4">{desc}</p>
+      <span className="inline-block text-xs font-bold text-[#E8722A] bg-[#E8722A]/10 px-3 py-1 rounded-full">
         {price}
       </span>
     </div>

@@ -3,16 +3,6 @@ import { useMutation } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { useInView } from '../hooks/useInView'
 
-const helpOptions = [
-  'Website Build',
-  'AI Chatbot',
-  'Google Business Setup',
-  'Social Media Content',
-  'Automation / Workflows',
-  'Branding Package',
-  'Not sure yet, just exploring',
-]
-
 export default function Contact() {
   const submit = useMutation(api.submissions.submit)
   const [ref, inView] = useInView()
@@ -65,18 +55,18 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="bg-[#F5F0EB] py-24">
-      <div className="container-xl">
+    <section id="contact" className="noise-overlay bg-[#F5EDD8] py-24">
+      <div className="container-xl relative z-10">
         <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-start">
 
           {/* Left: copy */}
           <div ref={ref} className={`reveal ${inView ? 'in-view' : ''}`}>
             <p className="section-eyebrow">Free Audit</p>
-            <h2 className="font-display font-bold text-4xl sm:text-5xl text-[#1a1a1a] tracking-tight mb-5">
+            <h2 className="font-display font-bold text-4xl sm:text-5xl text-[#1A1209] tracking-tight mb-5">
               Let's see what<br />
               <span className="text-orange-gradient">we can build.</span>
             </h2>
-            <p className="text-[#555] text-base leading-relaxed mb-8 max-w-sm">
+            <p className="text-[#1A1209]/50 text-base leading-relaxed mb-8 max-w-sm">
               Fill this out and I'll get back to you within one business day with a free audit of your online presence and a clear recommendation. No fluff, no upsell.
             </p>
 
@@ -86,7 +76,7 @@ export default function Contact() {
                 { icon: '📞', text: 'Response within 24 hours' },
                 { icon: '📍', text: 'Local to Ellensburg, easy to meet up' },
               ].map(item => (
-                <div key={item.text} className="flex items-center gap-3 text-[#444] text-sm font-medium">
+                <div key={item.text} className="flex items-center gap-3 text-[#1A1209]/60 text-sm font-medium">
                   <span className="text-base">{item.icon}</span>
                   {item.text}
                 </div>
@@ -95,21 +85,21 @@ export default function Contact() {
           </div>
 
           {/* Right: form */}
-          <div className="bg-white rounded-2xl border border-[#1a1a1a]/[0.08] p-7 shadow-sm">
+          <div className="bg-white rounded-3xl border border-[#1A1209]/[0.08] p-7 shadow-sm">
             {status === 'success' ? (
               <div className="text-center py-8">
-                <div className="w-16 h-16 bg-[#FF6B2B]/10 rounded-full flex items-center justify-center mx-auto mb-5">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF6B2B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <div className="w-16 h-16 bg-[#E8722A]/10 rounded-full flex items-center justify-center mx-auto mb-5">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E8722A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12"/>
                   </svg>
                 </div>
-                <h3 className="font-display font-bold text-[#1a1a1a] text-2xl mb-2">Got it!</h3>
-                <p className="text-[#666] text-sm leading-relaxed mb-6">
+                <h3 className="font-display font-bold text-[#1A1209] text-2xl mb-2">Got it!</h3>
+                <p className="text-[#1A1209]/50 text-sm leading-relaxed mb-6">
                   I'll look over your info and get back to you within 24 hours. Talk soon.
                 </p>
                 <button
                   onClick={() => { setStatus('idle'); setForm({ name: '', business: '', email: '', phone: '', message: '' }) }}
-                  className="text-sm text-[#FF6B2B] font-semibold hover:underline"
+                  className="text-sm text-[#E8722A] font-semibold hover:underline"
                 >
                   Submit another
                 </button>
@@ -125,8 +115,8 @@ export default function Contact() {
                   <Field label="Phone (optional)" name="phone" type="tel" placeholder="(509) 555-0100" value={form.phone} onChange={handle} />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#1a1a1a] mb-1.5">
-                    What do you need help with? <span className="text-[#FF6B2B]">*</span>
+                  <label className="block text-xs font-semibold text-[#1A1209] mb-1.5">
+                    What do you need help with? <span className="text-[#E8722A]">*</span>
                   </label>
                   <textarea
                     name="message"
@@ -135,12 +125,12 @@ export default function Contact() {
                     value={form.message}
                     onChange={handle}
                     required
-                    className="w-full bg-[#F8F6F3] border border-[#1a1a1a]/10 rounded-xl px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#aaa] focus:outline-none focus:border-[#FF6B2B] transition-colors resize-none"
+                    className="w-full bg-[#F5EDD8] border border-[#1A1209]/10 rounded-2xl px-4 py-3 text-sm text-[#1A1209] placeholder-[#1A1209]/30 focus:outline-none focus:border-[#E8722A] transition-colors resize-none"
                   />
                 </div>
 
                 {errorMsg && (
-                  <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-3 rounded-xl">
+                  <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-3 rounded-2xl">
                     {errorMsg}
                   </p>
                 )}
@@ -158,7 +148,7 @@ export default function Contact() {
                   )}
                 </button>
 
-                <p className="text-center text-xs text-[#aaa]">
+                <p className="text-center text-xs text-[#1A1209]/30">
                   No spam. No sales pressure. Just a real conversation.
                 </p>
               </form>
@@ -173,8 +163,8 @@ export default function Contact() {
 function Field({ label, name, type, placeholder, value, onChange, required }) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-[#1a1a1a] mb-1.5">
-        {label} {required && <span className="text-[#FF6B2B]">*</span>}
+      <label className="block text-xs font-semibold text-[#1A1209] mb-1.5">
+        {label} {required && <span className="text-[#E8722A]">*</span>}
       </label>
       <input
         type={type}
@@ -183,7 +173,7 @@ function Field({ label, name, type, placeholder, value, onChange, required }) {
         value={value}
         onChange={onChange}
         required={required}
-        className="w-full bg-[#F8F6F3] border border-[#1a1a1a]/10 rounded-xl px-4 py-3 text-sm text-[#1a1a1a] placeholder-[#aaa] focus:outline-none focus:border-[#FF6B2B] transition-colors"
+        className="w-full bg-[#F5EDD8] border border-[#1A1209]/10 rounded-2xl px-4 py-3 text-sm text-[#1A1209] placeholder-[#1A1209]/30 focus:outline-none focus:border-[#E8722A] transition-colors"
       />
     </div>
   )

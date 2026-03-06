@@ -98,7 +98,6 @@ const PLACEHOLDERS = [
     name: 'El Rancho Barbershop',
     description: 'Full website build + Google Business profile setup. Customers can now find them on Maps and book online.',
     services: ['Website Build', 'Google Business Setup'],
-    quote: 'Finally started getting calls from people who found us on Google. Worth every penny.',
     url: '/demos/barbershop.html',
   },
   {
@@ -106,7 +105,6 @@ const PLACEHOLDERS = [
     name: 'Peak Fitness Ellensburg',
     description: 'New website with class schedule, an AI chatbot for FAQs, and a 30-day social content pack.',
     services: ['Website Build', 'AI Chatbot', 'Social Media Pack'],
-    quote: 'Johnny had the whole thing done in two weeks. Our Instagram went from 80 to 400 followers.',
     url: '/demos/fitness.html',
   },
   {
@@ -114,7 +112,6 @@ const PLACEHOLDERS = [
     name: 'Afterzz',
     description: 'Campus social events platform built for college students. Find what\'s happening on and around campus, tonight.',
     services: ['Web App', 'Branding', 'Launch Strategy'],
-    quote: 'Built from scratch in Ellensburg. Real product, real users.',
     url: 'https://afterzz.com',
     demoEmail: 'demo@ocbuilds.com',
     demoPassword: 'OcBuilds2025!',
@@ -135,7 +132,7 @@ function PortfolioInner() {
   const items = (projects && projects.length > 0) ? projects : PLACEHOLDERS
 
   return (
-    <section id="portfolio" className="bg-[#1C1814] py-24">
+    <section id="portfolio" className="bg-[#1E3329] py-24">
       <div className="container-xl">
         <div ref={ref} className={`reveal ${inView ? 'in-view' : ''} flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12`}>
           <div>
@@ -170,7 +167,7 @@ function PortfolioInner() {
 
 function PortfolioFallback() {
   return (
-    <section id="portfolio" className="bg-[#141414] py-24">
+    <section id="portfolio" className="bg-[#1E3329] py-24">
       <div className="container-xl">
         <p className="section-eyebrow">My Work</p>
         <h2 className="font-display font-bold text-4xl sm:text-5xl text-white tracking-tight mb-12">
@@ -201,7 +198,7 @@ function ProjectCard({ project, index, delay }) {
       {HeroComponent ? (
         <HeroComponent />
       ) : (
-        <div className="h-48 bg-gradient-to-br from-[#FF6B2B]/20 to-[#1a1a1a] relative overflow-hidden flex items-center justify-center">
+        <div className="h-48 bg-gradient-to-br from-[#E8722A]/20 to-[#1E3329] relative overflow-hidden flex items-center justify-center">
           {project.imageUrl
             ? <img src={project.imageUrl} alt={project.name} className="w-full h-full object-cover" />
             : <span className="font-display font-bold text-5xl text-white/10">{project.name.split(' ').map(w => w[0]).join('').slice(0, 2)}</span>
@@ -222,7 +219,7 @@ function ProjectCard({ project, index, delay }) {
         {url && (
           <div className="mt-auto pt-3 border-t border-white/[0.06] space-y-2">
             {project.demoEmail && (
-              <div className="bg-white/[0.04] rounded-lg px-3 py-2 text-xs text-white/40 space-y-0.5">
+              <div className="bg-white/[0.04] rounded-xl px-3 py-2 text-xs text-white/40 space-y-0.5">
                 <div className="text-white/25 text-[10px] font-semibold uppercase tracking-wider mb-1">Demo Login</div>
                 <div><span className="text-white/30">Email:</span> <span className="text-white/60 font-mono">{project.demoEmail}</span></div>
                 <div><span className="text-white/30">Pass:</span> <span className="text-white/60 font-mono">{project.demoPassword}</span></div>
@@ -232,7 +229,7 @@ function ProjectCard({ project, index, delay }) {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#FF6B2B] hover:text-[#FF8C5A] transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#E8722A] hover:text-[#F08B4A] transition-colors"
             >
               View Live Site
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
