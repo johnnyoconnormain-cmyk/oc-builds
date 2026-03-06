@@ -1,0 +1,21 @@
+<svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="500" height="500" rx="90" fill="#1E3329"/>
+
+  <!-- Orange accent bar top-left -->
+  <rect x="62" y="60" width="96" height="11" rx="5.5" fill="#E8722A"/>
+
+  <!-- O — cream circle outline -->
+  <circle cx="174" cy="232" r="104" stroke="#F5EDD8" stroke-width="46" fill="none"/>
+
+  <!-- C — orange arc opening right -->
+  <!-- Center (298, 232), r=104, gap ±55deg from right -->
+  <path d="M 357.6,146.8 A 104,104 0 1 0 357.6,317.2"
+    stroke="#E8722A" stroke-width="46" stroke-linecap="round" fill="none"/>
+
+  <!-- BUILDS label -->
+  <text x="250" y="416"
+    font-family="system-ui,-apple-system,BlinkMacSystemFont,sans-serif"
+    font-weight="700" font-size="33" letter-spacing="15"
+    fill="rgba(245,237,216,0.28)" text-anchor="middle">BUILDS</text>
+</svg>

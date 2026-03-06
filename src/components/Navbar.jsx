@@ -28,13 +28,18 @@ export default function Navbar() {
       <div className="container-xl flex items-center justify-between">
         {/* Logo */}
         <a href="#" className="flex items-center">
-          <svg width="130" height="34" viewBox="0 0 130 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0" y="5" width="14" height="14" rx="2" fill="#FF6B2B"/>
-            <rect x="0" y="21" width="14" height="8" rx="2" fill="#FF6B2B" opacity="0.45"/>
-            <rect x="6" y="0" width="14" height="8" rx="2" fill="#FF6B2B" opacity="0.45"/>
-            <rect x="6" y="10" width="14" height="14" rx="2" fill="#FF6B2B" opacity="0.7"/>
-            <text x="28" y="18" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="15" fill="#1A1614" letterSpacing="-0.3">OC</text>
-            <text x="28" y="31" fontFamily="'Clash Display', sans-serif" fontWeight="600" fontSize="9" fill="rgba(26,22,20,0.4)" letterSpacing="3">BUILDS</text>
+          <svg width="148" height="34" viewBox="0 0 148 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Mark background -->
+            <rect x="0" y="0" width="34" height="34" rx="6" fill="#1E3329"/>
+            <!-- Orange accent bar -->
+            <rect x="5" y="5" width="10" height="2.5" rx="1.25" fill="#E8722A"/>
+            <!-- O — cream circle -->
+            <circle cx="12.5" cy="19" r="7" stroke="#F5EDD8" stroke-width="3" fill="none"/>
+            <!-- C — orange arc -->
+            <path d="M 23.8,13.1 A 7,7 0 1 0 23.8,24.9" stroke="#E8722A" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <!-- Wordmark -->
+            <text x="43" y="16" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="14" fill="#1A1209" letterSpacing="-0.3">OC</text>
+            <text x="43" y="28" fontFamily="'Clash Display', sans-serif" fontWeight="600" fontSize="8" fill="rgba(26,18,9,0.38)" letterSpacing="3.5">BUILDS</text>
           </svg>
         </a>
 

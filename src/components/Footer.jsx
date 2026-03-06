@@ -8,13 +8,15 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="mb-3">
-              <svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="0" y="5" width="13" height="13" rx="2" fill="#E8722A"/>
-                <rect x="0" y="20" width="13" height="7" rx="2" fill="#E8722A" opacity="0.45"/>
-                <rect x="6" y="0" width="13" height="7" rx="2" fill="#E8722A" opacity="0.45"/>
-                <rect x="6" y="9" width="13" height="13" rx="2" fill="#E8722A" opacity="0.7"/>
-                <text x="26" y="17" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="14" fill="white" letterSpacing="-0.3">OC</text>
-                <text x="26" y="29" fontFamily="'Clash Display', sans-serif" fontWeight="600" fontSize="8" fill="rgba(255,255,255,0.4)" letterSpacing="3">BUILDS</text>
+              <svg width="138" height="32" viewBox="0 0 138 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Mark -->
+                <rect x="0" y="0" width="32" height="32" rx="6" fill="#253D30"/>
+                <rect x="5" y="5" width="9" height="2.5" rx="1.25" fill="#E8722A"/>
+                <circle cx="11.5" cy="18" r="6.5" stroke="#F5EDD8" stroke-width="2.8" fill="none"/>
+                <path d="M 22.2,12.3 A 6.5,6.5 0 1 0 22.2,23.7" stroke="#E8722A" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+                <!-- Wordmark -->
+                <text x="41" y="15" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="13" fill="white" letterSpacing="-0.3">OC</text>
+                <text x="41" y="27" fontFamily="'Clash Display', sans-serif" fontWeight="600" fontSize="7.5" fill="rgba(255,255,255,0.35)" letterSpacing="3.5">BUILDS</text>
               </svg>
             </div>
             <p className="text-white/40 text-xs leading-relaxed max-w-[200px]">
