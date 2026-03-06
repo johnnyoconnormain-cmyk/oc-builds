@@ -50,7 +50,7 @@ export default function Contact() {
       setStatus('success')
     } catch {
       setStatus('error')
-      setErrorMsg('Something went wrong. Email me directly at hello@ocbuilds.com.')
+      setErrorMsg('Something went wrong. Email me directly at OCbuilds1@outlook.com.')
     }
   }
 

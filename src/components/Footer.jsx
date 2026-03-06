@@ -44,8 +44,8 @@ export default function Footer() {
             <h4 className="text-white/30 text-xs font-bold tracking-widest uppercase mb-4">Get In Touch</h4>
             <ul className="space-y-2.5 text-sm text-white/50">
               <li>
-                <a href="mailto:hello@ocbuilds.com" className="hover:text-white transition-colors">
-                  hello@ocbuilds.com
+                <a href="mailto:OCbuilds1@outlook.com" className="hover:text-white transition-colors">
+                  OCbuilds1@outlook.com
                 </a>
               </li>
               <li>
