@@ -20,7 +20,7 @@ export default function About() {
           {/* Photo */}
           <div className="relative order-2 md:order-1">
             <div className="aspect-[4/5] bg-[#253D30] border border-white/[0.07] rounded-3xl overflow-hidden relative">
-              <img src="/johnny.png" alt="Johnny O'Connor" className="w-full h-full object-cover object-top" />
+              <img src="/johnny.png" alt="Johnny O'Connor" className="w-full h-full object-cover object-center" />
             </div>
             <div className="absolute -bottom-4 -right-4 hidden sm:flex bg-[#E8722A] text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl items-center gap-2">
               <span>🏈</span> CWU Wildcats
