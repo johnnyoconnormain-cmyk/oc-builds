@@ -7,9 +7,9 @@ export default function Hero() {
         style={{ backgroundImage: 'radial-gradient(circle at 70% 30%, rgba(232,114,42,0.07) 0%, transparent 55%)' }} />
 
       <div className="container-xl relative z-10 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="max-w-4xl">
 
-          {/* Left: content */}
+          {/* Content */}
           <div>
             {/* Floating location badge */}
             <div className="h1 inline-flex items-center gap-2.5 bg-white/70 border border-[#1A1209]/10 text-[#1A1209]/60 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full mb-10 shadow-sm">
@@ -66,28 +66,6 @@ export default function Hero() {
                   <div className="text-xs text-[#1A1209]/35 mt-0.5">{s.sub}</div>
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Right: Johnny's photo */}
-          <div className="relative hidden lg:flex justify-center">
-            <div className="relative w-full max-w-sm">
-              {/* Photo */}
-              <div className="aspect-[3/4] rounded-3xl overflow-hidden border-2 border-[#1A1209]/10 shadow-2xl">
-                <img
-                  src="/johnny.png"
-                  alt="Johnny O'Connor"
-                  className="w-full h-full object-cover object-top"
-                />
-              </div>
-              {/* Floating accent: CWU badge */}
-              <div className="absolute -bottom-5 -left-5 flex items-center gap-2 bg-[#E8722A] text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-xl">
-                <span>🏈</span> CWU Wildcats
-              </div>
-              {/* Floating accent: location */}
-              <div className="absolute -top-4 -right-4 flex items-center gap-2 bg-white border border-[#1A1209]/10 text-[#1A1209] text-xs font-semibold px-4 py-3 rounded-2xl shadow-lg">
-                <span className="text-[#E8722A]">📍</span> Ellensburg, WA
-              </div>
             </div>
           </div>
 
