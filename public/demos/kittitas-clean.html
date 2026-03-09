@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kittitas Clean Co. — Ellensburg, WA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Space Grotesk', sans-serif; background: #F8FAFF; color: #0F172A; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: #fff; border-bottom: 1px solid #E2E8F0;
+      padding: 0 5%; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon {
+      width: 36px; height: 36px; background: #0EA5E9; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .logo-icon svg { width: 20px; height: 20px; }
+    .logo-text { font-size: 1rem; font-weight: 700; color: #0F172A; letter-spacing: -0.02em; }
+    .logo-text span { color: #0EA5E9; }
+    .nav-links { display: flex; gap: 2rem; font-size: 0.85rem; font-weight: 500; color: #64748B; }
+    .nav-links a:hover { color: #0F172A; }
+    .nav-book { background: #0EA5E9; color: #fff; font-size: 0.82rem; font-weight: 600; padding: 0.6rem 1.4rem; border-radius: 8px; letter-spacing: 0.01em; }
+    .nav-book:hover { background: #0284C7; }
+
+    /* HERO */
+    .hero {
+      padding: 5rem 5% 4rem;
+      display: grid; grid-template-columns: 1fr 420px; gap: 4rem; align-items: center;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #EFF6FF; color: #0EA5E9; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase; padding: 0.4rem 0.9rem;
+      border-radius: 100px; border: 1px solid #BAE6FD; margin-bottom: 1.5rem;
+    }
+    .hero-badge::before { content: '●'; font-size: 0.5rem; }
+    .hero h1 {
+      font-size: clamp(2.8rem, 5vw, 4.2rem); font-weight: 700; line-height: 1.05;
+      letter-spacing: -0.03em; color: #0F172A; margin-bottom: 1.2rem;
+    }
+    .hero h1 .highlight { color: #0EA5E9; }
+    .hero-sub {
+      font-size: 1rem; color: #64748B; line-height: 1.7; margin-bottom: 2rem; max-width: 440px;
+    }
+    .hero-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .btn-blue { background: #0EA5E9; color: #fff; font-size: 0.88rem; font-weight: 600; padding: 0.85rem 2rem; border-radius: 10px; border: none; cursor: pointer; }
+    .btn-blue:hover { background: #0284C7; }
+    .btn-ghost { background: transparent; color: #0F172A; font-size: 0.88rem; font-weight: 500; padding: 0.85rem 1.5rem; border-radius: 10px; border: 1px solid #E2E8F0; cursor: pointer; }
+    .hero-trust { display: flex; align-items: center; gap: 1.5rem; }
+    .trust-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: #64748B; font-weight: 500; }
+    .trust-item svg { width: 16px; height: 16px; color: #22C55E; }
+
+    /* BOOKING CARD */
+    .booking-card {
+      background: #fff; border-radius: 20px; padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 20px 60px -10px rgba(14,165,233,0.12);
+      border: 1px solid #E2E8F0;
+    }
+    .booking-card h3 { font-size: 1.1rem; font-weight: 700; color: #0F172A; margin-bottom: 0.25rem; }
+    .booking-card .bc-sub { font-size: 0.82rem; color: #94A3B8; margin-bottom: 1.5rem; }
+    .service-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.2rem; }
+    .svc-opt {
+      border: 2px solid #E2E8F0; border-radius: 10px; padding: 0.65rem 0.75rem;
+      font-size: 0.78rem; font-weight: 600; color: #64748B; cursor: pointer; text-align: center;
+      transition: all 0.15s;
+    }
+    .svc-opt.active { border-color: #0EA5E9; background: #EFF6FF; color: #0EA5E9; }
+    .field-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: #94A3B8; margin-bottom: 0.35rem; }
+    .field-input {
+      width: 100%; background: #F8FAFF; border: 1px solid #E2E8F0; border-radius: 8px;
+      padding: 0.7rem 0.9rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem;
+      color: #0F172A; outline: none; margin-bottom: 0.9rem;
+    }
+    .field-input::placeholder { color: #CBD5E1; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .book-btn {
+      width: 100%; background: #0EA5E9; color: #fff; font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem; font-weight: 700; padding: 0.9rem; border: none; border-radius: 10px;
+      cursor: pointer; margin-top: 0.25rem;
+    }
+    .book-btn:hover { background: #0284C7; }
+    .bc-footer { text-align: center; font-size: 0.72rem; color: #94A3B8; margin-top: 0.75rem; }
+
+    /* TRUST STRIP */
+    .trust-strip {
+      background: #0F172A; padding: 1.2rem 5%;
+      display: flex; align-items: center; justify-content: center;
+      gap: 3rem; flex-wrap: wrap;
+    }
+    .ts-item { display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.55); font-size: 0.78rem; font-weight: 500; }
+    .ts-item strong { color: #fff; }
+    .ts-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.12); }
+
+    /* SERVICES */
+    .services { padding: 6rem 5%; max-width: 1200px; margin: 0 auto; }
+    .section-tag { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: #0EA5E9; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .services h2 { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.02em; color: #0F172A; margin-bottom: 0.75rem; }
+    .services .sec-sub { font-size: 0.95rem; color: #64748B; margin-bottom: 3rem; max-width: 480px; }
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .svc-card {
+      background: #fff; border: 1px solid #E2E8F0; border-radius: 16px;
+      padding: 1.75rem; position: relative; overflow: hidden;
+    }
+    .svc-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #0EA5E9, #38BDF8);
+    }
+    .svc-icon {
+      width: 44px; height: 44px; background: #EFF6FF; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;
+    }
+    .svc-icon svg { width: 22px; height: 22px; stroke: #0EA5E9; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .svc-card h3 { font-size: 1rem; font-weight: 700; color: #0F172A; margin-bottom: 0.4rem; }
+    .svc-card p { font-size: 0.83rem; color: #64748B; line-height: 1.6; margin-bottom: 1rem; }
+    .svc-price { font-family: 'Space Mono', monospace; font-size: 0.78rem; font-weight: 700; color: #0EA5E9; }
+
+    /* HOW IT WORKS */
+    .how { background: #0F172A; padding: 6rem 5%; }
+    .how-inner { max-width: 1200px; margin: 0 auto; }
+    .how .section-tag { color: #38BDF8; }
+    .how h2 { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.02em; color: #fff; margin-bottom: 3rem; }
+    .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+    .step { padding: 2rem; border-right: 1px solid rgba(255,255,255,0.07); }
+    .step:last-child { border-right: none; }
+    .step-num { font-family: 'Space Mono', monospace; font-size: 2.5rem; font-weight: 700; color: rgba(14,165,233,0.2); margin-bottom: 1rem; line-height: 1; }
+    .step h4 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+    .step p { font-size: 0.82rem; color: rgba(255,255,255,0.45); line-height: 1.65; }
+
+    /* REVIEWS */
+    .reviews { padding: 6rem 5%; max-width: 1200px; margin: 0 auto; }
+    .reviews h2 { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.02em; color: #0F172A; margin-bottom: 3rem; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .review-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; padding: 1.75rem; }
+    .stars { color: #F59E0B; font-size: 0.85rem; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+    .review-text { font-size: 0.88rem; color: #374151; line-height: 1.7; margin-bottom: 1.25rem; }
+    .reviewer { display: flex; align-items: center; gap: 0.75rem; }
+    .reviewer-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #0EA5E9, #38BDF8);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .reviewer-name { font-size: 0.85rem; font-weight: 700; color: #0F172A; }
+    .reviewer-loc { font-size: 0.75rem; color: #94A3B8; }
+
+    /* FOOTER */
+    footer { background: #0F172A; border-top: 1px solid rgba(255,255,255,0.06); padding: 2.5rem 5%; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .footer-logo { display: flex; align-items: center; gap: 8px; }
+    .footer-logo-icon { width: 30px; height: 30px; background: #0EA5E9; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .footer-logo-icon svg { width: 16px; height: 16px; }
+    .footer-text { font-size: 0.8rem; font-weight: 600; color: #fff; }
+    .footer-right { font-size: 0.75rem; color: rgba(255,255,255,0.25); }
+    .footer-right strong { color: #0EA5E9; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+        <path d="M8 12l2.5 2.5L16 9"/>
+      </svg>
+    </div>
+    <div class="logo-text">Kittitas <span>Clean</span></div>
+  </div>
+  <div class="nav-links">
+    <a href="#">Services</a>
+    <a href="#">Pricing</a>
+    <a href="#">Reviews</a>
+    <a href="#">FAQ</a>
+  </div>
+  <a href="#book" class="nav-book">Book Online →</a>
+</nav>
+
+<section class="hero" id="book">
+  <div class="hero-left">
+    <div class="hero-badge">Now Booking for April 2025</div>
+    <h1>A <span class="highlight">cleaner home</span><br>in Ellensburg.</h1>
+    <p class="hero-sub">Professional residential and commercial cleaning. Fully insured, background-checked cleaners. Book in 60 seconds — we handle the rest.</p>
+    <div class="hero-actions">
+      <button class="btn-blue">Book a Clean →</button>
+      <button class="btn-ghost">See Pricing</button>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#22C55E"><polyline points="20 6 9 17 4 12"/></svg>
+        Insured & bonded
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#22C55E"><polyline points="20 6 9 17 4 12"/></svg>
+        Eco-friendly products
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#22C55E"><polyline points="20 6 9 17 4 12"/></svg>
+        Satisfaction guarantee
+      </div>
+    </div>
+  </div>
+
+  <div class="booking-card">
+    <h3>Get an Instant Quote</h3>
+    <p class="bc-sub">Takes 60 seconds. No commitment.</p>
+
+    <div style="margin-bottom:1rem">
+      <div class="field-label">Service Type</div>
+      <div class="service-selector">
+        <div class="svc-opt active">Standard Clean</div>
+        <div class="svc-opt">Deep Clean</div>
+        <div class="svc-opt">Move In/Out</div>
+        <div class="svc-opt">Commercial</div>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div>
+        <div class="field-label">Bedrooms</div>
+        <select class="field-input">
+          <option>1 bedroom</option>
+          <option>2 bedrooms</option>
+          <option>3 bedrooms</option>
+          <option>4+ bedrooms</option>
+        </select>
+      </div>
+      <div>
+        <div class="field-label">Bathrooms</div>
+        <select class="field-input">
+          <option>1 bathroom</option>
+          <option>2 bathrooms</option>
+          <option>3+ bathrooms</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-label">Preferred Date</div>
+    <input type="date" class="field-input" />
+
+    <div class="field-label">Your Name</div>
+    <input type="text" class="field-input" placeholder="Sarah Johnson" />
+
+    <div class="field-label">Phone or Email</div>
+    <input type="text" class="field-input" placeholder="(509) 000-0000" />
+
+    <button class="book-btn">Request My Quote →</button>
+    <div class="bc-footer">We'll confirm within 2 hours · No credit card needed</div>
+  </div>
+</section>
+
+<div class="trust-strip">
+  <div class="ts-item"><strong>250+</strong> happy clients</div>
+  <div class="ts-sep"></div>
+  <div class="ts-item"><strong>4.9★</strong> on Google</div>
+  <div class="ts-sep"></div>
+  <div class="ts-item"><strong>5 years</strong> serving Kittitas County</div>
+  <div class="ts-sep"></div>
+  <div class="ts-item"><strong>100%</strong> satisfaction guarantee</div>
+</div>
+
+<section class="services">
+  <p class="section-tag">// what we do</p>
+  <h2>Every clean, done right.</h2>
+  <p class="sec-sub">From weekly maintenance to move-out deep cleans — we've got Ellensburg covered.</p>
+  <div class="services-grid">
+    <div class="svc-card">
+      <div class="svc-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <h3>Standard Clean</h3>
+      <p>Kitchens, bathrooms, floors, dusting, and surfaces — everything your home needs to feel fresh every week.</p>
+      <div class="svc-price">From $95</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      </div>
+      <h3>Deep Clean</h3>
+      <p>Inside appliances, baseboards, window sills, grout scrubbing — the full top-to-bottom treatment for a truly spotless home.</p>
+      <div class="svc-price">From $175</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">
+        <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <h3>Move In / Out</h3>
+      <p>End-of-lease cleaning that helps you get your deposit back. Detailed checklist included — landlord approved results.</p>
+      <div class="svc-price">From $220</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </div>
+      <h3>Office & Commercial</h3>
+      <p>Recurring commercial cleans for offices, storefronts, and small businesses. Flexible scheduling around your hours.</p>
+      <div class="svc-price">Custom quote</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">
+        <svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      </div>
+      <h3>Recurring Service</h3>
+      <p>Weekly, bi-weekly, or monthly — set it and forget it. Recurring clients get priority scheduling and 10% off every clean.</p>
+      <div class="svc-price">Save 10%</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-icon">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <h3>Post-Event Clean</h3>
+      <p>Party, holiday gathering, or Airbnb turnover — we'll get your space guest-ready fast. Same-day availability on request.</p>
+      <div class="svc-price">From $130</div>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="how-inner">
+    <p class="section-tag">// how it works</p>
+    <h2>Booked, cleaned, done.</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Get a Quote Online</h4>
+        <p>Fill out our quick form — tell us your home size and service type. Takes under a minute.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>We Confirm Within 2 Hrs</h4>
+        <p>Our team reviews your request and texts or calls you to lock in a time that works for you.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>We Show Up & Clean</h4>
+        <p>Fully equipped, on time, and efficient. You don't have to be home — just leave us access.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>Enjoy Your Clean Home</h4>
+        <p>We send a completion summary with photos. Unhappy with anything? We'll fix it — free.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reviews">
+  <p class="section-tag">// what clients say</p>
+  <h2>Real reviews from Ellensburg.</h2>
+  <div class="reviews-grid">
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Absolutely incredible. I've tried three other cleaners in town and Kittitas Clean is in a different league. My apartment looks brand new every time."</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">MR</div>
+        <div>
+          <div class="reviewer-name">Michelle R.</div>
+          <div class="reviewer-loc">Downtown Ellensburg</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Used them for a move-out clean and got my full deposit back. The landlord actually called to say it was the cleanest unit she'd seen. Worth every penny."</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">TK</div>
+        <div>
+          <div class="reviewer-name">Tyler K.</div>
+          <div class="reviewer-loc">CWU Off-Campus</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Super easy to book online, they showed up on time, and my office has never been cleaner. Set up a recurring clean the same day. Highly recommend."</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">JP</div>
+        <div>
+          <div class="reviewer-name">Jessica P.</div>
+          <div class="reviewer-loc">Ellensburg Business Owner</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <div class="footer-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+          <path d="M8 12l2.5 2.5L16 9"/>
+        </svg>
+      </div>
+      <div class="footer-text">Kittitas Clean Co. · Ellensburg, WA</div>
+    </div>
+    <div class="footer-right">
+      Website by <strong>OC Builds</strong>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
