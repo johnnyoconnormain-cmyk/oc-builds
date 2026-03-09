@@ -7,6 +7,8 @@ const links = [
   { label: 'About', href: '#about' },
 ]
 
+const DREAMBOARD_HREF = '/dreamboard'
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
@@ -42,7 +44,13 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
-          <a href="#contact" className="btn-orange px-5 py-2.5 text-sm ml-3">
+          <a href={DREAMBOARD_HREF} className="px-4 py-2 text-sm font-medium text-[#E8722A] hover:text-[#E8722A] rounded-full hover:bg-[#E8722A]/8 transition-all duration-150 flex items-center gap-1.5">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+            </svg>
+            Build Your Site
+          </a>
+          <a href="#contact" className="btn-orange px-5 py-2.5 text-sm ml-2">
             Get Free Audit
           </a>
         </nav>
@@ -73,8 +81,15 @@ export default function Navbar() {
             </a>
           ))}
           <a
+            href={DREAMBOARD_HREF}
+            className="px-4 py-3 text-sm font-semibold text-[#E8722A] rounded-full hover:bg-[#E8722A]/8 transition-all flex items-center gap-2"
+            onClick={() => setOpen(false)}
+          >
+            Build Your Site
+          </a>
+          <a
             href="#contact"
-            className="btn-orange px-5 py-3 text-sm mt-2 justify-center"
+            className="btn-orange px-5 py-3 text-sm mt-1 justify-center"
             onClick={() => setOpen(false)}
           >
             Get Free Audit

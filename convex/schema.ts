@@ -21,4 +21,15 @@ export default defineSchema({
     createdAt: v.number(),
     read: v.boolean(),
   }).index('by_createdAt', ['createdAt']),
+
+  dreamboards: defineTable({
+    bizName: v.string(),
+    industry: v.string(),
+    vibe: v.string(),
+    colors: v.string(),
+    layout: v.string(),
+    tagline: v.string(),
+    createdAt: v.number(),
+    contacted: v.boolean(),
+  }).index('by_createdAt', ['createdAt']),
 })
