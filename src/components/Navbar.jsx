@@ -28,7 +28,7 @@ export default function Navbar() {
       <div className="container-xl flex items-center justify-between">
         {/* Logo */}
         <a href="#" className="flex items-center">
-          <img src="/logo.png" alt="OC Builds" className="h-9 w-auto" />
+          <img src="/logo.png" alt="OC Builds" className="w-11 h-11 object-cover rounded-2xl" />
         </a>
 
         {/* Desktop nav */}

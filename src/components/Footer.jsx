@@ -8,7 +8,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="mb-3">
-              <img src="/logo.png" alt="OC Builds" className="h-10 w-auto" />
+              <img src="/logo.png" alt="OC Builds" className="w-14 h-14 object-cover rounded-2xl" />
             </div>
             <p className="text-white/40 text-xs leading-relaxed max-w-[200px]">
               Websites, chatbots, and automations for small businesses who just need it done.
