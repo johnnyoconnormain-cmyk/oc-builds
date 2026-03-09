@@ -104,7 +104,6 @@ const INDUSTRY_SERVICES = {
   'other': ['Our Services', 'Consultations', 'Custom Projects', 'Get a Quote'],
 }
 
-const AFTERZ_LOGO_INLINE = `<svg width="26" height="26" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;border-radius:6px"><defs><linearGradient id="afg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FF2D78"/><stop offset="50%" stop-color="#FF5C4D"/><stop offset="100%" stop-color="#FF6B3D"/></linearGradient><linearGradient id="afg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FF6B3D"/><stop offset="100%" stop-color="#FF8A2B"/></linearGradient></defs><circle cx="50" cy="50" r="48" fill="#0A0A0E"/><text x="50" y="44" font-family="Arial,sans-serif" font-size="33" font-weight="800" fill="url(#afg1)" text-anchor="middle">AFT</text><text x="50" y="70" font-family="Arial,sans-serif" font-size="33" font-weight="800" fill="url(#afg2)" text-anchor="middle">ERZ</text></svg>`
 
 function generatePreviewHTML(form) {
   const { bizName, industry, fontStyle, colors, layout, sections, tagline, ctaText } = form
@@ -115,7 +114,8 @@ function generatePreviewHTML(form) {
   const tl = tagline || 'Built for your community.'
   const biz = bizName || 'My Business'
   const sel = sections || ['services', 'contact']
-  const logo = AFTERZ_LOGO_INLINE
+  const initials = biz.split(' ').filter(Boolean).map(w => w[0].toUpperCase()).slice(0, 2).join('')
+  const logo = `<svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;border-radius:8px"><rect width="30" height="30" rx="8" fill="${accent}"/><text x="15" y="${initials.length === 1 ? '21' : '20'}" font-family="Arial,sans-serif" font-size="${initials.length === 1 ? '16' : '13'}" font-weight="800" fill="white" text-anchor="middle">${initials}</text></svg>`
 
   const fontMap = { modern: '"Helvetica Neue",Arial,sans-serif', bold: '"Arial Black",Impact,sans-serif', classic: 'Georgia,"Times New Roman",serif', friendly: '"Trebuchet MS","Segoe UI",sans-serif' }
   const ff = fontMap[fontStyle] || fontMap.modern
