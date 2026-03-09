@@ -40,22 +40,28 @@ export default function About() {
 
             <div className="space-y-4 text-white/55 text-base leading-relaxed mb-8">
               <p>
-                I'm a Construction Management student at CWU and I play D-line
-                for the Wildcats. I grew up in Bellevue as the oldest of seven
-                kids — you learn to figure things out fast when you're running
-                point for that many people.
+                Construction Management student at CWU, D-line for the Wildcats.
+                Grew up in Bellevue as the oldest of seven — figuring things out
+                fast kind of just comes with the territory at that point.
               </p>
               <p>
-                I started OC Builds because I kept running into great local
-                businesses that had zero online presence, or a website that
-                looked like it was built in 2009. The work these people do is
-                good — they just weren't showing up when customers searched for
-                them. That felt like a problem I could actually solve.
+                Started OC Builds because I kept running into great local
+                businesses with no online presence, or a website that looked like
+                it hadn't been touched since 2009. The work they do is good.
+                They just weren't showing up when people went looking. That felt
+                like a problem I could actually fix.
               </p>
               <p>
-                I'm not an agency. There's no account manager, no sales team,
-                no one passing you off. You deal with me directly from the first
-                conversation to launch day and beyond.
+                Before this I worked at Schwartz Brothers and Chick-fil-A back
+                in Bellevue. Sounds unrelated, but those jobs taught me how to
+                deal with people, move fast under pressure, and show up every
+                single day no matter what. Same energy here.
+              </p>
+              <p>
+                No account manager, no sales team, no getting passed off. You
+                talk to me from the first conversation to launch day and beyond.
+                I use AI tools to build faster and cheaper than any agency —
+                websites, chatbots, automations — in days, not months.
               </p>
               <p className="callout-accent text-white/80 font-semibold">
                 I answer my phone. I meet deadlines. And I actually care whether
