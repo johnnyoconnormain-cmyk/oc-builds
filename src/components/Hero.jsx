@@ -35,7 +35,7 @@ export default function Hero() {
 
             {/* Subtext */}
             <p className="h3 text-lg sm:text-xl text-[#1A1209]/55 leading-relaxed max-w-xl mb-10">
-              Websites, chatbots, and automations for local businesses — done in days,
+              Websites, chatbots, and automations for local businesses. Done in days,
               not months. No agency markup, no account manager. Just me, and you've got
               my actual number.
             </p>

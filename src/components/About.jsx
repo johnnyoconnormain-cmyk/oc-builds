@@ -41,7 +41,7 @@ export default function About() {
             <div className="space-y-4 text-white/55 text-base leading-relaxed mb-8">
               <p>
                 Construction Management student at CWU, D-line for the Wildcats.
-                Grew up in Bellevue as the oldest of seven — figuring things out
+                Grew up in Bellevue as the oldest of seven. Figuring things out
                 fast kind of just comes with the territory at that point.
               </p>
               <p>
@@ -60,8 +60,8 @@ export default function About() {
               <p>
                 No account manager, no sales team, no getting passed off. You
                 talk to me from the first conversation to launch day and beyond.
-                I use AI tools to build faster and cheaper than any agency —
-                websites, chatbots, automations — in days, not months.
+                I use AI tools to build websites, chatbots, and automations
+                faster and cheaper than any agency. Days, not months.
               </p>
               <p className="callout-accent text-white/80 font-semibold">
                 I answer my phone. I meet deadlines. And I actually care whether
