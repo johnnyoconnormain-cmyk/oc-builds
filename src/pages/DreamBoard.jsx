@@ -104,6 +104,8 @@ const INDUSTRY_SERVICES = {
   'other': ['Our Services', 'Consultations', 'Custom Projects', 'Get a Quote'],
 }
 
+const AFTERZ_LOGO_INLINE = `<svg width="26" height="26" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;border-radius:6px"><defs><linearGradient id="afg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FF2D78"/><stop offset="50%" stop-color="#FF5C4D"/><stop offset="100%" stop-color="#FF6B3D"/></linearGradient><linearGradient id="afg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FF6B3D"/><stop offset="100%" stop-color="#FF8A2B"/></linearGradient></defs><circle cx="50" cy="50" r="48" fill="#0A0A0E"/><text x="50" y="44" font-family="Arial,sans-serif" font-size="33" font-weight="800" fill="url(#afg1)" text-anchor="middle">AFT</text><text x="50" y="70" font-family="Arial,sans-serif" font-size="33" font-weight="800" fill="url(#afg2)" text-anchor="middle">ERZ</text></svg>`
+
 function generatePreviewHTML(form) {
   const { bizName, industry, fontStyle, colors, layout, sections, tagline, ctaText } = form
   const { accent, bg, text: textCol } = colors
@@ -113,6 +115,7 @@ function generatePreviewHTML(form) {
   const tl = tagline || 'Built for your community.'
   const biz = bizName || 'My Business'
   const sel = sections || ['services', 'contact']
+  const logo = AFTERZ_LOGO_INLINE
 
   const fontMap = { modern: '"Helvetica Neue",Arial,sans-serif', bold: '"Arial Black",Impact,sans-serif', classic: 'Georgia,"Times New Roman",serif', friendly: '"Trebuchet MS","Segoe UI",sans-serif' }
   const ff = fontMap[fontStyle] || fontMap.modern
@@ -156,7 +159,7 @@ function generatePreviewHTML(form) {
       .ct{font-size:14px;font-weight:700;color:${light};margin-bottom:6px}
       .cd{font-size:12px;color:${dim};line-height:1.5}
     `,`
-      <nav><div class="nb">${biz}</div><div style="display:flex;gap:20px;align-items:center"><a href="#" style="font-size:12px;color:${dim};text-decoration:none">Services</a><a href="#" style="font-size:12px;color:${dim};text-decoration:none">Contact</a><button class="nc">${cta}</button></div></nav>
+      <nav><div style="display:flex;align-items:center;gap:8px">${logo}<div class="nb">${biz}</div></div><div style="display:flex;gap:20px;align-items:center"><a href="#" style="font-size:12px;color:${dim};text-decoration:none">Services</a><a href="#" style="font-size:12px;color:${dim};text-decoration:none">Contact</a><button class="nc">${cta}</button></div></nav>
       <section class="hero"><div><h1>${biz}<br><span class="tl">${tl}</span></h1><p class="sub">Local ${industryKey} you can count on. Real people, real service.</p><div class="btns"><button class="bp">${cta}</button><button class="bg">See Our Work</button></div></div></section>
       <section class="svcs"><p class="eye">What We Do</p><h2 class="sh">Our Services</h2><div class="grid">${svcs.map((s,i)=>`<div class="card"><div class="cnum">0${i+1}</div><div class="ct">${s}</div><div class="cd">Professional service, fair pricing.</div></div>`).join('')}</div></section>
       ${extras(dark+'88','1px solid rgba(255,255,255,0.08)',dark,'1px solid rgba(255,255,255,0.08)',light,dim,'6px')}
@@ -189,7 +192,7 @@ function generatePreviewHTML(form) {
       .ct{font-size:15px;font-weight:700;color:${pageText};margin-bottom:4px}
       .cd{font-size:13px;color:${pageMuted};line-height:1.5}
     `,`
-      <nav><div class="nb">${biz}</div><div class="nl"><a href="#">Services</a><a href="#">About</a><a href="#">Contact</a><button class="nc">${cta}</button></div></nav>
+      <nav><div style="display:flex;align-items:center;gap:8px">${logo}<div class="nb">${biz}</div></div><div class="nl"><a href="#">Services</a><a href="#">About</a><a href="#">Contact</a><button class="nc">${cta}</button></div></nav>
       <section class="hero"><div class="tag">${industryKey}</div><h1>${biz}<br><span>${tl}</span></h1><p class="sub">We're a local ${industryKey} business serving our community. Honest work, fair prices, and always available when you need us.</p><button class="bp">${cta}</button><button class="bg">See Our Work</button></section>
       <section class="svcs"><p class="eye">What We Do</p><h2 class="sh">Our Services</h2><div class="grid">${svcs.map(s=>`<div class="card"><div class="cicon"><div class="cdot"></div></div><div><div class="ct">${s}</div><div class="cd">Professional service. Fair pricing. Get in touch to learn more.</div></div></div>`).join('')}</div></section>
       ${extras('#F9FAFB',pageBorder,pageBg,pageBorder,pageText,pageMuted,'50px')}
@@ -223,7 +226,7 @@ function generatePreviewHTML(form) {
       .st{font-size:15px;font-weight:600;color:${textCol}}
       .sa{margin-left:auto;background:${accent};color:#fff;border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer}
     `,`
-      <nav><div class="nb">${biz}</div><div><a class="nl" href="#" style="font-size:12px;color:rgba(255,255,255,0.7);text-decoration:none;margin-left:20px">Services</a><a href="#" style="font-size:12px;color:rgba(255,255,255,0.7);text-decoration:none;margin-left:20px">Contact</a><button class="nc">${cta}</button></div></nav>
+      <nav><div style="display:flex;align-items:center;gap:8px">${logo}<div class="nb">${biz}</div></div><div><a class="nl" href="#" style="font-size:12px;color:rgba(255,255,255,0.7);text-decoration:none;margin-left:20px">Services</a><a href="#" style="font-size:12px;color:rgba(255,255,255,0.7);text-decoration:none;margin-left:20px">Contact</a><button class="nc">${cta}</button></div></nav>
       <section class="hero"><div class="hl"><h1>${biz}<br>${tl}</h1><p class="sub">Local ${industryKey}. Real people, honest work, and prices that make sense.</p><div><button class="bp">${cta}</button><button class="bg">Learn More</button></div></div><div class="hr">${['4.9★ Rated','100% Local','Fast Response'].map((s,i)=>`<div class="stat"><div class="sn">${['⭐','📍','⚡'][i]}</div><div class="sl">${s}</div></div>`).join('')}</div></section>
       <section class="svcs"><p class="eye">What We Do</p><h2 class="sh">Our Services</h2>${svcs.map((s,i)=>`<div class="srow"><span class="sn2">0${i+1}</span><span class="st">${s}</span><button class="sa">Book</button></div>`).join('')}</section>
       ${extras(bg+'44','1px solid '+textCol+'15',bg+'66','1px solid '+textCol+'15',textCol,dim,'4px')}
@@ -253,7 +256,7 @@ function generatePreviewHTML(form) {
       .cd{font-size:13px;color:${dim};line-height:1.5}
       .arr{display:inline-block;margin-top:12px;font-size:12px;font-weight:700;color:${accent}}
     `,`
-      <nav><div class="nb">${biz}</div><button class="nc">${cta}</button></nav>
+      <nav><div style="display:flex;align-items:center;gap:8px">${logo}<div class="nb">${biz}</div></div><button class="nc">${cta}</button></nav>
       <section class="hero"><div><div class="badge">${industryKey}</div><h1>${biz}<br><span>${tl}</span></h1><p class="sub">Serving your community with quality ${industryKey} services.</p><button class="bp">${cta}</button></div></section>
       <section class="svcs"><p class="sh">Our Services</p><div class="grid">${svcs.map((s,i)=>`<div class="card"><div class="cn">0${i+1}</div><div class="ct">${s}</div><div class="cd">Professional service with fair, upfront pricing. No surprises.</div><div class="arr">Book now →</div></div>`).join('')}</div></section>
       ${extras(textCol+'06','1px solid '+textCol+'10',textCol+'0a','1px solid '+textCol+'12',textCol,dim,'8px')}
@@ -285,7 +288,7 @@ function generatePreviewHTML(form) {
       .sd{font-size:13px;color:${pm};line-height:1.5}
       .sa{background:${accent};color:#fff;border:none;padding:8px 16px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
     `,`
-      <nav><div class="nb">${biz}</div><div class="nl"><a href="#">Services</a><a href="#">About</a><a href="#">Contact</a><button class="nc">${cta}</button></div></nav>
+      <nav><div style="display:flex;align-items:center;gap:8px">${logo}<div class="nb">${biz}</div></div><div class="nl"><a href="#">Services</a><a href="#">About</a><a href="#">Contact</a><button class="nc">${cta}</button></div></nav>
       <section class="hero"><div class="date">Est. 2024 · ${industryKey.toUpperCase()}</div><h1>${biz}<br><em>${tl}</em></h1><p class="sub">Trusted local ${industryKey} services. We show up on time, do the job right, and stand behind our work.</p><button class="bp">${cta}</button><button class="bg">View Work</button></section>
       <section class="svcs"><div class="sh">What We Do</div>${svcs.map((s,i)=>`<div class="srow"><div class="sn">0${i+1}</div><div><div class="st">${s}</div><div class="sd">Professional quality. Fair pricing. Available now.</div></div><button class="sa">Book</button></div>`).join('')}</section>
       ${extras('#F3F3EF','1px solid #E0E0D8','#FFFFFF','1px solid #E0E0D8',pg,pm,'0px')}
@@ -320,7 +323,7 @@ function generatePreviewHTML(form) {
       .ct{font-size:15px;font-weight:700;color:${textCol};margin-bottom:6px}
       .cd{font-size:13px;color:${textCol}60;line-height:1.5}
     `,`
-      <nav><div class="nb">${biz}</div><div><a class="nl" href="#" style="font-size:12px;color:${textCol+'80'};text-decoration:none;margin-left:20px">Services</a><a href="#" style="font-size:12px;color:${textCol+'80'};text-decoration:none;margin-left:20px">Contact</a><button class="nc">${cta}</button></div></nav>
+      <nav><div style="display:flex;align-items:center;gap:8px">${logo}<div class="nb">${biz}</div></div><div><a class="nl" href="#" style="font-size:12px;color:${textCol+'80'};text-decoration:none;margin-left:20px">Services</a><a href="#" style="font-size:12px;color:${textCol+'80'};text-decoration:none;margin-left:20px">Contact</a><button class="nc">${cta}</button></div></nav>
       <section class="hero"><div class="pill">⚡ ${industryKey}</div><h1>${biz}<br><span>${tl}</span></h1><p class="sub">Local ${industryKey} services done right. Real people, fair prices.</p><div class="btns"><button class="bp">${cta}</button><button class="bg">Learn More</button></div></section>
       <section class="svcs"><p class="eye">What We Do</p><h2 class="sh">Our Services</h2><div class="grid">${svcs.map(s=>`<div class="card"><div class="ci"></div><div class="ct">${s}</div><div class="cd">Professional service with upfront pricing and fast turnaround.</div></div>`).join('')}</div></section>
       ${extras('rgba(0,0,0,0.15)','1px solid rgba(255,255,255,0.1)','rgba(255,255,255,0.07)','1px solid rgba(255,255,255,0.12)',textCol,textCol+'60','50px')}
@@ -597,10 +600,10 @@ ${industryServices.map(s => `• ${s}`).join('\n')}
             </svg>
             Back
           </a>
-          <a href="https://afterz.io" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-0.5">
-            <img src="/afterz-logo.svg" alt="Afterz" className="h-7 w-7 rounded-lg" />
-            <div className="text-white/30 text-[10px] font-semibold tracking-widest uppercase">Dream Board</div>
-          </a>
+          <div className="text-center">
+            <div className="text-white font-display font-bold text-sm tracking-tight">Website Dream Board</div>
+            <div className="text-[#E8722A] text-xs font-semibold">by OC Builds</div>
+          </div>
           <div className="text-white/25 text-xs">{step}/{TOTAL_STEPS}</div>
         </div>
 
