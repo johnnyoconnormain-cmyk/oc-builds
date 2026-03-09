@@ -388,8 +388,11 @@ Tagline: "${form.tagline}"`,
   }
 
   const previewHTML = useMemo(() => {
-    if (step < 5 || !form.tagline) return null
-    return generatePreviewHTML(form)
+    if (step < 5) return null
+    return generatePreviewHTML({
+      ...form,
+      tagline: form.tagline || 'Your tagline will appear here...',
+    })
   }, [form, step])
 
   function buildBriefText() {
@@ -844,11 +847,13 @@ ${industryServices.map(s => `• ${s}`).join('\n')}
             </div>
             <p className="text-white/25 text-xs mb-8">Under 10 words. Keep it simple and honest.</p>
 
-            {/* Live preview */}
-            {form.tagline && (
-              <>
-                <div className="text-white/40 text-xs font-bold uppercase tracking-widest mb-3">Live Preview</div>
-                <div className="bg-[#141414] rounded-2xl border border-white/[0.07] overflow-hidden shadow-2xl">
+            {/* Live preview — always visible */}
+            <div className="dream-fade-in">
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-white/40 text-xs font-bold uppercase tracking-widest">Live Preview</div>
+                {!form.tagline && <div className="text-white/25 text-xs">← type a tagline to see your name here</div>}
+              </div>
+              <div className="bg-[#141414] rounded-2xl border border-white/[0.07] overflow-hidden shadow-2xl">
                   <div className="bg-[#1e1e1e] border-b border-white/[0.06] px-4 py-3 flex items-center gap-3">
                     <div className="flex gap-1.5">
                       <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
@@ -889,8 +894,7 @@ ${industryServices.map(s => `• ${s}`).join('\n')}
                     Download Preview HTML
                   </button>
                 </div>
-              </>
-            )}
+            </div>
           </div>
         )}
 

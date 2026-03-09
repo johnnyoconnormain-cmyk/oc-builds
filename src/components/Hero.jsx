@@ -48,11 +48,8 @@ export default function Hero() {
                   <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
               </a>
-              <a href="/dreamboard" className="inline-flex items-center gap-2 border border-[#1A1209]/20 hover:border-[#E8722A]/50 text-[#1A1209]/70 hover:text-[#E8722A] font-semibold rounded-full px-8 py-4 text-base transition-all duration-200 hover:bg-[#E8722A]/5">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
-                </svg>
-                Build Your Dream Site
+              <a href="#portfolio" className="inline-flex items-center gap-2 border border-[#1A1209]/20 hover:border-[#E8722A]/50 text-[#1A1209]/70 hover:text-[#E8722A] font-semibold rounded-full px-8 py-4 text-base transition-all duration-200 hover:bg-[#E8722A]/5">
+                See My Work
               </a>
             </div>
 

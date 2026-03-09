@@ -84,6 +84,14 @@
   transform: translateY(0);
 }
 
+@keyframes dreamFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.dream-fade-in {
+  animation: dreamFadeIn 0.22s ease-out both;
+}
+
 @keyframes heroFadeUp {
   from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
