@@ -28,19 +28,7 @@ export default function Navbar() {
       <div className="container-xl flex items-center justify-between">
         {/* Logo */}
         <a href="#" className="flex items-center">
-          <svg width="148" height="34" viewBox="0 0 148 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Mark background -->
-            <rect x="0" y="0" width="34" height="34" rx="6" fill="#1E3329"/>
-            <!-- Orange accent bar -->
-            <rect x="5" y="5" width="10" height="2.5" rx="1.25" fill="#E8722A"/>
-            <!-- O — cream circle -->
-            <circle cx="12.5" cy="19" r="7" stroke="#F5EDD8" stroke-width="3" fill="none"/>
-            <!-- C — orange arc -->
-            <path d="M 23.8,13.1 A 7,7 0 1 0 23.8,24.9" stroke="#E8722A" stroke-width="3" stroke-linecap="round" fill="none"/>
-            <!-- Wordmark -->
-            <text x="43" y="16" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="14" fill="#1A1209" letterSpacing="-0.3">OC</text>
-            <text x="43" y="28" fontFamily="'Clash Display', sans-serif" fontWeight="600" fontSize="8" fill="rgba(26,18,9,0.38)" letterSpacing="3.5">BUILDS</text>
-          </svg>
+          <img src="/logo.png" alt="OC Builds" className="h-9 w-auto" />
         </a>
 
         {/* Desktop nav */}

@@ -8,16 +8,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="mb-3">
-              <svg width="138" height="32" viewBox="0 0 138 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Mark -->
-                <rect x="0" y="0" width="32" height="32" rx="6" fill="#253D30"/>
-                <rect x="5" y="5" width="9" height="2.5" rx="1.25" fill="#E8722A"/>
-                <circle cx="11.5" cy="18" r="6.5" stroke="#F5EDD8" stroke-width="2.8" fill="none"/>
-                <path d="M 22.2,12.3 A 6.5,6.5 0 1 0 22.2,23.7" stroke="#E8722A" stroke-width="2.8" stroke-linecap="round" fill="none"/>
-                <!-- Wordmark -->
-                <text x="41" y="15" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="13" fill="white" letterSpacing="-0.3">OC</text>
-                <text x="41" y="27" fontFamily="'Clash Display', sans-serif" fontWeight="600" fontSize="7.5" fill="rgba(255,255,255,0.35)" letterSpacing="3.5">BUILDS</text>
-              </svg>
+              <img src="/logo.png" alt="OC Builds" className="h-10 w-auto" />
             </div>
             <p className="text-white/40 text-xs leading-relaxed max-w-[200px]">
               Websites, chatbots, and automations for small businesses who just need it done.
