@@ -392,6 +392,67 @@ Tagline: "${form.tagline}"`,
     return generatePreviewHTML(form)
   }, [form, step])
 
+  function buildBriefText() {
+    const industryServices = INDUSTRY_SERVICES[(form.industry || 'other').toLowerCase()] || INDUSTRY_SERVICES['other']
+    return `Build a complete website for a client using the following spec from their OC Builds Dream Board. Match everything exactly.
+
+━━━ CLIENT BRIEF ━━━
+
+Business Name: ${form.bizName}
+Industry: ${form.industry}
+Tagline: "${form.tagline}"
+CTA Button Text: "${form.ctaText}"
+
+━━━ DESIGN ━━━
+
+Vibe: ${form.vibe}
+Font Style: ${form.fontStyle}
+Layout: ${form.layout}
+
+Colors:
+  Accent (buttons, highlights): ${form.colors.accent}
+  Background: ${form.colors.bg}
+  Text: ${form.colors.text}
+
+━━━ SECTIONS (in order) ━━━
+
+${form.sections.map((s, i) => `${i + 1}. ${s.charAt(0).toUpperCase() + s.slice(1)}`).join('\n')}
+
+━━━ SERVICES TO SHOW ━━━
+
+${industryServices.map(s => `• ${s}`).join('\n')}
+
+━━━ STYLE NOTES ━━━
+
+- Vibe is "${form.vibe}" — apply this throughout (button shape, spacing, font weight, tone of copy)
+- Font style is "${form.fontStyle}" — use appropriate font family
+- Layout is "${form.layout}" — structure the hero section accordingly
+- Footer should say "Website by OC Builds"
+- All placeholder copy should be appropriate for a ${form.industry} business
+- Mobile responsive
+- Use the exact hex colors provided above`
+  }
+
+  const [copied, setCopied] = useState(false)
+
+  function handleCopyBrief() {
+    navigator.clipboard.writeText(buildBriefText()).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2500)
+    })
+  }
+
+  function handleDownload() {
+    const html = generatePreviewHTML(form)
+    const blob = new Blob([html], { type: 'text/html' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${(form.bizName || 'my-site').toLowerCase().replace(/[^a-z0-9]/g, '-')}-preview.html`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const STEP_LABELS = ['Business', 'Style', 'Colors', 'Layout', 'Tagline']
 
   if (submitted) {
@@ -430,6 +491,25 @@ Tagline: "${form.tagline}"`,
                 ))}
               </div>
             </div>
+          </div>
+          <div className="flex flex-wrap gap-3 justify-center mb-6">
+            <button
+              onClick={handleCopyBrief}
+              className="flex items-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.1] text-white/70 hover:text-white text-sm font-semibold px-5 py-3 rounded-xl transition-all"
+            >
+              {copied ? (
+                <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8722A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span className="text-[#E8722A]">Copied!</span></>
+              ) : (
+                <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Build Brief</>
+              )}
+            </button>
+            <button
+              onClick={handleDownload}
+              className="flex items-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.1] text-white/70 hover:text-white text-sm font-semibold px-5 py-3 rounded-xl transition-all"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Preview
+            </button>
           </div>
           <a href="/" className="btn-orange px-8 py-3.5 text-sm inline-flex items-center gap-2">
             Back to OC Builds
@@ -788,6 +868,27 @@ Tagline: "${form.tagline}"`,
                   />
                 </div>
                 <p className="text-white/20 text-xs mt-2 text-center">This is how your site will look. Real build will be even better.</p>
+
+                {/* Export buttons */}
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <button
+                    onClick={handleCopyBrief}
+                    className="flex items-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.1] text-white/80 hover:text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all"
+                  >
+                    {copied ? (
+                      <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8722A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg> <span className="text-[#E8722A]">Copied!</span></>
+                    ) : (
+                      <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Build Brief for Claude</>
+                    )}
+                  </button>
+                  <button
+                    onClick={handleDownload}
+                    className="flex items-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.1] text-white/80 hover:text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download Preview HTML
+                  </button>
+                </div>
               </>
             )}
           </div>
