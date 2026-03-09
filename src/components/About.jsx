@@ -1,11 +1,5 @@
 import { useInView } from '../hooks/useInView'
 
-const badges = [
-  { icon: '🏈', label: 'CWU Wildcats D-Line' },
-  { icon: '🏗️', label: 'Construction Management' },
-  { icon: '📍', label: 'Ellensburg, WA' },
-  { icon: '👨‍👧‍👦', label: 'Oldest of 7' },
-]
 
 export default function About() {
   const [ref, inView] = useInView()
@@ -67,14 +61,6 @@ export default function About() {
                 I answer my phone. I meet deadlines. And I actually care whether
                 your business grows.
               </p>
-            </div>
-
-            <div className="flex flex-wrap gap-2 mb-8">
-              {badges.map(b => (
-                <span key={b.label} className="flex items-center gap-1.5 bg-white/[0.06] border border-white/[0.08] text-white/70 text-xs font-medium px-3.5 py-2 rounded-full">
-                  <span>{b.icon}</span> {b.label}
-                </span>
-              ))}
             </div>
 
             <a href="#contact" className="btn-orange px-8 py-4 text-sm">
