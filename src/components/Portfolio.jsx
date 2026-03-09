@@ -86,10 +86,75 @@ function AfterzHero() {
   )
 }
 
+function ValleyGrilleHero() {
+  return (
+    <div className="h-48 relative overflow-hidden flex items-center justify-center"
+      style={{ background: 'linear-gradient(135deg, #1A0F07 0%, #2D1A0A 100%)' }}>
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 60% 40%, rgba(217,119,6,0.18) 0%, transparent 60%)' }} />
+      <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #D97706, transparent)', opacity: 0.5 }} />
+      <svg width="170" height="44" viewBox="0 0 170 44" fill="none">
+        <line x1="8" y1="6" x2="8" y2="26" stroke="#D97706" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="13" y1="6" x2="13" y2="16" stroke="#D97706" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M8 16 Q10.5 19 13 16" stroke="#D97706" strokeWidth="1.5" fill="none"/>
+        <line x1="13" y1="16" x2="13" y2="26" stroke="#D97706" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M21 6 L21 26 M21 6 Q28 11 21 17" stroke="#D97706" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+        <text x="34" y="20" fontFamily="'Playfair Display', Georgia, serif" fontWeight="700" fontSize="13" fill="#F5EFE6" letterSpacing="1">VALLEY GRILLE</text>
+        <line x1="34" y1="24" x2="164" y2="24" stroke="#D97706" strokeWidth="0.5" opacity="0.4"/>
+        <text x="34" y="34" fontFamily="Georgia, serif" fontWeight="400" fontSize="7.5" fill="rgba(217,119,6,0.55)" letterSpacing="2">ELLENSBURG, WA</text>
+      </svg>
+    </div>
+  )
+}
+
+function SummitLandscapingHero() {
+  return (
+    <div className="h-48 relative overflow-hidden flex items-center justify-center"
+      style={{ background: 'linear-gradient(160deg, #040E04 0%, #0A1F0A 60%, #0C2410 100%)' }}>
+      <div className="absolute inset-0" style={{
+        backgroundImage: 'linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
+      }} />
+      <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: '#22C55E', opacity: 0.6 }} />
+      <svg width="180" height="48" viewBox="0 0 180 48" fill="none">
+        <polygon points="6,38 14,22 22,38" fill="rgba(34,197,94,0.12)" stroke="#22C55E" strokeWidth="1.5" strokeLinejoin="round"/>
+        <polygon points="18,38 28,14 38,38" fill="rgba(34,197,94,0.08)" stroke="#22C55E" strokeWidth="1.8" strokeLinejoin="round"/>
+        <polygon points="26,16 28,10 30,16" fill="#22C55E" opacity="0.9"/>
+        <text x="50" y="23" fontFamily="'Barlow Condensed', Impact, sans-serif" fontWeight="800" fontSize="17" fill="#ffffff" letterSpacing="1.5">SUMMIT</text>
+        <text x="50" y="37" fontFamily="'Barlow Condensed', Impact, sans-serif" fontWeight="500" fontSize="10" fill="rgba(34,197,94,0.65)" letterSpacing="3.5">LANDSCAPING</text>
+      </svg>
+    </div>
+  )
+}
+
+function KittitasCleanHero() {
+  return (
+    <div className="h-48 relative overflow-hidden flex items-center justify-center"
+      style={{ background: 'linear-gradient(135deg, #04101A 0%, #071828 100%)' }}>
+      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #0EA5E9, transparent)' }} />
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(14,165,233,0.08) 0%, transparent 55%)' }} />
+      <svg width="180" height="48" viewBox="0 0 180 48" fill="none">
+        <defs>
+          <linearGradient id="skyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0EA5E9"/>
+            <stop offset="100%" stopColor="#38BDF8"/>
+          </linearGradient>
+        </defs>
+        <path d="M14 8 L16 14 L22 16 L16 18 L14 24 L12 18 L6 16 L12 14 Z" fill="url(#skyGrad)" opacity="0.95"/>
+        <path d="M24 5 L25 8 L28 9 L25 10 L24 13 L23 10 L20 9 L23 8 Z" fill="#38BDF8" opacity="0.5"/>
+        <text x="34" y="21" fontFamily="'Inter', system-ui, sans-serif" fontWeight="800" fontSize="12" fill="#F0F9FF" letterSpacing="0.5">KITTITAS</text>
+        <text x="34" y="34" fontFamily="'Inter', system-ui, sans-serif" fontWeight="600" fontSize="10" fill="rgba(14,165,233,0.65)" letterSpacing="2.5">CLEAN CO.</text>
+      </svg>
+    </div>
+  )
+}
+
 const PROJECT_HEROES = {
   p1: BarbershopHero,
   p2: FitnessHero,
   p3: AfterzHero,
+  p4: ValleyGrilleHero,
+  p5: SummitLandscapingHero,
+  p6: KittitasCleanHero,
 }
 
 const PLACEHOLDERS = [
@@ -115,6 +180,27 @@ const PLACEHOLDERS = [
     url: 'https://afterzz.com',
     demoEmail: 'demo@ocbuilds.com',
     demoPassword: 'OcBuilds2025!',
+  },
+  {
+    _id: 'p4',
+    name: 'Valley Grille',
+    description: 'Local restaurant site with an online menu, reservation request form, and full Google Business profile.',
+    services: ['Website Build', 'Online Menu', 'Google Business'],
+    url: '/demos/valley-grille.html',
+  },
+  {
+    _id: 'p5',
+    name: 'Summit Landscaping',
+    description: 'Clean site with a photo gallery of past jobs, instant quote request form, and seasonal service pages.',
+    services: ['Website Build', 'Photo Gallery', 'Quote Form'],
+    url: '/demos/summit-landscaping.html',
+  },
+  {
+    _id: 'p6',
+    name: 'Kittitas Clean Co.',
+    description: 'Cleaning service site with online booking, service area map, and automated review request flow.',
+    services: ['Website Build', 'Online Booking', 'Review System'],
+    url: '/demos/kittitas-clean.html',
   },
 ]
 
