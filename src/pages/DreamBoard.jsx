@@ -44,28 +44,40 @@ const COLOR_PRESETS = [
 
 const LAYOUTS = [
   {
-    key: 'big hero',
-    label: 'Big Opening',
-    desc: 'Full-screen intro that grabs attention',
-    preview: '▓▓▓▓▓▓▓▓\n▓      ▓\n▓  ██  ▓\n▓      ▓',
+    key: 'fullscreen-bold',
+    label: 'Fullscreen Bold',
+    desc: 'Giant headline, dark + dramatic. Grabs attention immediately.',
+    badge: 'DARK',
   },
   {
-    key: 'services first',
+    key: 'bright-clean',
+    label: 'Bright & Clean',
+    desc: 'White background, light and professional. Easy to read.',
+    badge: 'LIGHT',
+  },
+  {
+    key: 'split-screen',
+    label: 'Split Screen',
+    desc: 'Half your color, half your accent. Bold and modern.',
+    badge: 'BOLD',
+  },
+  {
+    key: 'card-focus',
     label: 'Services First',
-    desc: 'Short intro, then straight to what you do',
-    preview: '████████\n██  ██\n▓ ▓ ▓ ▓\n        ',
+    desc: 'Short intro then big numbered service cards. Straight to business.',
+    badge: 'ANY',
   },
   {
-    key: 'simple clean',
-    label: 'Simple & Direct',
-    desc: 'Clean, minimal, no fluff',
-    preview: '████████\n        \n▓▓▓▓▓▓▓▓\n        ',
+    key: 'editorial',
+    label: 'Editorial',
+    desc: 'Clean magazine-style with strong type. Feels established.',
+    badge: 'LIGHT',
   },
   {
-    key: 'centered',
-    label: 'Centered Hero',
-    desc: 'Everything centered, very polished look',
-    preview: '        \n  ████  \n  ▓▓▓▓  \n        ',
+    key: 'gradient-glass',
+    label: 'Modern Glass',
+    desc: 'Gradient mesh background with frosted glass cards. Very current.',
+    badge: 'DARK',
   },
 ]
 
@@ -92,180 +104,231 @@ const INDUSTRY_SERVICES = {
   'other': ['Our Services', 'Consultations', 'Custom Projects', 'Get a Quote'],
 }
 
-function generatePreviewHTML({ bizName, industry, vibe, fontStyle, colors, layout, sections, tagline, ctaText }) {
+function generatePreviewHTML(form) {
+  const { bizName, industry, fontStyle, colors, layout, sections, tagline, ctaText } = form
   const { accent, bg, text: textCol } = colors
-  const muted = bg.startsWith('#F') || bg.startsWith('#f') || parseInt(bg.slice(1), 16) > 0x888888
-    ? textCol + '99'
-    : textCol + '88'
-  const surface = bg.startsWith('#F') || bg.startsWith('#f') || parseInt(bg.slice(1), 16) > 0x888888
-    ? '#00000011'
-    : '#ffffff0d'
-  const surfaceBorder = bg.startsWith('#F') || bg.startsWith('#f') || parseInt(bg.slice(1), 16) > 0x888888
-    ? '1px solid rgba(0,0,0,0.1)'
-    : '1px solid rgba(255,255,255,0.08)'
-
   const industryKey = (industry || 'other').toLowerCase()
-  const services = INDUSTRY_SERVICES[industryKey] || INDUSTRY_SERVICES['other']
-  const domain = (bizName || 'yourbusiness').toLowerCase().replace(/[^a-z0-9]/g, '') + '.com'
+  const svcs = INDUSTRY_SERVICES[industryKey] || INDUSTRY_SERVICES['other']
   const cta = ctaText || 'Get a Free Quote'
+  const tl = tagline || 'Built for your community.'
+  const biz = bizName || 'My Business'
+  const sel = sections || ['services', 'contact']
 
-  const fontMap = {
-    modern: '"Helvetica Neue", Arial, sans-serif',
-    bold: '"Arial Black", Impact, sans-serif',
-    classic: 'Georgia, "Times New Roman", serif',
-    friendly: '"Trebuchet MS", "Segoe UI", sans-serif',
+  const fontMap = { modern: '"Helvetica Neue",Arial,sans-serif', bold: '"Arial Black",Impact,sans-serif', classic: 'Georgia,"Times New Roman",serif', friendly: '"Trebuchet MS","Segoe UI",sans-serif' }
+  const ff = fontMap[fontStyle] || fontMap.modern
+
+  // shared optional sections builder
+  function extras(bgAlt, borderCol, cardBg, cardBorder, textC, mutedC, btnR) {
+    let out = ''
+    if (sel.includes('testimonials')) out += `<section style="padding:60px 48px;background:${bgAlt}"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">What People Say</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 32px">Customer Reviews</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">${['Great work, highly recommend!','Professional and on time.','Will definitely use again.'].map(q=>`<div style="background:${cardBg};border:${cardBorder};border-radius:12px;padding:18px"><div style="color:${accent};margin-bottom:6px">★★★★★</div><p style="font-size:13px;color:${mutedC};margin:0 0 10px">"${q}"</p><div style="font-size:12px;font-weight:700;color:${textC}">— Happy Customer</div></div>`).join('')}</div></section>`
+    if (sel.includes('about')) out += `<section style="padding:60px 48px"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">Our Story</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 16px">About ${biz}</h2><p style="font-size:15px;color:${mutedC};max-width:560px;line-height:1.7;margin:0 0 24px">We're a local ${industryKey} business built on trust and doing the job right the first time. You deal with us directly — no middleman.</p><button style="background:${accent};color:#fff;border:none;padding:11px 22px;border-radius:${btnR};font-size:13px;font-weight:700;cursor:pointer">Our Story</button></section>`
+    if (sel.includes('faq')) out += `<section style="padding:60px 48px;background:${bgAlt}">${['How do I get started?','What areas do you serve?','Do you offer free estimates?'].map(q=>`<div style="border-bottom:${borderCol};padding:16px 0"><div style="font-size:14px;font-weight:700;color:${textC};margin-bottom:6px">${q}</div><div style="font-size:13px;color:${mutedC}">Give us a call and we'll get back to you within 24 hours.</div></div>`).join('')}</section>`
+    if (sel.includes('gallery')) out += `<section style="padding:60px 48px"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">Our Work</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 24px">Portfolio</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">${[...Array(6)].map((_,i)=>`<div style="aspect-ratio:1;background:${cardBg};border:${cardBorder};border-radius:10px;display:flex;align-items:center;justify-content:center;color:${mutedC};font-size:12px">Photo ${i+1}</div>`).join('')}</div></section>`
+    if (sel.includes('pricing')) out += `<section style="padding:60px 48px;background:${bgAlt}"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">Rates</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 28px">Simple Pricing</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">${[['Basic','$99'],['Standard','$199'],['Premium','$399']].map(([n,p],i)=>`<div style="background:${i===1?accent+'25':cardBg};border:${i===1?`2px solid ${accent}`:cardBorder};border-radius:12px;padding:20px;text-align:center;position:relative">${i===1?`<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:${accent};color:#fff;font-size:9px;font-weight:700;padding:2px 10px;border-radius:50px">POPULAR</div>`:''}<div style="font-size:13px;font-weight:700;color:${textC};margin-bottom:4px">${n}</div><div style="font-size:24px;font-weight:900;color:${i===1?accent:textC}">${p}</div></div>`).join('')}</div></section>`
+    if (sel.includes('contact')) out += `<section style="padding:60px 48px;text-align:center"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">Get In Touch</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 24px">Ready to get started?</h2><div style="max-width:440px;margin:0 auto;background:${cardBg};border:${cardBorder};border-radius:16px;padding:32px"><input placeholder="Your name" style="width:100%;background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};margin-bottom:8px;outline:none;display:block"/><input placeholder="Phone or email" style="width:100%;background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};margin-bottom:8px;outline:none;display:block"/><textarea rows="3" placeholder="Tell us what you need..." style="width:100%;background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};margin-bottom:10px;outline:none;resize:none;display:block"></textarea><button style="width:100%;background:${accent};color:#fff;border:none;padding:12px;border-radius:${btnR};font-size:14px;font-weight:700;cursor:pointer">${cta}</button></div></section>`
+    return out
   }
-  const fontFamily = fontMap[fontStyle] || fontMap.modern
 
-  const heroMin = layout === 'big hero' ? '100vh' : '70vh'
-  const heroAlign = layout === 'centered' ? 'center' : 'flex-start'
-  const heroTextAlign = layout === 'centered' ? 'center' : 'left'
-  const heroPad = layout === 'big hero' ? '0 48px' : '0 48px'
+  const wrap = (css, body) => `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:${ff};-webkit-font-smoothing:antialiased}${css}</style></head><body>${body}<footer style="padding:20px 40px;border-top:1px solid rgba(128,128,128,0.15);display:flex;justify-content:space-between;font-size:11px;color:#888"><span>© 2025 ${biz}</span><span>Website by <b style="color:${accent}">OC Builds</b></span></footer></body></html>`
 
-  const btnR = vibe === 'warm and friendly' ? '50px' : vibe === 'clean and minimal' ? '8px' : '6px'
-  const cardR = vibe === 'warm and friendly' ? '20px' : '12px'
+  // ── LAYOUT 1: Fullscreen Bold ── dark, centered, cinematic
+  if (layout === 'fullscreen-bold') {
+    const dark = bg; const light = textCol; const dim = textCol + '60'
+    return wrap(`
+      body{background:${dark};color:${light}}
+      nav{position:sticky;top:0;z-index:9;padding:0 48px;height:60px;display:flex;align-items:center;justify-content:space-between;background:${dark}cc;backdrop-filter:blur(12px)}
+      .nb{font-size:16px;font-weight:900;letter-spacing:-0.5px;color:${light}}
+      .nc{background:${accent};color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
+      .hero{min-height:90vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 40px;position:relative;overflow:hidden}
+      .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,${accent}18 0%,transparent 65%);pointer-events:none}
+      h1{font-size:64px;font-weight:900;line-height:1;letter-spacing:-3px;color:${light};margin-bottom:16px}
+      .tl{color:${accent}}
+      .sub{font-size:16px;color:${dim};max-width:480px;margin:0 auto 32px;line-height:1.6}
+      .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+      .bp{background:${accent};color:#fff;border:none;padding:14px 32px;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer}
+      .bg{background:rgba(255,255,255,0.08);color:${light};border:1px solid rgba(255,255,255,0.15);padding:14px 32px;border-radius:6px;font-size:14px;cursor:pointer}
+      .svcs{padding:72px 48px}
+      .eye{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin-bottom:8px;font-weight:700}
+      .sh{font-size:26px;font-weight:800;color:${light};margin-bottom:32px;letter-spacing:-0.5px}
+      .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden}
+      .card{background:${dark};padding:28px 20px}
+      .cnum{font-size:32px;font-weight:900;color:${accent};margin-bottom:8px;line-height:1}
+      .ct{font-size:14px;font-weight:700;color:${light};margin-bottom:6px}
+      .cd{font-size:12px;color:${dim};line-height:1.5}
+    `,`
+      <nav><div class="nb">${biz}</div><div style="display:flex;gap:20px;align-items:center"><a href="#" style="font-size:12px;color:${dim};text-decoration:none">Services</a><a href="#" style="font-size:12px;color:${dim};text-decoration:none">Contact</a><button class="nc">${cta}</button></div></nav>
+      <section class="hero"><div><h1>${biz}<br><span class="tl">${tl}</span></h1><p class="sub">Local ${industryKey} you can count on. Real people, real service.</p><div class="btns"><button class="bp">${cta}</button><button class="bg">See Our Work</button></div></div></section>
+      <section class="svcs"><p class="eye">What We Do</p><h2 class="sh">Our Services</h2><div class="grid">${svcs.map((s,i)=>`<div class="card"><div class="cnum">0${i+1}</div><div class="ct">${s}</div><div class="cd">Professional service, fair pricing.</div></div>`).join('')}</div></section>
+      ${extras(dark+'88','1px solid rgba(255,255,255,0.08)',dark,'1px solid rgba(255,255,255,0.08)',light,dim,'6px')}
+    `)
+  }
 
-  const serviceCards = services.map(s => `
-    <div style="background:${surface};border:${surfaceBorder};border-radius:${cardR};padding:24px 20px;">
-      <div style="width:36px;height:36px;background:${accent};border-radius:8px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;">
-        <div style="width:12px;height:12px;background:white;border-radius:2px;opacity:0.8;"></div>
-      </div>
-      <h3 style="font-size:15px;font-weight:700;color:${textCol};margin:0 0 6px;">${s}</h3>
-      <p style="font-size:13px;color:${muted};line-height:1.5;margin:0;">Professional service tailored to you. Reach out for pricing.</p>
-    </div>`).join('')
+  // ── LAYOUT 2: Bright & Clean ── white bg, spacious, minimal
+  if (layout === 'bright-clean') {
+    const pageBg = '#FFFFFF'; const pageText = '#111111'; const pageMuted = '#666666'; const pageBorder = '1px solid #E5E7EB'
+    return wrap(`
+      body{background:${pageBg};color:${pageText}}
+      nav{height:56px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;border-bottom:${pageBorder};background:${pageBg}}
+      .nb{font-size:15px;font-weight:800;color:${pageText}}
+      .nl a{font-size:13px;color:${pageMuted};text-decoration:none;margin-left:24px}
+      .nc{background:${accent};color:#fff;border:none;padding:8px 16px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer}
+      .hero{padding:80px 48px 64px;max-width:720px}
+      .tag{display:inline-block;background:${accent}18;color:${accent};font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:50px;margin-bottom:20px}
+      h1{font-size:52px;font-weight:900;line-height:1.05;letter-spacing:-2px;color:${pageText};margin-bottom:16px}
+      h1 span{color:${accent}}
+      .sub{font-size:17px;color:${pageMuted};max-width:500px;line-height:1.7;margin-bottom:32px}
+      .bp{background:${accent};color:#fff;border:none;padding:14px 28px;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;margin-right:12px}
+      .bg{background:transparent;color:${pageText};border:1.5px solid #D1D5DB;padding:13px 28px;border-radius:50px;font-size:14px;cursor:pointer}
+      .svcs{padding:72px 48px;background:#F9FAFB;border-top:${pageBorder};border-bottom:${pageBorder}}
+      .eye{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin-bottom:8px;font-weight:700}
+      .sh{font-size:28px;font-weight:800;color:${pageText};margin-bottom:32px;letter-spacing:-0.5px}
+      .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+      .card{background:${pageBg};border:${pageBorder};border-radius:12px;padding:24px;display:flex;gap:16px;align-items:flex-start}
+      .cicon{width:40px;height:40px;background:${accent}18;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      .cdot{width:14px;height:14px;background:${accent};border-radius:50%}
+      .ct{font-size:15px;font-weight:700;color:${pageText};margin-bottom:4px}
+      .cd{font-size:13px;color:${pageMuted};line-height:1.5}
+    `,`
+      <nav><div class="nb">${biz}</div><div class="nl"><a href="#">Services</a><a href="#">About</a><a href="#">Contact</a><button class="nc">${cta}</button></div></nav>
+      <section class="hero"><div class="tag">${industryKey}</div><h1>${biz}<br><span>${tl}</span></h1><p class="sub">We're a local ${industryKey} business serving our community. Honest work, fair prices, and always available when you need us.</p><button class="bp">${cta}</button><button class="bg">See Our Work</button></section>
+      <section class="svcs"><p class="eye">What We Do</p><h2 class="sh">Our Services</h2><div class="grid">${svcs.map(s=>`<div class="card"><div class="cicon"><div class="cdot"></div></div><div><div class="ct">${s}</div><div class="cd">Professional service. Fair pricing. Get in touch to learn more.</div></div></div>`).join('')}</div></section>
+      ${extras('#F9FAFB',pageBorder,pageBg,pageBorder,pageText,pageMuted,'50px')}
+    `)
+  }
 
-  const selectedSections = sections || ['services', 'contact']
+  // ── LAYOUT 3: Split Screen ── half bg, half accent, bold
+  if (layout === 'split-screen') {
+    const dim = textCol + '70'
+    return wrap(`
+      body{background:${bg};color:${textCol}}
+      nav{height:60px;background:${accent};padding:0 48px;display:flex;align-items:center;justify-content:space-between}
+      .nb{font-size:16px;font-weight:900;color:#fff;letter-spacing:-0.5px}
+      .nl a{font-size:12px;color:rgba(255,255,255,0.7);text-decoration:none;margin-left:20px}
+      .nc{background:#fff;color:${accent};border:none;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:800;cursor:pointer}
+      .hero{display:grid;grid-template-columns:1fr 1fr;min-height:85vh}
+      .hl{background:${bg};padding:64px 48px;display:flex;flex-direction:column;justify-content:center}
+      .hr{background:${accent};display:flex;align-items:center;justify-content:center;padding:40px}
+      h1{font-size:48px;font-weight:900;line-height:1.05;letter-spacing:-2px;color:${textCol};margin-bottom:16px}
+      .sub{font-size:16px;color:${dim};line-height:1.65;margin-bottom:28px;max-width:420px}
+      .bp{background:${accent};color:#fff;border:none;padding:14px 28px;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;margin-right:10px}
+      .bg{background:transparent;color:${textCol};border:1px solid ${textCol}40;padding:13px 28px;border-radius:4px;font-size:14px;cursor:pointer}
+      .stat{color:rgba(255,255,255,0.9);text-align:center;padding:16px}
+      .sn{font-size:40px;font-weight:900;color:#fff;line-height:1}
+      .sl{font-size:12px;color:rgba(255,255,255,0.7);margin-top:4px}
+      .svcs{padding:64px 48px}
+      .eye{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin-bottom:8px;font-weight:700}
+      .sh{font-size:26px;font-weight:800;color:${textCol};margin-bottom:28px;letter-spacing:-0.5px}
+      .srow{display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid ${textCol}15}
+      .sn2{font-size:11px;font-weight:800;color:${accent};letter-spacing:1px;min-width:28px}
+      .st{font-size:15px;font-weight:600;color:${textCol}}
+      .sa{margin-left:auto;background:${accent};color:#fff;border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer}
+    `,`
+      <nav><div class="nb">${biz}</div><div><a class="nl" href="#" style="font-size:12px;color:rgba(255,255,255,0.7);text-decoration:none;margin-left:20px">Services</a><a href="#" style="font-size:12px;color:rgba(255,255,255,0.7);text-decoration:none;margin-left:20px">Contact</a><button class="nc">${cta}</button></div></nav>
+      <section class="hero"><div class="hl"><h1>${biz}<br>${tl}</h1><p class="sub">Local ${industryKey}. Real people, honest work, and prices that make sense.</p><div><button class="bp">${cta}</button><button class="bg">Learn More</button></div></div><div class="hr">${['4.9★ Rated','100% Local','Fast Response'].map((s,i)=>`<div class="stat"><div class="sn">${['⭐','📍','⚡'][i]}</div><div class="sl">${s}</div></div>`).join('')}</div></section>
+      <section class="svcs"><p class="eye">What We Do</p><h2 class="sh">Our Services</h2>${svcs.map((s,i)=>`<div class="srow"><span class="sn2">0${i+1}</span><span class="st">${s}</span><button class="sa">Book</button></div>`).join('')}</section>
+      ${extras(bg+'44','1px solid '+textCol+'15',bg+'66','1px solid '+textCol+'15',textCol,dim,'4px')}
+    `)
+  }
 
-  const testimonialsSection = selectedSections.includes('testimonials') ? `
-    <section style="padding:72px 48px;background:${surface};">
-      <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin-bottom:10px;font-weight:700;">What People Say</p>
-      <h2 style="font-size:28px;font-weight:800;color:${textCol};margin:0 0 40px;letter-spacing:-0.5px;">Customer Reviews</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
-        ${['Great service, highly recommend!', 'Professional and affordable.', 'Will definitely use again.'].map(q => `
-          <div style="background:${surface};border:${surfaceBorder};border-radius:${cardR};padding:20px;">
-            <div style="color:${accent};font-size:18px;margin-bottom:8px;">★★★★★</div>
-            <p style="font-size:14px;color:${muted};margin:0 0 12px;">"${q}"</p>
-            <div style="font-size:13px;font-weight:700;color:${textCol};">— Happy Customer</div>
-          </div>`).join('')}
-      </div>
-    </section>` : ''
+  // ── LAYOUT 4: Card Focus ── compact hero, big service blocks
+  if (layout === 'card-focus') {
+    const dim = textCol + '65'
+    return wrap(`
+      body{background:${bg};color:${textCol}}
+      nav{height:58px;padding:0 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid ${textCol}12}
+      .nb{font-size:15px;font-weight:800;color:${textCol}}
+      .nc{background:${accent};color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer}
+      .hero{padding:48px 40px 40px;display:flex;align-items:center;justify-content:space-between;gap:40px}
+      h1{font-size:36px;font-weight:900;letter-spacing:-1.5px;color:${textCol};line-height:1.1;margin-bottom:10px}
+      h1 span{color:${accent}}
+      .sub{font-size:14px;color:${dim};line-height:1.6;max-width:400px}
+      .badge{background:${accent}22;color:${accent};font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:50px;margin-bottom:12px;display:inline-block}
+      .bp{margin-top:16px;background:${accent};color:#fff;border:none;padding:11px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+      .svcs{padding:0 40px 60px}
+      .sh{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:${accent};margin-bottom:16px}
+      .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+      .card{background:${textCol}0a;border:1px solid ${textCol}12;border-radius:16px;padding:28px;cursor:pointer;transition:all 0.15s}
+      .cn{font-size:48px;font-weight:900;color:${accent};line-height:1;margin-bottom:8px;opacity:0.5}
+      .ct{font-size:17px;font-weight:800;color:${textCol};margin-bottom:6px}
+      .cd{font-size:13px;color:${dim};line-height:1.5}
+      .arr{display:inline-block;margin-top:12px;font-size:12px;font-weight:700;color:${accent}}
+    `,`
+      <nav><div class="nb">${biz}</div><button class="nc">${cta}</button></nav>
+      <section class="hero"><div><div class="badge">${industryKey}</div><h1>${biz}<br><span>${tl}</span></h1><p class="sub">Serving your community with quality ${industryKey} services.</p><button class="bp">${cta}</button></div></section>
+      <section class="svcs"><p class="sh">Our Services</p><div class="grid">${svcs.map((s,i)=>`<div class="card"><div class="cn">0${i+1}</div><div class="ct">${s}</div><div class="cd">Professional service with fair, upfront pricing. No surprises.</div><div class="arr">Book now →</div></div>`).join('')}</div></section>
+      ${extras(textCol+'06','1px solid '+textCol+'10',textCol+'0a','1px solid '+textCol+'12',textCol,dim,'8px')}
+    `)
+  }
 
-  const aboutSection = selectedSections.includes('about') ? `
-    <section style="padding:72px 48px;">
-      <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin-bottom:10px;font-weight:700;">Our Story</p>
-      <h2 style="font-size:28px;font-weight:800;color:${textCol};margin:0 0 20px;letter-spacing:-0.5px;">About ${bizName || 'Us'}</h2>
-      <p style="font-size:16px;color:${muted};max-width:600px;line-height:1.7;margin:0 0 28px;">We're a local ${industryKey} business built on trust, hard work, and doing the job right the first time. We've been serving our community for years and treat every customer like a neighbor.</p>
-      <button style="background:${accent};color:#fff;border:none;padding:12px 24px;border-radius:${btnR};font-size:14px;font-weight:700;cursor:pointer;">Learn More About Us</button>
-    </section>` : ''
+  // ── LAYOUT 5: Editorial ── light bg, strong type, magazine feel
+  if (layout === 'editorial') {
+    const pageBg = '#FAFAF8'; const pg = '#1a1a1a'; const pm = '#555'
+    return wrap(`
+      body{background:${pageBg};color:${pg}}
+      nav{height:52px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid ${pg}}
+      .nb{font-size:20px;font-weight:900;color:${pg};letter-spacing:-1px}
+      .nl{display:flex;gap:24px;align-items:center}
+      .nl a{font-size:12px;color:${pm};text-decoration:none;font-weight:600;letter-spacing:0.5px;text-transform:uppercase}
+      .nc{background:${pg};color:${pageBg};border:none;padding:8px 16px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
+      .hero{padding:72px 48px 60px;border-bottom:1px solid #E0E0D8}
+      .date{font-size:11px;color:${pm};letter-spacing:2px;text-transform:uppercase;margin-bottom:20px}
+      h1{font-size:58px;font-weight:900;line-height:1;letter-spacing:-3px;color:${pg};margin-bottom:20px;max-width:700px}
+      h1 em{color:${accent};font-style:normal}
+      .sub{font-size:18px;color:${pm};max-width:540px;line-height:1.6;margin-bottom:28px;font-style:italic}
+      .bp{background:${accent};color:#fff;border:none;padding:13px 28px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.5px}
+      .bg{background:transparent;color:${pg};border:1px solid ${pg};padding:12px 28px;font-size:13px;cursor:pointer;margin-left:10px}
+      .svcs{padding:64px 48px}
+      .sh{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:${pm};margin-bottom:32px;padding-bottom:12px;border-bottom:1px solid #E0E0D8}
+      .srow{display:grid;grid-template-columns:80px 1fr auto;align-items:start;padding:20px 0;border-bottom:1px solid #E8E8E0;gap:16px}
+      .sn{font-size:40px;font-weight:900;color:${accent};line-height:1}
+      .st{font-size:17px;font-weight:800;color:${pg};margin-bottom:4px}
+      .sd{font-size:13px;color:${pm};line-height:1.5}
+      .sa{background:${accent};color:#fff;border:none;padding:8px 16px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+    `,`
+      <nav><div class="nb">${biz}</div><div class="nl"><a href="#">Services</a><a href="#">About</a><a href="#">Contact</a><button class="nc">${cta}</button></div></nav>
+      <section class="hero"><div class="date">Est. 2024 · ${industryKey.toUpperCase()}</div><h1>${biz}<br><em>${tl}</em></h1><p class="sub">Trusted local ${industryKey} services. We show up on time, do the job right, and stand behind our work.</p><button class="bp">${cta}</button><button class="bg">View Work</button></section>
+      <section class="svcs"><div class="sh">What We Do</div>${svcs.map((s,i)=>`<div class="srow"><div class="sn">0${i+1}</div><div><div class="st">${s}</div><div class="sd">Professional quality. Fair pricing. Available now.</div></div><button class="sa">Book</button></div>`).join('')}</section>
+      ${extras('#F3F3EF','1px solid #E0E0D8','#FFFFFF','1px solid #E0E0D8',pg,pm,'0px')}
+    `)
+  }
 
-  const faqSection = selectedSections.includes('faq') ? `
-    <section style="padding:72px 48px;background:${surface};">
-      <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin-bottom:10px;font-weight:700;">Questions</p>
-      <h2 style="font-size:28px;font-weight:800;color:${textCol};margin:0 0 32px;letter-spacing:-0.5px;">Frequently Asked</h2>
-      ${['How do I get started?', 'What areas do you serve?', 'Do you offer free estimates?'].map(q => `
-        <div style="border-bottom:${surfaceBorder};padding:18px 0;">
-          <div style="font-size:15px;font-weight:700;color:${textCol};margin-bottom:8px;">${q}</div>
-          <div style="font-size:14px;color:${muted};">Give us a call or fill out our contact form and we'll get back to you within 24 hours.</div>
-        </div>`).join('')}
-    </section>` : ''
+  // ── LAYOUT 6: Gradient Glass ── mesh gradient, frosted glass cards
+  if (layout === 'gradient-glass') {
+    const gc1 = bg; const gc2 = accent + 'cc'
+    return wrap(`
+      body{background:${gc1};color:${textCol};min-height:100vh}
+      body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,${accent}30 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,${accent}18 0%,transparent 50%),radial-gradient(ellipse at 60% 10%,${textCol}08 0%,transparent 40%);pointer-events:none;z-index:0}
+      *{position:relative;z-index:1}
+      nav{height:60px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.2);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.1)}
+      .nb{font-size:16px;font-weight:900;color:${textCol};letter-spacing:-0.5px}
+      .nl a{font-size:12px;color:${textCol}80;text-decoration:none;margin-left:20px}
+      .nc{background:${accent};color:#fff;border:none;padding:8px 18px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer}
+      .hero{padding:80px 48px 72px;text-align:center}
+      .pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);border-radius:50px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${textCol}aa;margin-bottom:24px}
+      h1{font-size:56px;font-weight:900;line-height:1.05;letter-spacing:-2px;color:${textCol};margin-bottom:16px}
+      h1 span{color:${accent}}
+      .sub{font-size:17px;color:${textCol}70;max-width:500px;margin:0 auto 32px;line-height:1.6}
+      .btns{display:flex;gap:12px;justify-content:center}
+      .bp{background:${accent};color:#fff;border:none;padding:14px 28px;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer}
+      .bg{background:rgba(255,255,255,0.1);color:${textCol};border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(10px);padding:13px 28px;border-radius:50px;font-size:14px;cursor:pointer}
+      .svcs{padding:64px 48px}
+      .eye{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin-bottom:8px;font-weight:700;text-align:center}
+      .sh{font-size:28px;font-weight:800;color:${textCol};margin-bottom:32px;letter-spacing:-0.5px;text-align:center}
+      .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+      .card{background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:24px}
+      .ci{width:36px;height:36px;background:${accent}33;border:1px solid ${accent}55;border-radius:10px;margin-bottom:14px}
+      .ct{font-size:15px;font-weight:700;color:${textCol};margin-bottom:6px}
+      .cd{font-size:13px;color:${textCol}60;line-height:1.5}
+    `,`
+      <nav><div class="nb">${biz}</div><div><a class="nl" href="#" style="font-size:12px;color:${textCol+'80'};text-decoration:none;margin-left:20px">Services</a><a href="#" style="font-size:12px;color:${textCol+'80'};text-decoration:none;margin-left:20px">Contact</a><button class="nc">${cta}</button></div></nav>
+      <section class="hero"><div class="pill">⚡ ${industryKey}</div><h1>${biz}<br><span>${tl}</span></h1><p class="sub">Local ${industryKey} services done right. Real people, fair prices.</p><div class="btns"><button class="bp">${cta}</button><button class="bg">Learn More</button></div></section>
+      <section class="svcs"><p class="eye">What We Do</p><h2 class="sh">Our Services</h2><div class="grid">${svcs.map(s=>`<div class="card"><div class="ci"></div><div class="ct">${s}</div><div class="cd">Professional service with upfront pricing and fast turnaround.</div></div>`).join('')}</div></section>
+      ${extras('rgba(0,0,0,0.15)','1px solid rgba(255,255,255,0.1)','rgba(255,255,255,0.07)','1px solid rgba(255,255,255,0.12)',textCol,textCol+'60','50px')}
+    `)
+  }
 
-  const gallerySection = selectedSections.includes('gallery') ? `
-    <section style="padding:72px 48px;">
-      <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin-bottom:10px;font-weight:700;">Portfolio</p>
-      <h2 style="font-size:28px;font-weight:800;color:${textCol};margin:0 0 32px;letter-spacing:-0.5px;">Our Work</h2>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-        ${[...Array(6)].map((_, i) => `<div style="aspect-ratio:1;background:${surface};border:${surfaceBorder};border-radius:${cardR};display:flex;align-items:center;justify-content:center;color:${muted};font-size:12px;">Photo ${i+1}</div>`).join('')}
-      </div>
-    </section>` : ''
-
-  const pricingSection = selectedSections.includes('pricing') ? `
-    <section style="padding:72px 48px;background:${surface};">
-      <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin-bottom:10px;font-weight:700;">Rates</p>
-      <h2 style="font-size:28px;font-weight:800;color:${textCol};margin:0 0 32px;letter-spacing:-0.5px;">Simple Pricing</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
-        ${[['Basic', '$99', ['1 service', 'Email support', 'Standard turnaround']], ['Standard', '$199', ['Up to 3 services', 'Phone support', 'Priority turnaround']], ['Premium', '$399', ['Unlimited services', 'Dedicated support', 'Same-day service']]].map(([name, price, feats], i) => `
-          <div style="background:${i===1?accent+22:surface};border:${i===1?`2px solid ${accent}`:surfaceBorder};border-radius:${cardR};padding:24px;${i===1?'position:relative;':''}">
-            ${i===1?`<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:${accent};color:#fff;font-size:10px;font-weight:700;padding:3px 12px;border-radius:50px;">POPULAR</div>`:''}
-            <div style="font-size:14px;font-weight:700;color:${textCol};margin-bottom:6px;">${name}</div>
-            <div style="font-size:28px;font-weight:900;color:${i===1?accent:textCol};margin-bottom:16px;">${price}<span style="font-size:13px;font-weight:400;">/job</span></div>
-            ${feats.map(f=>`<div style="font-size:13px;color:${muted};margin-bottom:6px;">✓ ${f}</div>`).join('')}
-          </div>`).join('')}
-      </div>
-    </section>` : ''
-
-  return `<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${bizName || 'My Business'}</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:${fontFamily};background:${bg};color:${textCol};line-height:1.6;-webkit-font-smoothing:antialiased}
-nav{position:sticky;top:0;z-index:99;background:${bg}f0;backdrop-filter:blur(16px);border-bottom:${surfaceBorder};padding:0 48px;height:64px;display:flex;align-items:center;justify-content:space-between}
-.nav-brand{font-size:17px;font-weight:800;color:${textCol};letter-spacing:-0.5px}
-.nav-links{display:flex;gap:24px}
-.nav-links a{font-size:13px;color:${muted};font-weight:500;text-decoration:none}
-.nav-cta{background:${accent};color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:${btnR};border:none;cursor:pointer}
-.hero{min-height:${heroMin};display:flex;align-items:center;justify-content:${heroAlign};padding:80px ${heroPad};position:relative;overflow:hidden;text-align:${heroTextAlign}}
-.hero::before{content:'';position:absolute;top:0;right:0;width:600px;height:600px;background:radial-gradient(circle at 70% 30%,${accent}1a 0%,transparent 60%);pointer-events:none}
-.hero-content{position:relative;z-index:1;max-width:${layout==='centered'?'640px':'680px'}}
-.badge{display:inline-flex;align-items:center;gap:8px;background:${accent}22;border:1px solid ${accent}44;border-radius:50px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${accent};margin-bottom:20px}
-h1{font-size:${layout==='big hero'?'56px':'44px'};font-weight:900;line-height:1.05;letter-spacing:-1.5px;color:${textCol};margin-bottom:18px}
-.accent-text{color:${accent}}
-.hero-sub{font-size:17px;color:${muted};max-width:540px;${layout==='centered'?'margin:0 auto 32px;':'margin-bottom:32px;'}line-height:1.65}
-.btn-row{display:flex;gap:12px;flex-wrap:wrap;${layout==='centered'?'justify-content:center;':''}}
-.btn-p{background:${accent};color:#fff;font-size:14px;font-weight:700;padding:14px 28px;border-radius:${btnR};border:none;cursor:pointer}
-.btn-g{background:transparent;color:${textCol};font-size:14px;font-weight:600;padding:14px 28px;border-radius:${btnR};border:1px solid ${textCol}30;cursor:pointer}
-.services{padding:80px 48px}
-.section-eye{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:${accent};margin-bottom:10px}
-.section-h{font-size:30px;font-weight:800;color:${textCol};margin-bottom:40px;letter-spacing:-0.5px}
-.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
-.contact{padding:80px 48px;text-align:center}
-.contact-box{max-width:480px;margin:0 auto;background:${surface};border:${surfaceBorder};border-radius:20px;padding:40px}
-input,textarea{width:100%;background:${surface};border:${surfaceBorder};border-radius:10px;padding:12px 14px;color:${textCol};font-size:14px;font-family:inherit;margin-bottom:10px;outline:none}
-input::placeholder,textarea::placeholder{color:${muted}}
-footer{padding:28px 48px;border-top:${surfaceBorder};display:flex;justify-content:space-between;align-items:center;font-size:12px;color:${muted}}
-.footer-mark{font-weight:700;color:${accent}}
-</style></head><body>
-<nav>
-  <div class="nav-brand">${bizName || 'My Business'}</div>
-  <div class="nav-links"><a href="#">Services</a><a href="#">About</a><a href="#">Contact</a></div>
-  <button class="nav-cta">${cta}</button>
-</nav>
-<section class="hero">
-  <div class="hero-content">
-    <div class="badge">⚡ ${(industry || 'Local Business').charAt(0).toUpperCase() + (industry||'Local Business').slice(1)} · ${domain}</div>
-    <h1>${bizName || 'Your Business'}<br><span class="accent-text">${tagline || 'Built for your community.'}</span></h1>
-    <p class="hero-sub">We're a local ${(industry||'business').toLowerCase()} you can count on. Real people, real service, right here in your community.</p>
-    <div class="btn-row">
-      <button class="btn-p">${cta}</button>
-      <button class="btn-g">See Our Work</button>
-    </div>
-  </div>
-</section>
-<section class="services">
-  <p class="section-eye">What We Do</p>
-  <h2 class="section-h">Our Services</h2>
-  <div class="grid4">${serviceCards}</div>
-</section>
-${aboutSection}
-${gallerySection}
-${testimonialsSection}
-${pricingSection}
-${faqSection}
-${selectedSections.includes('contact') ? `
-<section class="contact">
-  <p class="section-eye">Get In Touch</p>
-  <h2 class="section-h" style="margin-bottom:28px;">Ready to get started?</h2>
-  <div class="contact-box">
-    <input placeholder="Your name" /><input placeholder="Phone or email" />
-    <textarea rows="4" placeholder="Tell us what you need..." style="resize:none"></textarea>
-    <button class="btn-p" style="width:100%;margin-top:4px">Send Message</button>
-  </div>
-</section>` : ''}
-<footer>
-  <span>&copy; 2025 ${bizName || 'My Business'}</span>
-  <span>Website by <span class="footer-mark">OC Builds</span></span>
-</footer>
-</body></html>`
+  // fallback → bright-clean
+  return generatePreviewHTML({ ...form, layout: 'bright-clean' })
 }
 
 // ── Color picker swatch ──
@@ -534,10 +597,10 @@ ${industryServices.map(s => `• ${s}`).join('\n')}
             </svg>
             Back
           </a>
-          <div className="text-center">
-            <div className="text-white font-display font-bold text-sm tracking-tight">Website Dream Board</div>
-            <div className="text-[#E8722A] text-xs font-semibold">by OC Builds</div>
-          </div>
+          <a href="https://afterz.io" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-0.5">
+            <img src="/afterz-logo.svg" alt="Afterz" className="h-7 w-7 rounded-lg" />
+            <div className="text-white/30 text-[10px] font-semibold tracking-widest uppercase">Dream Board</div>
+          </a>
           <div className="text-white/25 text-xs">{step}/{TOTAL_STEPS}</div>
         </div>
 
@@ -759,7 +822,10 @@ ${industryServices.map(s => `• ${s}`).join('\n')}
                         : 'bg-white/[0.04] border-white/[0.07] hover:border-white/20 hover:bg-white/[0.06]'
                     }`}
                   >
-                    <div className={`font-bold text-base mb-1 ${form.layout === l.key ? 'text-[#E8722A]' : 'text-white'}`}>{l.label}</div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`font-bold text-base ${form.layout === l.key ? 'text-[#E8722A]' : 'text-white'}`}>{l.label}</span>
+                      <span className="text-[10px] font-bold tracking-widest px-1.5 py-0.5 rounded bg-white/10 text-white/40">{l.badge}</span>
+                    </div>
                     <div className="text-white/40 text-sm">{l.desc}</div>
                   </button>
                 ))}
