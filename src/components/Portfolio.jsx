@@ -45,10 +45,10 @@ function FitnessHero() {
         400
       </div>
       {/* Angled yellow accent line */}
-      <div className="absolute top-0 left-0 right-0 h-1" style={{ background: '#E8FF00' }} />
+      <div className="absolute top-0 left-0 right-0 h-1" style={{ background: '#F59E0B' }} />
       {/* Logo */}
       <svg width="160" height="44" viewBox="0 0 160 44" fill="none">
-        <rect x="0" y="2" width="32" height="36" rx="3" fill="#E8FF00"/>
+        <rect x="0" y="2" width="32" height="36" rx="3" fill="#F59E0B"/>
         <polygon points="21,7 12,22 18,22 11,38 24,20 17,20 24,7" fill="#080808"/>
         <text x="40" y="22" fontFamily="'Barlow Condensed', Impact, sans-serif" fontWeight="900" fontSize="18" fill="#ffffff" letterSpacing="1">PEAK</text>
         <text x="40" y="38" fontFamily="'Barlow Condensed', Impact, sans-serif" fontWeight="600" fontSize="11" fill="rgba(255,255,255,0.35)" letterSpacing="4">FITNESS</text>
@@ -61,27 +61,11 @@ function AfterzHero() {
   return (
     <div className="h-48 relative overflow-hidden flex items-center justify-center"
       style={{ background: 'linear-gradient(135deg, #08080A 0%, #130B1E 100%)' }}>
-      {/* Blob glows */}
-      <div className="absolute -top-8 -left-8 w-32 h-32 rounded-full opacity-30"
-        style={{ background: '#A855F7', filter: 'blur(40px)' }} />
-      <div className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full opacity-20"
-        style={{ background: '#EC4899', filter: 'blur(40px)' }} />
-      {/* Logo */}
-      <svg width="150" height="44" viewBox="0 0 150 44" fill="none">
-        <defs>
-          <linearGradient id="cg1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#A855F7"/>
-            <stop offset="50%" stopColor="#EC4899"/>
-            <stop offset="100%" stopColor="#F97316"/>
-          </linearGradient>
-        </defs>
-        <path d="M5 34 L16 8 L27 34" stroke="url(#cg1)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        <line x1="9" y1="25" x2="23" y2="25" stroke="url(#cg1)" strokeWidth="2.5" strokeLinecap="round"/>
-        <circle cx="30" cy="10" r="3" fill="#A855F7"/>
-        <circle cx="30" cy="10" r="6" fill="#A855F7" opacity="0.15"/>
-        <text x="42" y="26" fontFamily="'Inter', system-ui, sans-serif" fontWeight="900" fontSize="20" fill="white" letterSpacing="-1">after<tspan fill="url(#cg1)">zz</tspan></text>
-        <text x="42" y="39" fontFamily="'Inter', system-ui, sans-serif" fontWeight="500" fontSize="8" fill="rgba(168,85,247,0.6)" letterSpacing="2">CAMPUS EVENTS</text>
-      </svg>
+      <div className="absolute -top-8 -left-8 w-32 h-32 rounded-full opacity-25"
+        style={{ background: '#FF2D78', filter: 'blur(50px)' }} />
+      <div className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full opacity-15"
+        style={{ background: '#FF6B3D', filter: 'blur(50px)' }} />
+      <img src="/afterz-logo.svg" alt="Afterz" width="88" height="88" style={{ position: 'relative', zIndex: 1 }} />
     </div>
   )
 }
@@ -164,6 +148,7 @@ const PLACEHOLDERS = [
     description: 'Full website build + Google Business profile setup. Customers can now find them on Maps and book online.',
     services: ['Website Build', 'Google Business Setup'],
     url: '/demos/barbershop.html',
+    demo: true,
   },
   {
     _id: 'p2',
@@ -171,6 +156,7 @@ const PLACEHOLDERS = [
     description: 'New website with class schedule, an AI chatbot for FAQs, and a 30-day social content pack.',
     services: ['Website Build', 'AI Chatbot', 'Social Media Pack'],
     url: '/demos/fitness.html',
+    demo: true,
   },
   {
     _id: 'p3',
@@ -187,6 +173,7 @@ const PLACEHOLDERS = [
     description: 'Local restaurant site with an online menu, reservation request form, and full Google Business profile.',
     services: ['Website Build', 'Online Menu', 'Google Business'],
     url: '/demos/valley-grille.html',
+    demo: true,
   },
   {
     _id: 'p5',
@@ -194,6 +181,7 @@ const PLACEHOLDERS = [
     description: 'Clean site with a photo gallery of past jobs, instant quote request form, and seasonal service pages.',
     services: ['Website Build', 'Photo Gallery', 'Quote Form'],
     url: '/demos/summit-landscaping.html',
+    demo: true,
   },
   {
     _id: 'p6',
@@ -201,6 +189,7 @@ const PLACEHOLDERS = [
     description: 'Cleaning service site with online booking, service area map, and automated review request flow.',
     services: ['Website Build', 'Online Booking', 'Review System'],
     url: '/demos/kittitas-clean.html',
+    demo: true,
   },
 ]
 
@@ -238,7 +227,11 @@ function PortfolioInner() {
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        <p className="text-white/25 text-xs text-center mt-8 max-w-lg mx-auto leading-relaxed">
+          * El Rancho Barbershop, Peak Fitness, Valley Grille, Summit Landscaping, and Kittitas Clean Co. are mock demo sites I built as examples — not official client work. Afterzz is a real project.
+        </p>
+
+        <div className="text-center mt-8">
           <a href="#contact" className="btn-ghost px-8 py-3.5 text-sm inline-flex">
             Want to be next? Let's talk
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -282,7 +275,14 @@ function ProjectCard({ project, index, delay }) {
     >
       {/* Branded header */}
       {HeroComponent ? (
-        <HeroComponent />
+        <div className="relative">
+          <HeroComponent />
+          {project.demo && (
+            <span className="absolute top-3 left-3 text-[10px] font-semibold uppercase tracking-wider bg-black/50 text-white/60 px-2 py-0.5 rounded-full backdrop-blur-sm">
+              Mock Site
+            </span>
+          )}
+        </div>
       ) : (
         <div className="h-48 bg-gradient-to-br from-[#E8722A]/20 to-[#1E3329] relative overflow-hidden flex items-center justify-center">
           {project.imageUrl
