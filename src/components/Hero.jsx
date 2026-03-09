@@ -20,24 +20,24 @@ export default function Hero() {
               Ellensburg, WA
             </div>
 
-            {/* Headline — plain bold */}
+            {/* Headline */}
             <h1 className="h2 font-display font-bold tracking-tight mb-8" style={{ lineHeight: 1.0 }}>
               <span className="block text-5xl sm:text-6xl lg:text-[76px] text-[#1A1209]">
-                Websites for
+                I build what
               </span>
               <span className="block text-5xl sm:text-6xl lg:text-[76px] text-[#1A1209]">
-                Ellensburg's
+                agencies
               </span>
               <span className="block text-5xl sm:text-6xl lg:text-[76px] text-[#E8722A]">
-                small businesses.
+                overcharge for.
               </span>
             </h1>
 
             {/* Subtext */}
             <p className="h3 text-lg sm:text-xl text-[#1A1209]/55 leading-relaxed max-w-xl mb-10">
-              I'm Johnny. I get local businesses online fast — a real website, Google
-              listing, and whatever else you need to show up when customers search for
-              you. Flat rates, no agency markup, one person you can actually reach.
+              Websites, chatbots, and automations for local businesses — done in days,
+              not months. No agency markup, no account manager. Just me, and you've got
+              my actual number.
             </p>
 
             {/* CTAs */}
