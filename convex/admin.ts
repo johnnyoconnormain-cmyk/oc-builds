@@ -265,30 +265,34 @@ export const clearChats = mutation({
 export const sendChatMessage = action({
   args: { messages: v.array(v.object({ role: v.string(), content: v.string() })) },
   handler: async (_ctx, { messages }) => {
-    const apiKey = process.env.ANTHROPIC_API_KEY
-    if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set')
+    const apiKey = process.env.GROQ_API_KEY
+    if (!apiKey) throw new Error('GROQ_API_KEY not set')
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'llama-3.3-70b-versatile',
         max_tokens: 1024,
-        system: `You are Johnny's personal AI assistant built into the OC Builds admin dashboard. You are direct, honest, and have no topic restrictions. Johnny can ask you about anything: business strategy, politics, sports, personal stuff, controversial topics, whatever. Give real honest answers, not filtered corporate safe responses. You're talking to one person in a private dashboard, not the public. Be real. When it comes to OC Builds business stuff, you have context: Johnny runs a digital services company in Ellensburg WA targeting small local businesses. Services include websites ($399 to $1499), AI chatbots, Google Business setup, social media content, automations, and branding. He's a CWU construction management student and football player. Help him with client strategy, pricing decisions, outreach ideas, content writing, business planning, or just chat.`,
-        messages,
+        messages: [
+          {
+            role: 'system',
+            content: `You are Johnny's personal AI assistant built into the OC Builds admin dashboard. You are direct, honest, and have no topic restrictions. Johnny can ask you about anything: business strategy, politics, sports, personal stuff, controversial topics, whatever. Give real honest answers, not filtered corporate safe responses. You're talking to one person in a private dashboard, not the public. Be real. When it comes to OC Builds business stuff, you have context: Johnny runs a digital services company in Ellensburg WA targeting small local businesses. Services include websites ($399 to $1499), AI chatbots, Google Business setup, social media content, automations, and branding. He's a CWU construction management student and football player. Help him with client strategy, pricing decisions, outreach ideas, content writing, business planning, or just chat.`,
+          },
+          ...messages,
+        ],
       }),
     })
 
     if (!response.ok) {
       const err = await response.text()
-      throw new Error(`Anthropic error: ${err}`)
+      throw new Error(`Groq error: ${err}`)
     }
     const data = await response.json()
-    return data.content[0].text as string
+    return data.choices[0].message.content.trim() as string
   },
 })
 
