@@ -1161,7 +1161,7 @@ function AIChat() {
       const reply = await sendMessage({ messages: history })
       await saveChat({ role: 'assistant', content: reply })
     } catch {
-      await saveChat({ role: 'assistant', content: 'Something went wrong. Check that ANTHROPIC_API_KEY is set in Convex.' })
+      await saveChat({ role: 'assistant', content: "Something went wrong on my end. Try again in a sec — I'm Rody btw." })
     } finally {
       setLoading(false)
     }
@@ -1171,8 +1171,8 @@ function AIChat() {
     <div className="flex flex-col h-full" style={{ height: 'calc(100vh - 120px)' }}>
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#1a1a1a]">AI Assistant</h1>
-          <p className="text-gray-400 text-sm mt-1">Your personal business assistant. Ask anything.</p>
+          <h1 className="text-2xl font-bold text-[#1a1a1a]">Rodrick <span className="text-gray-400 font-normal text-lg">/ Rody</span></h1>
+          <p className="text-gray-400 text-sm mt-1">Your personal assistant. Ask him anything.</p>
         </div>
         <button onClick={() => clearChats()} className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500 font-semibold transition-colors border border-gray-200 px-3 py-2 rounded-xl">
           <Icon name="refresh" size={13} /> Clear Chat
