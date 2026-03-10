@@ -248,7 +248,7 @@ const PROJECT_TYPES = ['website', 'chatbot', 'google_business', 'branding', 'aut
 const PROJECT_STATUSES = ['lead', 'in_progress', 'review', 'completed', 'cancelled']
 
 function emptyProject() {
-  return { clientName: '', businessName: '', projectType: 'website', status: 'lead', startDate: '', deadline: '', price: '', notes: '', tasks: [] }
+  return { clientName: '', businessName: '', projectType: 'website', status: 'lead', startDate: '', deadline: '', price: '', notes: '', websiteUrl: '', tasks: [] }
 }
 
 function ProjectForm({ initial, onSave, onClose }) {
@@ -301,6 +301,9 @@ function ProjectForm({ initial, onSave, onClose }) {
       <Field label="Price ($)">
         <input className={inp} type="number" value={form.price} onChange={e => f('price', e.target.value)} placeholder="499" />
       </Field>
+      <Field label="Website URL">
+        <input className={inp} value={form.websiteUrl} onChange={e => f('websiteUrl', e.target.value)} placeholder="https://clientsite.com" />
+      </Field>
       <Field label="Notes">
         <textarea className={`${inp} resize-none`} rows={3} value={form.notes} onChange={e => f('notes', e.target.value)} placeholder="Any notes about this project..." />
       </Field>
@@ -332,6 +335,147 @@ function ProjectForm({ initial, onSave, onClose }) {
   )
 }
 
+function ProjectWorkspace({ project, onClose, onUpdate }) {
+  const update = useMutation(api.admin.updateAdminProject)
+  const [tasks, setTasks] = useState(project.tasks)
+  const [notes, setNotes] = useState(project.notes || '')
+  const [taskInput, setTaskInput] = useState('')
+  const [iframeError, setIframeError] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  function toggleTask(i) {
+    const t = [...tasks]
+    t[i] = { ...t[i], done: !t[i].done }
+    setTasks(t)
+  }
+  function addTask() {
+    if (!taskInput.trim()) return
+    setTasks(prev => [...prev, { text: taskInput.trim(), done: false }])
+    setTaskInput('')
+  }
+  function removeTask(i) { setTasks(prev => prev.filter((_, idx) => idx !== i)) }
+
+  async function save() {
+    await update({ id: project._id, tasks, notes })
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+    onUpdate()
+  }
+
+  const url = project.websiteUrl
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3">
+      <div className="bg-[#F5EDD8] rounded-3xl shadow-2xl w-full max-w-6xl h-[90vh] flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div>
+              <div className="font-bold text-[#1a1a1a]">{project.businessName}</div>
+              <div className="text-xs text-gray-400">{project.clientName} · {project.projectType.replace(/_/g, ' ')}</div>
+            </div>
+            <Badge label={project.status} />
+          </div>
+          <div className="flex items-center gap-3">
+            {url && (
+              <a href={url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-xs font-bold text-[#E8722A] border border-[#E8722A]/30 px-3 py-1.5 rounded-lg hover:bg-[#E8722A]/10 transition-colors">
+                <Icon name="arrow" size={12} /> Open Site
+              </a>
+            )}
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><Icon name="x" size={20} /></button>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Left — project workspace */}
+          <div className="w-80 shrink-0 bg-white border-r border-gray-100 flex flex-col overflow-y-auto p-5 space-y-5">
+            {/* Tasks */}
+            <div>
+              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Tasks</div>
+              <div className="space-y-1.5 mb-2">
+                {tasks.map((t, i) => (
+                  <div key={i} className="flex items-center gap-2 group">
+                    <button onClick={() => toggleTask(i)} className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${t.done ? 'bg-[#E8722A] border-[#E8722A]' : 'border-gray-300'}`}>
+                      {t.done && <Icon name="check" size={10} />}
+                    </button>
+                    <span className={`text-sm flex-1 ${t.done ? 'line-through text-gray-400' : 'text-[#1a1a1a]'}`}>{t.text}</span>
+                    <button onClick={() => removeTask(i)} className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 transition-all"><Icon name="x" size={12} /></button>
+                  </div>
+                ))}
+              </div>
+              {tasks.length > 0 && (
+                <div className="mb-3">
+                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#E8722A] rounded-full transition-all" style={{ width: `${(tasks.filter(t => t.done).length / tasks.length) * 100}%` }} />
+                  </div>
+                  <div className="text-xs text-gray-400 mt-1">{tasks.filter(t => t.done).length}/{tasks.length} done</div>
+                </div>
+              )}
+              <div className="flex gap-2">
+                <input className={`${inp} flex-1 text-xs py-2`} value={taskInput} onChange={e => setTaskInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addTask()} placeholder="Add task..." />
+                <button onClick={addTask} className="bg-[#E8722A] text-white px-2.5 rounded-lg hover:bg-[#d4651f]"><Icon name="plus" size={14} /></button>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div>
+              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Notes</div>
+              <textarea
+                className={`${inp} resize-none text-sm`}
+                rows={6}
+                value={notes}
+                onChange={e => setNotes(e.target.value)}
+                placeholder="Notes, ideas, client feedback..."
+              />
+            </div>
+
+            {/* Project info */}
+            <div className="text-xs text-gray-400 space-y-1.5 border-t border-gray-100 pt-4">
+              {project.deadline && <div>Deadline: <span className="font-semibold text-gray-600">{project.deadline}</span></div>}
+              {project.price && <div>Price: <span className="font-bold text-green-600">${project.price.toLocaleString()}</span></div>}
+              {project.startDate && <div>Started: <span className="font-semibold text-gray-600">{project.startDate}</span></div>}
+            </div>
+
+            <button onClick={save} className={`w-full font-bold py-2.5 rounded-xl text-sm transition-colors ${saved ? 'bg-green-500 text-white' : 'bg-[#E8722A] hover:bg-[#d4651f] text-white'}`}>
+              {saved ? '✓ Saved' : 'Save Changes'}
+            </button>
+          </div>
+
+          {/* Right — site preview */}
+          <div className="flex-1 bg-gray-50 flex flex-col overflow-hidden">
+            {!url ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-gray-400 gap-3">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                <p className="text-sm font-medium">No website URL set</p>
+                <p className="text-xs">Edit this project to add one</p>
+              </div>
+            ) : iframeError ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-gray-400 gap-3 p-8 text-center">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p className="text-sm font-medium">Can't preview this site</p>
+                <p className="text-xs max-w-xs">Most sites block being loaded in an iframe. Open it directly instead.</p>
+                <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm font-bold text-[#E8722A] hover:underline mt-2">
+                  <Icon name="arrow" size={14} /> Open {url}
+                </a>
+              </div>
+            ) : (
+              <iframe
+                src={url}
+                className="flex-1 w-full border-0"
+                onError={() => setIframeError(true)}
+                title={project.businessName}
+                sandbox="allow-scripts allow-same-origin allow-forms"
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function Projects() {
   const projects = useQuery(api.admin.listAdminProjects)
   const create = useMutation(api.admin.createAdminProject)
@@ -339,6 +483,7 @@ function Projects() {
   const del = useMutation(api.admin.deleteAdminProject)
 
   const [modal, setModal] = useState(null) // null | { mode: 'add' } | { mode: 'edit', project }
+  const [workspace, setWorkspace] = useState(null)
   const [filter, setFilter] = useState('all')
 
   const filtered = projects?.filter(p => filter === 'all' || p.status === filter) ?? []
@@ -403,6 +548,9 @@ function Projects() {
                 </div>
               )}
               <div className="flex gap-2 pt-2 border-t border-gray-50">
+                <button onClick={() => setWorkspace(p)} className="flex items-center gap-1.5 text-xs text-[#E8722A] hover:text-[#d4651f] font-bold transition-colors">
+                  <Icon name="arrow" size={13} /> Open
+                </button>
                 <button onClick={() => setModal({ mode: 'edit', project: p })} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-[#E8722A] font-semibold transition-colors">
                   <Icon name="edit" size={13} /> Edit
                 </button>
@@ -413,6 +561,10 @@ function Projects() {
             </div>
           ))}
         </div>
+      )}
+
+      {workspace && (
+        <ProjectWorkspace project={workspace} onClose={() => setWorkspace(null)} onUpdate={() => {}} />
       )}
 
       {modal && (
@@ -427,6 +579,7 @@ function Projects() {
               deadline: modal.project.deadline || '',
               price: modal.project.price ?? '',
               notes: modal.project.notes || '',
+              websiteUrl: modal.project.websiteUrl || '',
               tasks: modal.project.tasks,
             }}
             onSave={handleSave}
