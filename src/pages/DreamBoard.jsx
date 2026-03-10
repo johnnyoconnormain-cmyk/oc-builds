@@ -82,14 +82,34 @@ const LAYOUTS = [
 ]
 
 const SECTION_OPTIONS = [
-  { key: 'services', label: 'Services', desc: 'Show what you offer', locked: true },
+  { key: 'services', label: 'Services', desc: 'Show what you offer' },
   { key: 'about', label: 'About Us', desc: 'Tell your story' },
   { key: 'testimonials', label: 'Reviews', desc: 'Customer testimonials' },
   { key: 'gallery', label: 'Photo Gallery', desc: 'Show your work' },
   { key: 'faq', label: 'FAQ', desc: 'Answer common questions' },
   { key: 'pricing', label: 'Pricing', desc: 'Show your rates' },
-  { key: 'contact', label: 'Contact Form', desc: 'Let people reach you', locked: true },
+  { key: 'contact', label: 'Contact Form', desc: 'Let people reach you' },
 ]
+
+const INDUSTRY_EXTRA_SECTIONS = {
+  restaurant: [
+    { key: 'menu', label: 'Online Menu', desc: 'Show your food and drinks with prices' },
+    { key: 'reservations', label: 'Reservations', desc: 'Let guests book a table online' },
+  ],
+  barbershop: [
+    { key: 'booking', label: 'Online Booking', desc: 'Let customers book a cut' },
+  ],
+  salon: [
+    { key: 'booking', label: 'Online Booking', desc: 'Let clients schedule appointments' },
+  ],
+  cleaning: [
+    { key: 'booking', label: 'Online Booking', desc: 'Let clients book a clean' },
+  ],
+  fitness: [
+    { key: 'schedule', label: 'Class Schedule', desc: 'Show your weekly class times' },
+    { key: 'booking', label: 'Online Booking', desc: 'Let members book sessions' },
+  ],
+}
 
 const INDUSTRY_SERVICES = {
   'auto repair': ['Oil Change & Lube', 'Brake Service', 'Engine Diagnostics', 'Tire Rotation'],
@@ -129,6 +149,10 @@ function generatePreviewHTML(form) {
     if (sel.includes('gallery')) out += `<section style="padding:60px 48px"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">Our Work</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 24px">Portfolio</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">${[...Array(6)].map((_,i)=>`<div style="aspect-ratio:1;background:${cardBg};border:${cardBorder};border-radius:10px;display:flex;align-items:center;justify-content:center;color:${mutedC};font-size:12px">Photo ${i+1}</div>`).join('')}</div></section>`
     if (sel.includes('pricing')) out += `<section style="padding:60px 48px;background:${bgAlt}"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">Rates</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 28px">Simple Pricing</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">${[['Basic','$99'],['Standard','$199'],['Premium','$399']].map(([n,p],i)=>`<div style="background:${i===1?accent+'25':cardBg};border:${i===1?`2px solid ${accent}`:cardBorder};border-radius:12px;padding:20px;text-align:center;position:relative">${i===1?`<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:${accent};color:#fff;font-size:9px;font-weight:700;padding:2px 10px;border-radius:50px">POPULAR</div>`:''}<div style="font-size:13px;font-weight:700;color:${textC};margin-bottom:4px">${n}</div><div style="font-size:24px;font-weight:900;color:${i===1?accent:textC}">${p}</div></div>`).join('')}</div></section>`
     if (sel.includes('contact')) out += `<section style="padding:60px 48px;text-align:center"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">Get In Touch</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 24px">Ready to get started?</h2><div style="max-width:440px;margin:0 auto;background:${cardBg};border:${cardBorder};border-radius:16px;padding:32px"><input placeholder="Your name" style="width:100%;background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};margin-bottom:8px;outline:none;display:block"/><input placeholder="Phone or email" style="width:100%;background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};margin-bottom:8px;outline:none;display:block"/><textarea rows="3" placeholder="Tell us what you need..." style="width:100%;background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};margin-bottom:10px;outline:none;resize:none;display:block"></textarea><button style="width:100%;background:${accent};color:#fff;border:none;padding:12px;border-radius:${btnR};font-size:14px;font-weight:700;cursor:pointer">${cta}</button></div></section>`
+    if (sel.includes('menu')) out += `<section style="padding:60px 48px;background:${bgAlt}"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">What We Serve</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 32px">Our Menu</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">${[['Starters',[['Caesar Salad','$12'],['Soup of the Day','$8'],['Bruschetta','$10'],['Shrimp Cocktail','$14']]],['Mains',[['Grilled Salmon','$28'],['Ribeye Steak','$36'],['Pasta Primavera','$18'],['Roasted Chicken','$22']]]].map(([cat,items])=>`<div><div style="font-size:12px;font-weight:800;color:${accent};letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid ${textC}25">${cat}</div>${items.map(([name,price])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid ${textC}08"><span style="font-size:14px;color:${textC}">${name}</span><span style="font-size:14px;color:${accent};font-weight:700">${price}</span></div>`).join('')}</div>`).join('')}</div></section>`
+    if (sel.includes('reservations')) out += `<section style="padding:60px 48px;text-align:center"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">Book a Table</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 24px">Make a Reservation</h2><div style="max-width:480px;margin:0 auto;background:${cardBg};border:${cardBorder};border-radius:16px;padding:32px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><input placeholder="Your name" style="background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};outline:none;width:100%"/><input placeholder="Phone" style="background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};outline:none;width:100%"/></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><input type="date" style="background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};outline:none;width:100%"/><select style="background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};outline:none;width:100%"><option>2 guests</option><option>4 guests</option><option>6 guests</option><option>8+ guests</option></select></div><button style="width:100%;background:${accent};color:#fff;border:none;padding:12px;border-radius:${btnR};font-size:14px;font-weight:700;cursor:pointer">Reserve a Table</button></div></section>`
+    if (sel.includes('booking')) { const bkSvcs=({'barbershop':['Haircut','Beard Trim','Hot Towel Shave',"Kids' Cut"],'salon':['Cut & Style','Color','Highlights','Blowout'],'cleaning':['Standard Clean','Deep Clean','Move-In/Out','Office Clean'],'fitness':['Personal Training','Group Class','Nutrition Consult','Open Gym']}[industryKey])||['Consultation','Standard Service','Premium Package','Custom']; out += `<section style="padding:60px 48px;text-align:center"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">Schedule</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 24px">Book an Appointment</h2><div style="max-width:440px;margin:0 auto;background:${cardBg};border:${cardBorder};border-radius:16px;padding:32px"><input placeholder="Your name" style="width:100%;background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};margin-bottom:10px;outline:none;display:block"/><input placeholder="Phone number" style="width:100%;background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};margin-bottom:10px;outline:none;display:block"/><input type="date" style="width:100%;background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};margin-bottom:10px;outline:none;display:block"/><select style="width:100%;background:${bgAlt};border:${borderCol};border-radius:8px;padding:10px 12px;color:${textC};font-family:${ff};margin-bottom:10px;outline:none;display:block">${bkSvcs.map(s=>`<option>${s}</option>`).join('')}</select><button style="width:100%;background:${accent};color:#fff;border:none;padding:12px;border-radius:${btnR};font-size:14px;font-weight:700;cursor:pointer">Book Now</button></div></section>`}
+    if (sel.includes('schedule')) out += `<section style="padding:60px 48px;background:${bgAlt}"><p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${accent};margin:0 0 8px;font-weight:700">Classes</p><h2 style="font-size:24px;font-weight:800;color:${textC};margin:0 0 28px">Weekly Schedule</h2><div style="display:grid;gap:2px">${[['Mon','6:00 AM','HIIT Bootcamp','45 min'],['Tue','7:00 AM','Yoga Flow','60 min'],['Wed','6:00 AM','Strength Training','50 min'],['Thu','5:30 PM','Cardio Blast','40 min'],['Fri','6:00 AM','CrossFit','55 min'],['Sat','9:00 AM','Open Gym','All day']].map(([day,time,name,dur])=>`<div style="display:grid;grid-template-columns:80px 90px 1fr 60px;align-items:center;padding:14px 16px;background:${cardBg};border-bottom:1px solid ${textC}10;gap:12px"><span style="font-size:13px;font-weight:700;color:${textC}">${day}</span><span style="font-size:12px;color:${accent};font-weight:700">${time}</span><span style="font-size:14px;color:${textC}">${name}</span><span style="font-size:11px;color:${mutedC}">${dur}</span></div>`).join('')}</div></section>`
     return out
   }
 
@@ -778,18 +802,17 @@ Tagline: "${form.tagline}"`,
             <div>
               <label className="block text-white/60 text-sm font-semibold mb-3">Sections to include</label>
               <div className="grid sm:grid-cols-2 gap-2.5">
-                {SECTION_OPTIONS.map(s => {
+                {[...SECTION_OPTIONS, ...(INDUSTRY_EXTRA_SECTIONS[form.industry] || [])].map(s => {
                   const checked = form.sections.includes(s.key)
                   return (
                     <button
                       key={s.key}
-                      onClick={() => !s.locked && toggleSection(s.key)}
-                      disabled={s.locked}
+                      onClick={() => toggleSection(s.key)}
                       className={`flex items-center gap-3 p-4 rounded-xl border text-left transition-all duration-150 ${
                         checked
                           ? 'bg-[#E8722A]/10 border-[#E8722A]/50'
                           : 'bg-white/[0.03] border-white/[0.07] hover:border-white/15'
-                      } ${s.locked ? 'opacity-70' : ''}`}
+                      }`}
                     >
                       <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
                         checked ? 'bg-[#E8722A] border-[#E8722A]' : 'border-white/25'
@@ -802,7 +825,7 @@ Tagline: "${form.tagline}"`,
                       </div>
                       <div>
                         <div className={`text-sm font-semibold ${checked ? 'text-white' : 'text-white/55'}`}>
-                          {s.label} {s.locked && <span className="text-white/30 font-normal text-xs">(required)</span>}
+                          {s.label}
                         </div>
                         <div className="text-white/30 text-xs">{s.desc}</div>
                       </div>
