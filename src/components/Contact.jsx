@@ -70,7 +70,7 @@ export default function Contact() {
               Fill this out and I'll get back to you within one business day with a free audit of your online presence and a clear recommendation. No fluff, no upsell.
             </p>
 
-            <div className="space-y-4">
+            <div className="space-y-4 mb-8">
               {[
                 { icon: '⚡', text: 'Free, no-obligation audit' },
                 { icon: '📞', text: 'Response within 24 hours' },
@@ -82,6 +82,20 @@ export default function Contact() {
                 </div>
               ))}
             </div>
+
+            <a
+              href="https://instagram.com/ocbuilds_"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 text-[#1A1209]/50 hover:text-[#E8722A] text-sm font-semibold transition-colors"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+              </svg>
+              @ocbuilds_
+            </a>
           </div>
 
           {/* Right: form */}
