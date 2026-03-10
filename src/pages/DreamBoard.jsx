@@ -390,6 +390,7 @@ export default function DreamBoard() {
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [loadingTagline, setLoadingTagline] = useState(false)
+  const [loadingCta, setLoadingCta] = useState(false)
 
   const [form, setForm] = useState({
     bizName: '',
@@ -404,6 +405,7 @@ export default function DreamBoard() {
   })
 
   const generateTagline = useAction(api.dreamboards.generateTagline)
+  const generateCta = useAction(api.dreamboards.generateCta)
 
   function set(field, val) {
     setForm(f => ({ ...f, [field]: val }))
@@ -441,6 +443,19 @@ export default function DreamBoard() {
       set('tagline', 'Quality work. Every time.')
     } finally {
       setLoadingTagline(false)
+    }
+  }
+
+  async function handleGenerateCta() {
+    if (!form.bizName || !form.industry) return
+    setLoadingCta(true)
+    try {
+      const result = await generateCta({ bizName: form.bizName, industry: form.industry })
+      set('ctaText', result)
+    } catch {
+      set('ctaText', 'Get a Free Quote')
+    } finally {
+      setLoadingCta(false)
     }
   }
 
@@ -837,13 +852,26 @@ Tagline: "${form.tagline}"`,
 
             <div className="mt-6">
               <label className="block text-white/60 text-sm font-semibold mb-2">CTA button text <span className="text-white/25 font-normal">(the main button on your site)</span></label>
-              <input
-                type="text"
-                value={form.ctaText}
-                onChange={e => set('ctaText', e.target.value)}
-                placeholder="Get a Free Quote"
-                className="w-full bg-white/[0.05] border border-white/[0.1] focus:border-[#E8722A]/70 rounded-xl px-4 py-3.5 text-white placeholder-white/20 text-sm outline-none transition-colors"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={form.ctaText}
+                  onChange={e => set('ctaText', e.target.value)}
+                  placeholder="Get a Free Quote"
+                  className="w-full bg-white/[0.05] border border-white/[0.1] focus:border-[#E8722A]/70 rounded-xl px-4 py-3.5 text-white placeholder-white/20 text-sm outline-none pr-40 transition-colors"
+                />
+                <button
+                  onClick={handleGenerateCta}
+                  disabled={loadingCta || !form.bizName}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#E8722A] hover:bg-[#d4651f] disabled:opacity-40 text-white text-xs font-bold px-3.5 py-2.5 rounded-lg flex items-center gap-1.5 transition-colors"
+                >
+                  {loadingCta ? (
+                    <><svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg> Writing...</>
+                  ) : (
+                    <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg> Write it for me</>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         )}
