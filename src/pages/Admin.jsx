@@ -1,0 +1,1274 @@
+import { useState, useRef, useEffect } from 'react'
+import { useQuery, useMutation, useAction } from 'convex/react'
+import { api } from '../../convex/_generated/api'
+
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'ocbuilds'
+
+// ─────────────────────────────────────────
+// Icons (inline lucide-style SVGs)
+// ─────────────────────────────────────────
+function Icon({ name, size = 18 }) {
+  const paths = {
+    home: <><rect x="3" y="9" width="18" height="13" rx="2"/><path d="M3 9L12 3l9 6"/></>,
+    folder: <><path d="M2 7a2 2 0 012-2h4l2 3h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2z"/></>,
+    inbox: <><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></>,
+    image: <><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></>,
+    dollar: <><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></>,
+    calendar: <><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>,
+    message: <><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></>,
+    settings: <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></>,
+    plus: <><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>,
+    x: <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>,
+    check: <><polyline points="20 6 9 17 4 12"/></>,
+    edit: <><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></>,
+    trash: <><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></>,
+    logout: <><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>,
+    send: <><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></>,
+    refresh: <><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></>,
+    chevron: <><polyline points="6 9 12 15 18 9"/></>,
+    menu: <><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></>,
+    arrow: <><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></>,
+  }
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      {paths[name]}
+    </svg>
+  )
+}
+
+// ─────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────
+function fmt(ts) {
+  if (!ts) return '—'
+  return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
+function fmtTime(ts) {
+  if (!ts) return '—'
+  return new Date(ts).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+}
+function statusColor(s) {
+  const map = {
+    new: 'bg-blue-100 text-blue-700',
+    contacted: 'bg-yellow-100 text-yellow-700',
+    proposal_sent: 'bg-purple-100 text-purple-700',
+    converted: 'bg-green-100 text-green-700',
+    lost: 'bg-gray-100 text-gray-500',
+    lead: 'bg-blue-100 text-blue-700',
+    in_progress: 'bg-orange-100 text-orange-700',
+    review: 'bg-purple-100 text-purple-700',
+    completed: 'bg-green-100 text-green-700',
+    cancelled: 'bg-red-100 text-red-600',
+    draft: 'bg-gray-100 text-gray-500',
+    sent: 'bg-blue-100 text-blue-700',
+    paid: 'bg-green-100 text-green-700',
+    overdue: 'bg-red-100 text-red-600',
+    scheduled: 'bg-yellow-100 text-yellow-700',
+    posted: 'bg-green-100 text-green-700',
+  }
+  return map[s] || 'bg-gray-100 text-gray-500'
+}
+function Badge({ label }) {
+  return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${statusColor(label)}`}>{label?.replace(/_/g, ' ')}</span>
+}
+
+// ─────────────────────────────────────────
+// Modal wrapper
+// ─────────────────────────────────────────
+function Modal({ title, onClose, children }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h3 className="font-bold text-[#1a1a1a] text-lg">{title}</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors"><Icon name="x" size={20} /></button>
+        </div>
+        <div className="p-6">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// Form field helpers
+// ─────────────────────────────────────────
+function Field({ label, children }) {
+  return (
+    <div>
+      <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">{label}</label>
+      {children}
+    </div>
+  )
+}
+const inp = 'w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#E8722A] transition-colors bg-white'
+const sel = `${inp} cursor-pointer`
+
+// ─────────────────────────────────────────
+// Password Gate
+// ─────────────────────────────────────────
+function PasswordGate({ onUnlock }) {
+  const [pw, setPw] = useState('')
+  const [err, setErr] = useState(false)
+
+  function attempt() {
+    if (pw === ADMIN_PASSWORD) {
+      sessionStorage.setItem('oc_admin', '1')
+      onUnlock()
+    } else {
+      setErr(true)
+      setPw('')
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-[#F5EDD8] flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-sm">
+        <div className="w-12 h-12 bg-[#E8722A] rounded-2xl flex items-center justify-center mb-6">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+        </div>
+        <h1 className="font-bold text-2xl text-[#1a1a1a] mb-1">OC Builds Admin</h1>
+        <p className="text-gray-400 text-sm mb-6">Enter your password to continue.</p>
+        <input
+          type="password"
+          value={pw}
+          onChange={e => { setPw(e.target.value); setErr(false) }}
+          onKeyDown={e => e.key === 'Enter' && attempt()}
+          placeholder="Password"
+          className={`${inp} mb-3 ${err ? 'border-red-400' : ''}`}
+          autoFocus
+        />
+        {err && <p className="text-red-500 text-xs mb-3">Wrong password.</p>}
+        <button onClick={attempt} className="w-full bg-[#E8722A] hover:bg-[#d4651f] text-white font-bold py-3 rounded-xl text-sm transition-colors">
+          Enter Dashboard
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// Overview
+// ─────────────────────────────────────────
+function Overview({ setSection }) {
+  const stats = useQuery(api.admin.getOverviewStats)
+
+  if (!stats) return <div className="text-gray-400 text-sm">Loading…</div>
+
+  const quickActions = [
+    { label: 'Add Project', icon: 'folder', section: 'projects' },
+    { label: 'View Leads', icon: 'inbox', section: 'leads' },
+    { label: 'New Invoice', icon: 'dollar', section: 'invoices' },
+  ]
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-bold text-[#1a1a1a]">Overview</h1>
+        <p className="text-gray-400 text-sm mt-1">What's going on with OC Builds.</p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {[
+          { label: 'Active Projects', value: stats.activeProjects, color: 'text-[#E8722A]' },
+          { label: 'Leads This Month', value: stats.leadsThisMonth, color: 'text-blue-600' },
+          { label: 'Revenue This Month', value: `$${stats.revenueThisMonth.toLocaleString()}`, color: 'text-green-600' },
+        ].map(s => (
+          <div key={s.label} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+            <div className={`text-3xl font-bold ${s.color} mb-1`}>{s.value}</div>
+            <div className="text-gray-400 text-sm font-medium">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick actions */}
+      <div>
+        <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Quick Actions</h2>
+        <div className="flex flex-wrap gap-3">
+          {quickActions.map(a => (
+            <button
+              key={a.label}
+              onClick={() => setSection(a.section)}
+              className="flex items-center gap-2 bg-white border border-gray-200 hover:border-[#E8722A]/50 hover:bg-[#E8722A]/5 text-[#1a1a1a] font-semibold text-sm px-4 py-2.5 rounded-xl transition-all"
+            >
+              <span className="text-[#E8722A]"><Icon name={a.icon} size={15} /></span>
+              {a.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent activity */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+          <h2 className="font-bold text-[#1a1a1a] mb-4">Recent Contact Leads</h2>
+          {stats.recentSubmissions.length === 0
+            ? <p className="text-gray-400 text-sm">No submissions yet.</p>
+            : <div className="space-y-3">
+                {stats.recentSubmissions.map(s => (
+                  <div key={s._id} className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="font-semibold text-sm text-[#1a1a1a]">{s.name}</div>
+                      <div className="text-xs text-gray-400">{s.business} · {fmtTime(s.createdAt)}</div>
+                    </div>
+                    <Badge label={s.leadStatus || 'new'} />
+                  </div>
+                ))}
+              </div>
+          }
+        </div>
+        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+          <h2 className="font-bold text-[#1a1a1a] mb-4">Recent Dream Board Leads</h2>
+          {stats.recentDreamboards.length === 0
+            ? <p className="text-gray-400 text-sm">No dream board entries yet.</p>
+            : <div className="space-y-3">
+                {stats.recentDreamboards.map(d => (
+                  <div key={d._id} className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="font-semibold text-sm text-[#1a1a1a]">{d.bizName}</div>
+                      <div className="text-xs text-gray-400">{d.industry} · {fmtTime(d.createdAt)}</div>
+                    </div>
+                    <Badge label={d.leadStatus || 'new'} />
+                  </div>
+                ))}
+              </div>
+          }
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// Projects
+// ─────────────────────────────────────────
+const PROJECT_TYPES = ['website', 'chatbot', 'google_business', 'branding', 'automation', 'content', 'full_stack']
+const PROJECT_STATUSES = ['lead', 'in_progress', 'review', 'completed', 'cancelled']
+
+function emptyProject() {
+  return { clientName: '', businessName: '', projectType: 'website', status: 'lead', startDate: '', deadline: '', price: '', notes: '', tasks: [] }
+}
+
+function ProjectForm({ initial, onSave, onClose }) {
+  const [form, setForm] = useState(initial)
+  const [taskInput, setTaskInput] = useState('')
+
+  function f(field, val) { setForm(p => ({ ...p, [field]: val })) }
+  function addTask() {
+    if (!taskInput.trim()) return
+    f('tasks', [...form.tasks, { text: taskInput.trim(), done: false }])
+    setTaskInput('')
+  }
+  function toggleTask(i) {
+    const t = [...form.tasks]
+    t[i] = { ...t[i], done: !t[i].done }
+    f('tasks', t)
+  }
+  function removeTask(i) { f('tasks', form.tasks.filter((_, idx) => idx !== i)) }
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Client Name">
+          <input className={inp} value={form.clientName} onChange={e => f('clientName', e.target.value)} placeholder="Johnny Smith" />
+        </Field>
+        <Field label="Business Name">
+          <input className={inp} value={form.businessName} onChange={e => f('businessName', e.target.value)} placeholder="Smith Plumbing" />
+        </Field>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Project Type">
+          <select className={sel} value={form.projectType} onChange={e => f('projectType', e.target.value)}>
+            {PROJECT_TYPES.map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}
+          </select>
+        </Field>
+        <Field label="Status">
+          <select className={sel} value={form.status} onChange={e => f('status', e.target.value)}>
+            {PROJECT_STATUSES.map(s => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
+          </select>
+        </Field>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Start Date">
+          <input className={inp} type="date" value={form.startDate} onChange={e => f('startDate', e.target.value)} />
+        </Field>
+        <Field label="Deadline">
+          <input className={inp} type="date" value={form.deadline} onChange={e => f('deadline', e.target.value)} />
+        </Field>
+      </div>
+      <Field label="Price ($)">
+        <input className={inp} type="number" value={form.price} onChange={e => f('price', e.target.value)} placeholder="499" />
+      </Field>
+      <Field label="Notes">
+        <textarea className={`${inp} resize-none`} rows={3} value={form.notes} onChange={e => f('notes', e.target.value)} placeholder="Any notes about this project..." />
+      </Field>
+
+      {/* Tasks */}
+      <Field label="Task Checklist">
+        <div className="space-y-1.5 mb-2">
+          {form.tasks.map((t, i) => (
+            <div key={i} className="flex items-center gap-2 group">
+              <button onClick={() => toggleTask(i)} className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${t.done ? 'bg-[#E8722A] border-[#E8722A]' : 'border-gray-300'}`}>
+                {t.done && <Icon name="check" size={10} />}
+              </button>
+              <span className={`text-sm flex-1 ${t.done ? 'line-through text-gray-400' : 'text-[#1a1a1a]'}`}>{t.text}</span>
+              <button onClick={() => removeTask(i)} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all"><Icon name="x" size={14} /></button>
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <input className={`${inp} flex-1`} value={taskInput} onChange={e => setTaskInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addTask()} placeholder="Add a task..." />
+          <button onClick={addTask} className="bg-[#E8722A] text-white px-3 rounded-xl hover:bg-[#d4651f] transition-colors"><Icon name="plus" size={16} /></button>
+        </div>
+      </Field>
+
+      <div className="flex gap-3 pt-2">
+        <button onClick={onClose} className="flex-1 border border-gray-200 text-gray-600 font-semibold py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-colors">Cancel</button>
+        <button onClick={() => onSave(form)} className="flex-1 bg-[#E8722A] text-white font-bold py-2.5 rounded-xl text-sm hover:bg-[#d4651f] transition-colors">Save Project</button>
+      </div>
+    </div>
+  )
+}
+
+function Projects() {
+  const projects = useQuery(api.admin.listAdminProjects)
+  const create = useMutation(api.admin.createAdminProject)
+  const update = useMutation(api.admin.updateAdminProject)
+  const del = useMutation(api.admin.deleteAdminProject)
+
+  const [modal, setModal] = useState(null) // null | { mode: 'add' } | { mode: 'edit', project }
+  const [filter, setFilter] = useState('all')
+
+  const filtered = projects?.filter(p => filter === 'all' || p.status === filter) ?? []
+
+  async function handleSave(form) {
+    const data = { ...form, price: form.price ? Number(form.price) : undefined, tasks: form.tasks }
+    if (modal.mode === 'add') {
+      await create(data)
+    } else {
+      await update({ id: modal.project._id, ...data })
+    }
+    setModal(null)
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1a1a1a]">Projects</h1>
+          <p className="text-gray-400 text-sm mt-1">All client work in one place.</p>
+        </div>
+        <button onClick={() => setModal({ mode: 'add' })} className="flex items-center gap-2 bg-[#E8722A] text-white font-bold text-sm px-4 py-2.5 rounded-xl hover:bg-[#d4651f] transition-colors">
+          <Icon name="plus" size={16} /> Add Project
+        </button>
+      </div>
+
+      {/* Filter */}
+      <div className="flex flex-wrap gap-2">
+        {['all', ...PROJECT_STATUSES].map(s => (
+          <button key={s} onClick={() => setFilter(s)}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${filter === s ? 'bg-[#E8722A] text-white' : 'bg-white border border-gray-200 text-gray-500 hover:border-[#E8722A]/40'}`}>
+            {s.replace(/_/g, ' ')}
+          </button>
+        ))}
+      </div>
+
+      {/* Cards */}
+      {!projects ? <div className="text-gray-400 text-sm">Loading…</div> : filtered.length === 0 ? (
+        <div className="text-center py-16 text-gray-400">No projects yet. Add your first one.</div>
+      ) : (
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          {filtered.map(p => (
+            <div key={p._id} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <div className="font-bold text-[#1a1a1a]">{p.businessName}</div>
+                  <div className="text-xs text-gray-400 mt-0.5">{p.clientName}</div>
+                </div>
+                <Badge label={p.status} />
+              </div>
+              <div className="text-xs text-gray-400 mb-3 space-y-1">
+                <div>Type: <span className="text-gray-600 font-medium">{p.projectType.replace(/_/g, ' ')}</span></div>
+                {p.deadline && <div>Deadline: <span className="text-gray-600 font-medium">{p.deadline}</span></div>}
+                {p.price && <div>Price: <span className="text-green-600 font-bold">${p.price.toLocaleString()}</span></div>}
+              </div>
+              {p.tasks.length > 0 && (
+                <div className="mb-3">
+                  <div className="text-xs text-gray-400 mb-1">{p.tasks.filter(t => t.done).length}/{p.tasks.length} tasks done</div>
+                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#E8722A] rounded-full transition-all" style={{ width: `${(p.tasks.filter(t => t.done).length / p.tasks.length) * 100}%` }} />
+                  </div>
+                </div>
+              )}
+              <div className="flex gap-2 pt-2 border-t border-gray-50">
+                <button onClick={() => setModal({ mode: 'edit', project: p })} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-[#E8722A] font-semibold transition-colors">
+                  <Icon name="edit" size={13} /> Edit
+                </button>
+                <button onClick={() => del({ id: p._id })} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-red-500 font-semibold transition-colors ml-auto">
+                  <Icon name="trash" size={13} /> Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {modal && (
+        <Modal title={modal.mode === 'add' ? 'New Project' : 'Edit Project'} onClose={() => setModal(null)}>
+          <ProjectForm
+            initial={modal.mode === 'add' ? emptyProject() : {
+              clientName: modal.project.clientName,
+              businessName: modal.project.businessName,
+              projectType: modal.project.projectType,
+              status: modal.project.status,
+              startDate: modal.project.startDate || '',
+              deadline: modal.project.deadline || '',
+              price: modal.project.price ?? '',
+              notes: modal.project.notes || '',
+              tasks: modal.project.tasks,
+            }}
+            onSave={handleSave}
+            onClose={() => setModal(null)}
+          />
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// Leads
+// ─────────────────────────────────────────
+const LEAD_STATUSES = ['new', 'contacted', 'proposal_sent', 'converted', 'lost']
+
+function Leads() {
+  const submissions = useQuery(api.submissions.list)
+  const dreamboards = useQuery(api.admin.listDreamboards)
+  const updateSub = useMutation(api.admin.updateSubmissionStatus)
+  const updateBoard = useMutation(api.admin.updateDreamboardStatus)
+  const createProject = useMutation(api.admin.createAdminProject)
+
+  const [tab, setTab] = useState('contact')
+  const [filter, setFilter] = useState('all')
+  const [expanded, setExpanded] = useState(null)
+
+  const subs = submissions?.filter(s => filter === 'all' || (s.leadStatus || 'new') === filter) ?? []
+  const boards = dreamboards?.filter(d => filter === 'all' || (d.leadStatus || 'new') === filter) ?? []
+
+  async function convertToProject(lead, type) {
+    await createProject({
+      clientName: type === 'contact' ? lead.name : lead.bizName,
+      businessName: type === 'contact' ? lead.business : lead.bizName,
+      projectType: 'website',
+      status: 'lead',
+      tasks: [],
+      notes: type === 'contact' ? lead.message : `Industry: ${lead.industry}. Vibe: ${lead.vibe}.`,
+    })
+    alert('Project created! Check the Projects section.')
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-[#1a1a1a]">Leads Inbox</h1>
+        <p className="text-gray-400 text-sm mt-1">Contact form submissions and Dream Board entries.</p>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
+        {[{ key: 'contact', label: 'Contact Form' }, { key: 'dreamboard', label: 'Dream Board' }].map(t => (
+          <button key={t.key} onClick={() => setTab(t.key)}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${tab === t.key ? 'bg-white text-[#1a1a1a] shadow-sm' : 'text-gray-500'}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Filter */}
+      <div className="flex flex-wrap gap-2">
+        {['all', ...LEAD_STATUSES].map(s => (
+          <button key={s} onClick={() => setFilter(s)}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${filter === s ? 'bg-[#E8722A] text-white' : 'bg-white border border-gray-200 text-gray-500 hover:border-[#E8722A]/40'}`}>
+            {s.replace(/_/g, ' ')}
+          </button>
+        ))}
+      </div>
+
+      {/* Contact leads */}
+      {tab === 'contact' && (
+        <div className="space-y-3">
+          {!submissions ? <div className="text-gray-400 text-sm">Loading…</div> : subs.length === 0
+            ? <div className="text-center py-16 text-gray-400">No leads found.</div>
+            : subs.map(s => (
+              <div key={s._id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="flex items-center gap-4 p-5 cursor-pointer" onClick={() => setExpanded(expanded === s._id ? null : s._id)}>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-[#1a1a1a]">{s.name}</span>
+                      {!s.read && <span className="w-2 h-2 bg-[#E8722A] rounded-full shrink-0" />}
+                      <Badge label={s.leadStatus || 'new'} />
+                    </div>
+                    <div className="text-xs text-gray-400 mt-0.5">{s.business} · {s.email} · {fmtTime(s.createdAt)}</div>
+                  </div>
+                  <Icon name="chevron" size={16} />
+                </div>
+                {expanded === s._id && (
+                  <div className="px-5 pb-5 border-t border-gray-50 pt-4 space-y-4">
+                    <p className="text-sm text-gray-600 leading-relaxed">{s.message}</p>
+                    {s.phone && <p className="text-xs text-gray-400">Phone: {s.phone}</p>}
+                    <div className="flex flex-wrap gap-2">
+                      {LEAD_STATUSES.map(st => (
+                        <button key={st} onClick={() => updateSub({ id: s._id, leadStatus: st, read: true })}
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${(s.leadStatus || 'new') === st ? 'bg-[#E8722A] text-white border-[#E8722A]' : 'bg-white border-gray-200 text-gray-500 hover:border-[#E8722A]/40'}`}>
+                          {st.replace(/_/g, ' ')}
+                        </button>
+                      ))}
+                      <button onClick={() => convertToProject(s, 'contact')} className="ml-auto flex items-center gap-1.5 text-xs font-bold text-[#E8722A] hover:underline">
+                        <Icon name="arrow" size={13} /> Convert to Project
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))
+          }
+        </div>
+      )}
+
+      {/* Dream board leads */}
+      {tab === 'dreamboard' && (
+        <div className="space-y-3">
+          {!dreamboards ? <div className="text-gray-400 text-sm">Loading…</div> : boards.length === 0
+            ? <div className="text-center py-16 text-gray-400">No dream board entries yet.</div>
+            : boards.map(d => (
+              <div key={d._id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="flex items-center gap-4 p-5 cursor-pointer" onClick={() => setExpanded(expanded === d._id ? null : d._id)}>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-[#1a1a1a]">{d.bizName}</span>
+                      <Badge label={d.leadStatus || 'new'} />
+                    </div>
+                    <div className="text-xs text-gray-400 mt-0.5">{d.industry} · {fmtTime(d.createdAt)}</div>
+                  </div>
+                  <Icon name="chevron" size={16} />
+                </div>
+                {expanded === d._id && (
+                  <div className="px-5 pb-5 border-t border-gray-50 pt-4 space-y-4">
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div><span className="text-gray-400 text-xs">Vibe</span><div className="font-medium">{d.vibe}</div></div>
+                      <div><span className="text-gray-400 text-xs">Layout</span><div className="font-medium">{d.layout}</div></div>
+                      <div><span className="text-gray-400 text-xs">Tagline</span><div className="font-medium italic">"{d.tagline}"</div></div>
+                      <div><span className="text-gray-400 text-xs">Colors</span><div className="font-medium font-mono text-xs">{d.colors}</div></div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {LEAD_STATUSES.map(st => (
+                        <button key={st} onClick={() => updateBoard({ id: d._id, leadStatus: st, contacted: st !== 'new' })}
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${(d.leadStatus || 'new') === st ? 'bg-[#E8722A] text-white border-[#E8722A]' : 'bg-white border-gray-200 text-gray-500 hover:border-[#E8722A]/40'}`}>
+                          {st.replace(/_/g, ' ')}
+                        </button>
+                      ))}
+                      <button onClick={() => convertToProject(d, 'dreamboard')} className="ml-auto flex items-center gap-1.5 text-xs font-bold text-[#E8722A] hover:underline">
+                        <Icon name="arrow" size={13} /> Convert to Project
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))
+          }
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// Portfolio Manager
+// ─────────────────────────────────────────
+function emptyPortfolioItem(order) {
+  return { title: '', clientName: '', description: '', services: [], testimonial: '', imageUrl: '', featured: false, published: true, order }
+}
+
+function PortfolioForm({ initial, onSave, onClose }) {
+  const [form, setForm] = useState(initial)
+  const [svcInput, setSvcInput] = useState('')
+  function f(field, val) { setForm(p => ({ ...p, [field]: val })) }
+  function addSvc() {
+    if (!svcInput.trim()) return
+    f('services', [...form.services, svcInput.trim()])
+    setSvcInput('')
+  }
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Project Title"><input className={inp} value={form.title} onChange={e => f('title', e.target.value)} placeholder="Barbershop Website" /></Field>
+        <Field label="Client Name"><input className={inp} value={form.clientName} onChange={e => f('clientName', e.target.value)} placeholder="El Rancho" /></Field>
+      </div>
+      <Field label="Description"><textarea className={`${inp} resize-none`} rows={2} value={form.description} onChange={e => f('description', e.target.value)} placeholder="Short description..." /></Field>
+      <Field label="Screenshot URL"><input className={inp} value={form.imageUrl} onChange={e => f('imageUrl', e.target.value)} placeholder="https://..." /></Field>
+      <Field label="Testimonial (optional)"><textarea className={`${inp} resize-none`} rows={2} value={form.testimonial} onChange={e => f('testimonial', e.target.value)} placeholder="Quote from client..." /></Field>
+      <Field label="Services">
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {form.services.map((s, i) => (
+            <span key={i} className="flex items-center gap-1 bg-[#E8722A]/10 text-[#E8722A] text-xs font-semibold px-2 py-1 rounded-full">
+              {s} <button onClick={() => f('services', form.services.filter((_, idx) => idx !== i))}><Icon name="x" size={10} /></button>
+            </span>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <input className={`${inp} flex-1`} value={svcInput} onChange={e => setSvcInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSvc()} placeholder="Add service tag..." />
+          <button onClick={addSvc} className="bg-[#E8722A] text-white px-3 rounded-xl hover:bg-[#d4651f]"><Icon name="plus" size={16} /></button>
+        </div>
+      </Field>
+      <div className="flex gap-6">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" checked={form.featured} onChange={e => f('featured', e.target.checked)} className="w-4 h-4 accent-[#E8722A]" />
+          <span className="text-sm font-semibold text-[#1a1a1a]">Featured</span>
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" checked={form.published} onChange={e => f('published', e.target.checked)} className="w-4 h-4 accent-[#E8722A]" />
+          <span className="text-sm font-semibold text-[#1a1a1a]">Published</span>
+        </label>
+      </div>
+      <div className="flex gap-3 pt-2">
+        <button onClick={onClose} className="flex-1 border border-gray-200 text-gray-600 font-semibold py-2.5 rounded-xl text-sm hover:bg-gray-50">Cancel</button>
+        <button onClick={() => onSave(form)} className="flex-1 bg-[#E8722A] text-white font-bold py-2.5 rounded-xl text-sm hover:bg-[#d4651f]">Save</button>
+      </div>
+    </div>
+  )
+}
+
+function PortfolioManager() {
+  const items = useQuery(api.admin.listPortfolio)
+  const create = useMutation(api.admin.createPortfolioItem)
+  const update = useMutation(api.admin.updatePortfolioItem)
+  const del = useMutation(api.admin.deletePortfolioItem)
+  const [modal, setModal] = useState(null)
+
+  async function handleSave(form) {
+    const data = { ...form, order: form.order ?? 0 }
+    if (modal.mode === 'add') {
+      await create(data)
+    } else {
+      await update({ id: modal.item._id, ...data })
+    }
+    setModal(null)
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1a1a1a]">Portfolio</h1>
+          <p className="text-gray-400 text-sm mt-1">Manage what shows on your public site.</p>
+        </div>
+        <button onClick={() => setModal({ mode: 'add' })} className="flex items-center gap-2 bg-[#E8722A] text-white font-bold text-sm px-4 py-2.5 rounded-xl hover:bg-[#d4651f] transition-colors">
+          <Icon name="plus" size={16} /> Add Item
+        </button>
+      </div>
+
+      {!items ? <div className="text-gray-400 text-sm">Loading…</div> : items.length === 0
+        ? <div className="text-center py-16 text-gray-400">No portfolio items yet.</div>
+        : <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {items.map(item => (
+              <div key={item._id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-36 object-cover" onError={e => { e.target.style.display = 'none' }} />}
+                <div className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <div className="font-bold text-[#1a1a1a]">{item.title}</div>
+                      <div className="text-xs text-gray-400">{item.clientName}</div>
+                    </div>
+                    <div className="flex gap-1.5">
+                      {item.featured && <span className="text-xs bg-yellow-100 text-yellow-700 font-bold px-1.5 py-0.5 rounded">★</span>}
+                      <Badge label={item.published ? 'published' : 'hidden'} />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mb-3 line-clamp-2">{item.description}</p>
+                  <div className="flex gap-1.5 flex-wrap mb-3">
+                    {item.services.map(s => <span key={s} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{s}</span>)}
+                  </div>
+                  <div className="flex gap-2 pt-2 border-t border-gray-50">
+                    <button onClick={() => setModal({ mode: 'edit', item })} className="flex items-center gap-1 text-xs text-gray-500 hover:text-[#E8722A] font-semibold"><Icon name="edit" size={13} /> Edit</button>
+                    <button onClick={() => update({ id: item._id, published: !item.published })} className="flex items-center gap-1 text-xs text-gray-500 hover:text-[#E8722A] font-semibold">
+                      {item.published ? 'Hide' : 'Publish'}
+                    </button>
+                    <button onClick={() => del({ id: item._id })} className="ml-auto flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 font-semibold"><Icon name="trash" size={13} /> Delete</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+      }
+
+      {modal && (
+        <Modal title={modal.mode === 'add' ? 'Add Portfolio Item' : 'Edit Item'} onClose={() => setModal(null)}>
+          <PortfolioForm
+            initial={modal.mode === 'add' ? emptyPortfolioItem((items?.length ?? 0)) : {
+              title: modal.item.title, clientName: modal.item.clientName, description: modal.item.description,
+              services: modal.item.services, testimonial: modal.item.testimonial || '', imageUrl: modal.item.imageUrl || '',
+              featured: modal.item.featured, published: modal.item.published, order: modal.item.order,
+            }}
+            onSave={handleSave}
+            onClose={() => setModal(null)}
+          />
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// Invoices
+// ─────────────────────────────────────────
+const INVOICE_STATUSES = ['draft', 'sent', 'paid', 'overdue']
+
+function emptyInvoice() { return { clientName: '', projectRef: '', amount: '', status: 'draft', dateSent: '', datePaid: '', notes: '' } }
+
+function InvoiceForm({ initial, onSave, onClose }) {
+  const [form, setForm] = useState(initial)
+  function f(field, val) { setForm(p => ({ ...p, [field]: val })) }
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Client Name"><input className={inp} value={form.clientName} onChange={e => f('clientName', e.target.value)} placeholder="Smith Plumbing" /></Field>
+        <Field label="Project Ref"><input className={inp} value={form.projectRef} onChange={e => f('projectRef', e.target.value)} placeholder="Website Redesign" /></Field>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Amount ($)"><input className={inp} type="number" value={form.amount} onChange={e => f('amount', e.target.value)} placeholder="499" /></Field>
+        <Field label="Status">
+          <select className={sel} value={form.status} onChange={e => f('status', e.target.value)}>
+            {INVOICE_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </Field>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Date Sent"><input className={inp} type="date" value={form.dateSent} onChange={e => f('dateSent', e.target.value)} /></Field>
+        <Field label="Date Paid"><input className={inp} type="date" value={form.datePaid} onChange={e => f('datePaid', e.target.value)} /></Field>
+      </div>
+      <Field label="Notes"><textarea className={`${inp} resize-none`} rows={2} value={form.notes} onChange={e => f('notes', e.target.value)} /></Field>
+      <div className="flex gap-3 pt-2">
+        <button onClick={onClose} className="flex-1 border border-gray-200 text-gray-600 font-semibold py-2.5 rounded-xl text-sm hover:bg-gray-50">Cancel</button>
+        <button onClick={() => onSave(form)} className="flex-1 bg-[#E8722A] text-white font-bold py-2.5 rounded-xl text-sm hover:bg-[#d4651f]">Save Invoice</button>
+      </div>
+    </div>
+  )
+}
+
+function Invoices() {
+  const invoices = useQuery(api.admin.listInvoices)
+  const create = useMutation(api.admin.createInvoice)
+  const update = useMutation(api.admin.updateInvoice)
+  const del = useMutation(api.admin.deleteInvoice)
+  const [modal, setModal] = useState(null)
+
+  const totals = invoices ? {
+    invoiced: invoices.reduce((s, i) => s + i.amount, 0),
+    paid: invoices.filter(i => i.status === 'paid').reduce((s, i) => s + i.amount, 0),
+    outstanding: invoices.filter(i => i.status === 'sent' || i.status === 'overdue').reduce((s, i) => s + i.amount, 0),
+  } : null
+
+  async function handleSave(form) {
+    const data = { ...form, amount: Number(form.amount) }
+    if (modal.mode === 'add') await create(data)
+    else await update({ id: modal.invoice._id, ...data })
+    setModal(null)
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1a1a1a]">Invoices</h1>
+          <p className="text-gray-400 text-sm mt-1">Track what you're owed.</p>
+        </div>
+        <button onClick={() => setModal({ mode: 'add' })} className="flex items-center gap-2 bg-[#E8722A] text-white font-bold text-sm px-4 py-2.5 rounded-xl hover:bg-[#d4651f] transition-colors">
+          <Icon name="plus" size={16} /> New Invoice
+        </button>
+      </div>
+
+      {totals && (
+        <div className="grid grid-cols-3 gap-4">
+          {[
+            { label: 'Total Invoiced', val: totals.invoiced, color: 'text-[#1a1a1a]' },
+            { label: 'Total Paid', val: totals.paid, color: 'text-green-600' },
+            { label: 'Outstanding', val: totals.outstanding, color: 'text-orange-600' },
+          ].map(s => (
+            <div key={s.label} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm text-center">
+              <div className={`text-2xl font-bold ${s.color}`}>${s.val.toLocaleString()}</div>
+              <div className="text-xs text-gray-400 mt-1">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!invoices ? <div className="text-gray-400 text-sm">Loading…</div> : invoices.length === 0
+        ? <div className="text-center py-16 text-gray-400">No invoices yet.</div>
+        : <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wide">
+                  <th className="text-left p-4">Client</th>
+                  <th className="text-left p-4">Project</th>
+                  <th className="text-left p-4">Amount</th>
+                  <th className="text-left p-4">Status</th>
+                  <th className="text-left p-4">Sent</th>
+                  <th className="text-left p-4">Paid</th>
+                  <th className="p-4" />
+                </tr>
+              </thead>
+              <tbody>
+                {invoices.map(inv => (
+                  <tr key={inv._id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
+                    <td className="p-4 font-semibold text-[#1a1a1a]">{inv.clientName}</td>
+                    <td className="p-4 text-gray-500">{inv.projectRef || '—'}</td>
+                    <td className="p-4 font-bold text-green-600">${inv.amount.toLocaleString()}</td>
+                    <td className="p-4"><Badge label={inv.status} /></td>
+                    <td className="p-4 text-gray-400">{inv.dateSent || '—'}</td>
+                    <td className="p-4 text-gray-400">{inv.datePaid || '—'}</td>
+                    <td className="p-4">
+                      <div className="flex gap-2 justify-end">
+                        <button onClick={() => setModal({ mode: 'edit', invoice: inv })} className="text-gray-400 hover:text-[#E8722A] transition-colors"><Icon name="edit" size={15} /></button>
+                        <button onClick={() => del({ id: inv._id })} className="text-gray-400 hover:text-red-500 transition-colors"><Icon name="trash" size={15} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+      }
+
+      {modal && (
+        <Modal title={modal.mode === 'add' ? 'New Invoice' : 'Edit Invoice'} onClose={() => setModal(null)}>
+          <InvoiceForm
+            initial={modal.mode === 'add' ? emptyInvoice() : {
+              clientName: modal.invoice.clientName, projectRef: modal.invoice.projectRef || '',
+              amount: modal.invoice.amount, status: modal.invoice.status,
+              dateSent: modal.invoice.dateSent || '', datePaid: modal.invoice.datePaid || '',
+              notes: modal.invoice.notes || '',
+            }}
+            onSave={handleSave}
+            onClose={() => setModal(null)}
+          />
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// Content Planner
+// ─────────────────────────────────────────
+const PLATFORMS = ['instagram', 'facebook', 'tiktok', 'linkedin']
+const CONTENT_STATUSES = ['draft', 'scheduled', 'posted']
+
+function emptyPost() { return { platform: 'instagram', caption: '', imageUrl: '', scheduledDate: '', status: 'draft', notes: '' } }
+
+function ContentForm({ initial, onSave, onClose }) {
+  const [form, setForm] = useState(initial)
+  function f(field, val) { setForm(p => ({ ...p, [field]: val })) }
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Platform">
+          <select className={sel} value={form.platform} onChange={e => f('platform', e.target.value)}>
+            {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </Field>
+        <Field label="Status">
+          <select className={sel} value={form.status} onChange={e => f('status', e.target.value)}>
+            {CONTENT_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </Field>
+      </div>
+      <Field label="Caption"><textarea className={`${inp} resize-none`} rows={4} value={form.caption} onChange={e => f('caption', e.target.value)} placeholder="Write your caption..." /></Field>
+      <Field label="Image URL (optional)"><input className={inp} value={form.imageUrl} onChange={e => f('imageUrl', e.target.value)} placeholder="https://..." /></Field>
+      <Field label="Scheduled Date"><input className={inp} type="date" value={form.scheduledDate} onChange={e => f('scheduledDate', e.target.value)} /></Field>
+      <Field label="Notes"><textarea className={`${inp} resize-none`} rows={2} value={form.notes} onChange={e => f('notes', e.target.value)} placeholder="Any notes..." /></Field>
+      <div className="flex gap-3 pt-2">
+        <button onClick={onClose} className="flex-1 border border-gray-200 text-gray-600 font-semibold py-2.5 rounded-xl text-sm hover:bg-gray-50">Cancel</button>
+        <button onClick={() => onSave(form)} className="flex-1 bg-[#E8722A] text-white font-bold py-2.5 rounded-xl text-sm hover:bg-[#d4651f]">Save Post</button>
+      </div>
+    </div>
+  )
+}
+
+const PLATFORM_COLORS = { instagram: 'bg-pink-100 text-pink-600', facebook: 'bg-blue-100 text-blue-600', tiktok: 'bg-gray-900 text-white', linkedin: 'bg-blue-100 text-blue-800' }
+
+function ContentPlanner() {
+  const posts = useQuery(api.admin.listContent)
+  const create = useMutation(api.admin.createContent)
+  const update = useMutation(api.admin.updateContent)
+  const del = useMutation(api.admin.deleteContent)
+  const [modal, setModal] = useState(null)
+  const [filter, setFilter] = useState('all')
+
+  const filtered = posts?.filter(p => filter === 'all' || p.platform === filter) ?? []
+
+  async function handleSave(form) {
+    if (modal.mode === 'add') await create(form)
+    else await update({ id: modal.post._id, ...form })
+    setModal(null)
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1a1a1a]">Content Planner</h1>
+          <p className="text-gray-400 text-sm mt-1">Plan and track your social media posts.</p>
+        </div>
+        <button onClick={() => setModal({ mode: 'add' })} className="flex items-center gap-2 bg-[#E8722A] text-white font-bold text-sm px-4 py-2.5 rounded-xl hover:bg-[#d4651f] transition-colors">
+          <Icon name="plus" size={16} /> New Post
+        </button>
+      </div>
+
+      {/* Platform filter */}
+      <div className="flex flex-wrap gap-2">
+        {['all', ...PLATFORMS].map(p => (
+          <button key={p} onClick={() => setFilter(p)}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${filter === p ? 'bg-[#E8722A] text-white' : 'bg-white border border-gray-200 text-gray-500 hover:border-[#E8722A]/40'}`}>
+            {p}
+          </button>
+        ))}
+      </div>
+
+      {!posts ? <div className="text-gray-400 text-sm">Loading…</div> : filtered.length === 0
+        ? <div className="text-center py-16 text-gray-400">No posts yet. Plan your first one.</div>
+        : <div className="space-y-3">
+            {filtered.map(post => (
+              <div key={post._id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <div className="flex items-start gap-4">
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${PLATFORM_COLORS[post.platform] || 'bg-gray-100 text-gray-600'}`}>{post.platform}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-[#1a1a1a] leading-relaxed line-clamp-2">{post.caption}</p>
+                    <div className="flex flex-wrap items-center gap-3 mt-2">
+                      <Badge label={post.status} />
+                      {post.scheduledDate && <span className="text-xs text-gray-400">{post.scheduledDate}</span>}
+                    </div>
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <button onClick={() => setModal({ mode: 'edit', post })} className="text-gray-400 hover:text-[#E8722A] transition-colors"><Icon name="edit" size={15} /></button>
+                    <button onClick={() => del({ id: post._id })} className="text-gray-400 hover:text-red-500 transition-colors"><Icon name="trash" size={15} /></button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+      }
+
+      {modal && (
+        <Modal title={modal.mode === 'add' ? 'New Post' : 'Edit Post'} onClose={() => setModal(null)}>
+          <ContentForm
+            initial={modal.mode === 'add' ? emptyPost() : {
+              platform: modal.post.platform, caption: modal.post.caption, imageUrl: modal.post.imageUrl || '',
+              scheduledDate: modal.post.scheduledDate || '', status: modal.post.status, notes: modal.post.notes || '',
+            }}
+            onSave={handleSave}
+            onClose={() => setModal(null)}
+          />
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// AI Chat
+// ─────────────────────────────────────────
+function AIChat() {
+  const messages = useQuery(api.admin.listChats)
+  const saveChat = useMutation(api.admin.saveChat)
+  const clearChats = useMutation(api.admin.clearChats)
+  const sendMessage = useAction(api.admin.sendChatMessage)
+
+  const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
+  const bottomRef = useRef(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, loading])
+
+  async function send() {
+    const text = input.trim()
+    if (!text || loading) return
+    setInput('')
+    setLoading(true)
+
+    await saveChat({ role: 'user', content: text })
+
+    try {
+      const history = [...(messages ?? []), { role: 'user', content: text }]
+        .map(m => ({ role: m.role, content: m.content }))
+
+      const reply = await sendMessage({ messages: history })
+      await saveChat({ role: 'assistant', content: reply })
+    } catch {
+      await saveChat({ role: 'assistant', content: 'Something went wrong. Check that ANTHROPIC_API_KEY is set in Convex.' })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="flex flex-col h-full" style={{ height: 'calc(100vh - 120px)' }}>
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1a1a1a]">AI Assistant</h1>
+          <p className="text-gray-400 text-sm mt-1">Your personal business assistant. Ask anything.</p>
+        </div>
+        <button onClick={() => clearChats()} className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500 font-semibold transition-colors border border-gray-200 px-3 py-2 rounded-xl">
+          <Icon name="refresh" size={13} /> Clear Chat
+        </button>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-4 mb-4">
+        {!messages || messages.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-center text-gray-400 py-12">
+            <div className="w-14 h-14 bg-[#E8722A]/10 rounded-2xl flex items-center justify-center mb-4">
+              <Icon name="message" size={24} />
+            </div>
+            <p className="font-semibold text-[#1a1a1a] mb-1">Ask me anything</p>
+            <p className="text-sm max-w-xs">Business strategy, pricing, outreach scripts, content ideas, sports, whatever's on your mind.</p>
+          </div>
+        ) : (
+          messages.map(m => (
+            <div key={m._id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+                m.role === 'user'
+                  ? 'bg-[#E8722A] text-white rounded-br-sm'
+                  : 'bg-gray-100 text-[#1a1a1a] rounded-bl-sm'
+              }`}>
+                {m.content}
+              </div>
+            </div>
+          ))
+        )}
+        {loading && (
+          <div className="flex justify-start">
+            <div className="bg-gray-100 px-4 py-3 rounded-2xl rounded-bl-sm flex items-center gap-1.5">
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+          </div>
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input */}
+      <div className="flex gap-3">
+        <input
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
+          placeholder="Ask anything..."
+          className={`${inp} flex-1`}
+          disabled={loading}
+        />
+        <button
+          onClick={send}
+          disabled={loading || !input.trim()}
+          className="bg-[#E8722A] hover:bg-[#d4651f] disabled:opacity-40 text-white px-4 py-2.5 rounded-xl transition-colors"
+        >
+          <Icon name="send" size={18} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// Settings
+// ─────────────────────────────────────────
+function Settings({ onLogout }) {
+  const setSetting = useMutation(api.admin.setSetting)
+  const allSettings = useQuery(api.admin.listSettings)
+
+  function getVal(key) {
+    return allSettings?.find(s => s.key === key)?.value ?? ''
+  }
+
+  const [bizName, setBizName] = useState('')
+  const [bizEmail, setBizEmail] = useState('')
+  const [bizPhone, setBizPhone] = useState('')
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    if (allSettings) {
+      setBizName(getVal('biz_name') || 'OC Builds')
+      setBizEmail(getVal('biz_email') || '')
+      setBizPhone(getVal('biz_phone') || '')
+    }
+  }, [allSettings])
+
+  async function saveSettings() {
+    await setSetting({ key: 'biz_name', value: bizName })
+    await setSetting({ key: 'biz_email', value: bizEmail })
+    await setSetting({ key: 'biz_phone', value: bizPhone })
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+  }
+
+  return (
+    <div className="space-y-8 max-w-lg">
+      <div>
+        <h1 className="text-2xl font-bold text-[#1a1a1a]">Settings</h1>
+        <p className="text-gray-400 text-sm mt-1">Business info and dashboard config.</p>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+        <h2 className="font-bold text-[#1a1a1a]">Business Info</h2>
+        <Field label="Business Name"><input className={inp} value={bizName} onChange={e => setBizName(e.target.value)} /></Field>
+        <Field label="Email"><input className={inp} value={bizEmail} onChange={e => setBizEmail(e.target.value)} /></Field>
+        <Field label="Phone"><input className={inp} value={bizPhone} onChange={e => setBizPhone(e.target.value)} /></Field>
+        <button onClick={saveSettings} className={`w-full font-bold py-2.5 rounded-xl text-sm transition-colors ${saved ? 'bg-green-500 text-white' : 'bg-[#E8722A] hover:bg-[#d4651f] text-white'}`}>
+          {saved ? '✓ Saved' : 'Save Changes'}
+        </button>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h2 className="font-bold text-[#1a1a1a] mb-2">Admin Password</h2>
+        <p className="text-sm text-gray-400 mb-4">To change your password, update the <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs font-mono">VITE_ADMIN_PASSWORD</code> environment variable in Vercel and redeploy.</p>
+        <div className="bg-gray-50 rounded-xl p-4 font-mono text-xs text-gray-500">
+          VITE_ADMIN_PASSWORD=your_new_password
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h2 className="font-bold text-[#1a1a1a] mb-2">Session</h2>
+        <button onClick={onLogout} className="flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors">
+          <Icon name="logout" size={16} /> Log Out of Dashboard
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// Sidebar + Layout
+// ─────────────────────────────────────────
+const NAV = [
+  { key: 'overview', label: 'Overview', icon: 'home' },
+  { key: 'projects', label: 'Projects', icon: 'folder' },
+  { key: 'leads', label: 'Leads', icon: 'inbox' },
+  { key: 'portfolio', label: 'Portfolio', icon: 'image' },
+  { key: 'invoices', label: 'Invoices', icon: 'dollar' },
+  { key: 'content', label: 'Content', icon: 'calendar' },
+  { key: 'chat', label: 'AI Chat', icon: 'message' },
+  { key: 'settings', label: 'Settings', icon: 'settings' },
+]
+
+function AdminLayout({ onLogout }) {
+  const [section, setSection] = useState('overview')
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  function nav(key) { setSection(key); setMobileOpen(false) }
+
+  const sections = {
+    overview: <Overview setSection={nav} />,
+    projects: <Projects />,
+    leads: <Leads />,
+    portfolio: <PortfolioManager />,
+    invoices: <Invoices />,
+    content: <ContentPlanner />,
+    chat: <AIChat />,
+    settings: <Settings onLogout={onLogout} />,
+  }
+
+  const Sidebar = () => (
+    <div className="flex flex-col h-full">
+      {/* Logo */}
+      <div className="px-5 py-5 border-b border-[#1a1a1a]/5">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 bg-[#E8722A] rounded-xl flex items-center justify-center shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <div>
+            <div className="font-bold text-[#1a1a1a] text-sm leading-none">OC Builds</div>
+            <div className="text-[10px] text-gray-400 font-medium mt-0.5">Admin Dashboard</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Nav */}
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+        {NAV.map(item => (
+          <button
+            key={item.key}
+            onClick={() => nav(item.key)}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              section === item.key
+                ? 'bg-[#E8722A] text-white shadow-sm'
+                : 'text-gray-500 hover:bg-gray-100 hover:text-[#1a1a1a]'
+            }`}
+          >
+            <Icon name={item.icon} size={17} />
+            {item.label}
+          </button>
+        ))}
+      </nav>
+
+      {/* Footer */}
+      <div className="px-5 py-4 border-t border-[#1a1a1a]/5">
+        <button onClick={onLogout} className="flex items-center gap-2 text-xs text-gray-400 hover:text-red-500 font-semibold transition-colors">
+          <Icon name="logout" size={14} /> Log out
+        </button>
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="min-h-screen bg-[#F5EDD8] flex">
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex flex-col w-56 bg-white border-r border-gray-100 fixed inset-y-0 left-0 shadow-sm z-10">
+        <Sidebar />
+      </aside>
+
+      {/* Mobile sidebar overlay */}
+      {mobileOpen && (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
+          <aside className="relative w-56 bg-white h-full shadow-2xl flex flex-col">
+            <Sidebar />
+          </aside>
+        </div>
+      )}
+
+      {/* Main content */}
+      <div className="flex-1 md:ml-56">
+        {/* Mobile top bar */}
+        <div className="md:hidden flex items-center gap-3 bg-white border-b border-gray-100 px-4 py-3 sticky top-0 z-10">
+          <button onClick={() => setMobileOpen(true)} className="text-gray-500">
+            <Icon name="menu" size={22} />
+          </button>
+          <span className="font-bold text-[#1a1a1a] text-sm">OC Builds Admin</span>
+        </div>
+
+        <main className="p-5 md:p-8 max-w-6xl">
+          {sections[section]}
+        </main>
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
+// Root export
+// ─────────────────────────────────────────
+export default function Admin() {
+  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem('oc_admin') === '1')
+
+  function logout() {
+    sessionStorage.removeItem('oc_admin')
+    setUnlocked(false)
+  }
+
+  if (!unlocked) return <PasswordGate onUnlock={() => setUnlocked(true)} />
+  return <AdminLayout onLogout={logout} />
+}

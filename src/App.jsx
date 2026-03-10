@@ -12,6 +12,7 @@ import Contact from './components/Contact'
 import ChatWidget from "./components/ChatWidget"
 import Footer from './components/Footer'
 import DreamBoard from './pages/DreamBoard'
+import Admin from './pages/Admin'
 
 function HomePage() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/dreamboard" element={<DreamBoard />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
       <Analytics />
     </BrowserRouter>
