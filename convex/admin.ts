@@ -89,6 +89,16 @@ export const updateDreamboardStatus = mutation({
   },
 })
 
+export const deleteSubmission = mutation({
+  args: { id: v.id('submissions') },
+  handler: async (ctx, { id }) => { await ctx.db.delete(id) },
+})
+
+export const deleteDreamboard = mutation({
+  args: { id: v.id('dreamboards') },
+  handler: async (ctx, { id }) => { await ctx.db.delete(id) },
+})
+
 // ─────────────────────────────────────────
 // Portfolio
 // ─────────────────────────────────────────

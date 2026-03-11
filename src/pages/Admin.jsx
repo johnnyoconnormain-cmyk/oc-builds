@@ -660,6 +660,8 @@ function Leads() {
   const dreamboards = useQuery(api.admin.listDreamboards)
   const updateSub = useMutation(api.admin.updateSubmissionStatus)
   const updateBoard = useMutation(api.admin.updateDreamboardStatus)
+  const deleteSub = useMutation(api.admin.deleteSubmission)
+  const deleteBoard = useMutation(api.admin.deleteDreamboard)
   const createProject = useMutation(api.admin.createAdminProject)
 
   const [tab, setTab] = useState('contact')
@@ -740,6 +742,9 @@ function Leads() {
                       <button onClick={() => convertToProject(s, 'contact')} className="ml-auto flex items-center gap-1.5 text-xs font-bold text-[#E8722A] hover:underline">
                         <Icon name="arrow" size={13} /> Convert to Project
                       </button>
+                      <button onClick={() => deleteSub({ id: s._id })} className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 font-semibold transition-colors">
+                        <Icon name="trash" size={13} /> Delete
+                      </button>
                     </div>
                   </div>
                 )}
@@ -783,6 +788,9 @@ function Leads() {
                       ))}
                       <button onClick={() => convertToProject(d, 'dreamboard')} className="ml-auto flex items-center gap-1.5 text-xs font-bold text-[#E8722A] hover:underline">
                         <Icon name="arrow" size={13} /> Convert to Project
+                      </button>
+                      <button onClick={() => deleteBoard({ id: d._id })} className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 font-semibold transition-colors">
+                        <Icon name="trash" size={13} /> Delete
                       </button>
                     </div>
                   </div>
