@@ -337,11 +337,38 @@ function ProjectForm({ initial, onSave, onClose }) {
 
 function ProjectWorkspace({ project, onClose, onUpdate }) {
   const update = useMutation(api.admin.updateAdminProject)
+  const askRody = useAction(api.admin.askProjectQuestion)
   const [tasks, setTasks] = useState(project.tasks)
   const [notes, setNotes] = useState(project.notes || '')
   const [taskInput, setTaskInput] = useState('')
   const [iframeError, setIframeError] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [aiQ, setAiQ] = useState('')
+  const [aiA, setAiA] = useState('')
+  const [aiLoading, setAiLoading] = useState(false)
+
+  async function handleAsk() {
+    const q = aiQ.trim()
+    if (!q || aiLoading) return
+    setAiQ('')
+    setAiLoading(true)
+    try {
+      const answer = await askRody({
+        question: q,
+        projectContext: {
+          businessName: project.businessName,
+          clientName: project.clientName,
+          projectType: project.projectType,
+          status: project.status,
+          notes,
+          tasks,
+        },
+      })
+      setAiA(answer)
+    } finally {
+      setAiLoading(false)
+    }
+  }
 
   function toggleTask(i) {
     const t = [...tasks]
@@ -441,6 +468,38 @@ function ProjectWorkspace({ project, onClose, onUpdate }) {
             <button onClick={save} className={`w-full font-bold py-2.5 rounded-xl text-sm transition-colors ${saved ? 'bg-green-500 text-white' : 'bg-[#E8722A] hover:bg-[#d4651f] text-white'}`}>
               {saved ? '✓ Saved' : 'Save Changes'}
             </button>
+
+            {/* Ask Rody */}
+            <div className="border-t border-gray-100 pt-4">
+              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Ask Rody</div>
+              {aiA && (
+                <div className="bg-gray-50 rounded-xl p-3 text-xs text-gray-600 leading-relaxed mb-2 whitespace-pre-wrap">{aiA}</div>
+              )}
+              {aiLoading && (
+                <div className="flex gap-1 mb-2 px-1">
+                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              )}
+              <div className="flex gap-2">
+                <input
+                  className={`${inp} flex-1 text-xs py-2`}
+                  value={aiQ}
+                  onChange={e => setAiQ(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleAsk()}
+                  placeholder="What should I do next?"
+                  disabled={aiLoading}
+                />
+                <button
+                  onClick={handleAsk}
+                  disabled={aiLoading || !aiQ.trim()}
+                  className="bg-[#E8722A] disabled:opacity-40 text-white px-2.5 rounded-lg hover:bg-[#d4651f]"
+                >
+                  <Icon name="send" size={13} />
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Right — site preview */}
@@ -1022,7 +1081,30 @@ function emptyPost() { return { platform: 'instagram', caption: '', imageUrl: ''
 
 function ContentForm({ initial, onSave, onClose }) {
   const [form, setForm] = useState(initial)
+  const [selectedProject, setSelectedProject] = useState('')
+  const [generating, setGenerating] = useState(false)
+  const projects = useQuery(api.admin.listAdminProjects)
+  const generateCaption = useAction(api.admin.generateCaption)
+
   function f(field, val) { setForm(p => ({ ...p, [field]: val })) }
+
+  async function handleGenerate() {
+    const proj = projects?.find(p => p._id === selectedProject)
+    if (!proj) return
+    setGenerating(true)
+    try {
+      const caption = await generateCaption({
+        platform: form.platform,
+        businessName: proj.businessName,
+        projectType: proj.projectType,
+        notes: proj.notes,
+      })
+      f('caption', caption)
+    } finally {
+      setGenerating(false)
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
@@ -1037,7 +1119,26 @@ function ContentForm({ initial, onSave, onClose }) {
           </select>
         </Field>
       </div>
-      <Field label="Caption"><textarea className={`${inp} resize-none`} rows={4} value={form.caption} onChange={e => f('caption', e.target.value)} placeholder="Write your caption..." /></Field>
+
+      {/* AI Caption from Project */}
+      <Field label="Generate Caption from Project">
+        <div className="flex gap-2">
+          <select className={`${sel} flex-1`} value={selectedProject} onChange={e => setSelectedProject(e.target.value)}>
+            <option value="">— Pick a project —</option>
+            {projects?.map(p => <option key={p._id} value={p._id}>{p.businessName}</option>)}
+          </select>
+          <button
+            type="button"
+            onClick={handleGenerate}
+            disabled={!selectedProject || generating}
+            className="shrink-0 bg-[#E8722A] disabled:opacity-40 text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-[#d4651f] transition-colors flex items-center gap-1.5 whitespace-nowrap"
+          >
+            {generating ? '...' : '✦ AI Write'}
+          </button>
+        </div>
+      </Field>
+
+      <Field label="Caption"><textarea className={`${inp} resize-none`} rows={4} value={form.caption} onChange={e => f('caption', e.target.value)} placeholder="Write your caption or generate above..." /></Field>
       <Field label="Image URL (optional)"><input className={inp} value={form.imageUrl} onChange={e => f('imageUrl', e.target.value)} placeholder="https://..." /></Field>
       <Field label="Scheduled Date"><input className={inp} type="date" value={form.scheduledDate} onChange={e => f('scheduledDate', e.target.value)} /></Field>
       <Field label="Notes"><textarea className={`${inp} resize-none`} rows={2} value={form.notes} onChange={e => f('notes', e.target.value)} placeholder="Any notes..." /></Field>

@@ -299,6 +299,99 @@ export const sendChatMessage = action({
 })
 
 // ─────────────────────────────────────────
+// AI Caption Generator (Content Planner)
+// ─────────────────────────────────────────
+
+export const generateCaption = action({
+  args: {
+    platform: v.string(),
+    businessName: v.string(),
+    projectType: v.optional(v.string()),
+    notes: v.optional(v.string()),
+    extraContext: v.optional(v.string()),
+  },
+  handler: async (_ctx, { platform, businessName, projectType, notes, extraContext }) => {
+    const apiKey = process.env.GROQ_API_KEY
+    if (!apiKey) throw new Error('GROQ_API_KEY not set')
+
+    const context = [
+      `Business: ${businessName}`,
+      projectType ? `Type of work: ${projectType.replace(/_/g, ' ')}` : '',
+      notes ? `Notes: ${notes}` : '',
+      extraContext ? `Extra context: ${extraContext}` : '',
+    ].filter(Boolean).join('\n')
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        max_tokens: 300,
+        messages: [
+          {
+            role: 'system',
+            content: `You write punchy, authentic social media captions for small local businesses. Sound real — not like a marketing bot. Specific to the business. End with 3-5 relevant hashtags.`,
+          },
+          {
+            role: 'user',
+            content: `Write a ${platform} caption for this business:\n${context}`,
+          },
+        ],
+      }),
+    })
+    const data = await response.json()
+    return data.choices[0].message.content.trim() as string
+  },
+})
+
+// ─────────────────────────────────────────
+// AI Project Assistant (Workspace)
+// ─────────────────────────────────────────
+
+export const askProjectQuestion = action({
+  args: {
+    question: v.string(),
+    projectContext: v.object({
+      businessName: v.string(),
+      clientName: v.string(),
+      projectType: v.string(),
+      status: v.string(),
+      notes: v.optional(v.string()),
+      tasks: v.array(v.object({ text: v.string(), done: v.boolean() })),
+    }),
+  },
+  handler: async (_ctx, { question, projectContext }) => {
+    const apiKey = process.env.GROQ_API_KEY
+    if (!apiKey) throw new Error('GROQ_API_KEY not set')
+
+    const tasksSummary = projectContext.tasks.length > 0
+      ? projectContext.tasks.map(t => `[${t.done ? 'x' : ' '}] ${t.text}`).join(', ')
+      : 'none'
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        max_tokens: 400,
+        messages: [
+          {
+            role: 'system',
+            content: `You're Rody, Johnny's assistant at OC Builds. Johnny is working on a client project and needs quick, practical help. Be direct, specific, no filler. Short responses unless he asks for detail.`,
+          },
+          {
+            role: 'user',
+            content: `Project: ${projectContext.businessName} (${projectContext.clientName})\nType: ${projectContext.projectType.replace(/_/g, ' ')}\nStatus: ${projectContext.status}\nTasks: ${tasksSummary}\n${projectContext.notes ? `Notes: ${projectContext.notes}` : ''}\n\n${question}`,
+          },
+        ],
+      }),
+    })
+    const data = await response.json()
+    return data.choices[0].message.content.trim() as string
+  },
+})
+
+// ─────────────────────────────────────────
 // Settings
 // ─────────────────────────────────────────
 
