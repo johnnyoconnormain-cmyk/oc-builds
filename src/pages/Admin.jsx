@@ -1083,10 +1083,21 @@ function ContentForm({ initial, onSave, onClose }) {
   const [form, setForm] = useState(initial)
   const [selectedProject, setSelectedProject] = useState('')
   const [generating, setGenerating] = useState(false)
+  const [imgPrompt, setImgPrompt] = useState('')
+  const [generatedImg, setGeneratedImg] = useState('')
+  const [imgLoading, setImgLoading] = useState(false)
   const projects = useQuery(api.admin.listAdminProjects)
   const generateCaption = useAction(api.admin.generateCaption)
 
   function f(field, val) { setForm(p => ({ ...p, [field]: val })) }
+
+  function generateImage() {
+    if (!imgPrompt.trim()) return
+    setImgLoading(true)
+    setGeneratedImg('')
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(imgPrompt)}?width=1080&height=1080&nologo=true&seed=${Date.now()}`
+    setGeneratedImg(url)
+  }
 
   async function handleGenerate() {
     const proj = projects?.find(p => p._id === selectedProject)
@@ -1139,7 +1150,52 @@ function ContentForm({ initial, onSave, onClose }) {
       </Field>
 
       <Field label="Caption"><textarea className={`${inp} resize-none`} rows={4} value={form.caption} onChange={e => f('caption', e.target.value)} placeholder="Write your caption or generate above..." /></Field>
-      <Field label="Image URL (optional)"><input className={inp} value={form.imageUrl} onChange={e => f('imageUrl', e.target.value)} placeholder="https://..." /></Field>
+
+      {/* AI Image Generation */}
+      <Field label="AI Image Generator">
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <input
+              className={`${inp} flex-1`}
+              value={imgPrompt}
+              onChange={e => setImgPrompt(e.target.value)}
+              placeholder="Describe the image (e.g. 'modern website on laptop, professional')"
+              onKeyDown={e => e.key === 'Enter' && generateImage()}
+            />
+            <button
+              type="button"
+              onClick={generateImage}
+              disabled={!imgPrompt.trim() || imgLoading}
+              className="shrink-0 bg-[#E8722A] disabled:opacity-40 text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-[#d4651f] transition-colors whitespace-nowrap"
+            >
+              {imgLoading ? '…' : '✦ Gen'}
+            </button>
+          </div>
+          {generatedImg && (
+            <div className="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+              <img
+                src={generatedImg}
+                alt="AI Generated"
+                className="w-full h-44 object-cover"
+                onLoad={() => setImgLoading(false)}
+                onError={() => setImgLoading(false)}
+              />
+              {imgLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                  <span className="text-gray-400 text-sm">Generating…</span>
+                </div>
+              )}
+              <button
+                onClick={() => f('imageUrl', generatedImg)}
+                className="absolute bottom-2 right-2 bg-[#E8722A] text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-[#d4651f] shadow"
+              >
+                Use Image
+              </button>
+            </div>
+          )}
+        </div>
+      </Field>
+      <Field label="Image URL"><input className={inp} value={form.imageUrl} onChange={e => f('imageUrl', e.target.value)} placeholder="https://… or generate above" /></Field>
       <Field label="Scheduled Date"><input className={inp} type="date" value={form.scheduledDate} onChange={e => f('scheduledDate', e.target.value)} /></Field>
       <Field label="Notes"><textarea className={`${inp} resize-none`} rows={2} value={form.notes} onChange={e => f('notes', e.target.value)} placeholder="Any notes..." /></Field>
       <div className="flex gap-3 pt-2">
@@ -1405,6 +1461,285 @@ function Settings({ onLogout }) {
 }
 
 // ─────────────────────────────────────────
+// Mini Golf Game
+// ─────────────────────────────────────────
+const HOLES = [
+  { par: 2, tee: [50, 130], cup: [390, 130], walls: [] },
+  { par: 3, tee: [50, 80],  cup: [390, 200], walls: [{ x: 160, y: 90,  w: 18, h: 120 }] },
+  { par: 3, tee: [50, 130], cup: [390, 50],  walls: [{ x: 120, y: 50,  w: 200, h: 18 }] },
+  { par: 2, tee: [50, 50],  cup: [390, 210], walls: [{ x: 200, y: 50,  w: 18, h: 140 }] },
+  { par: 3, tee: [220, 230],cup: [390, 50],  walls: [{ x: 100, y: 100, w: 140, h: 18 }, { x: 280, y: 120, w: 18, h: 110 }] },
+  { par: 4, tee: [50, 50],  cup: [390, 210], walls: [{ x: 150, y: 50,  w: 18, h: 100 }, { x: 260, y: 110, w: 18, h: 100 }] },
+  { par: 3, tee: [50, 130], cup: [390, 130], walls: [{ x: 150, y: 60,  w: 18, h: 90 },  { x: 270, y: 110, w: 18, h: 90 }] },
+  { par: 2, tee: [50, 200], cup: [390, 60],  walls: [{ x: 180, y: 100, w: 120, h: 18 }] },
+  { par: 4, tee: [50, 130], cup: [390, 130], walls: [{ x: 140, y: 50,  w: 18, h: 80 },  { x: 240, y: 130, w: 18, h: 80 }, { x: 320, y: 50,  w: 18, h: 80 }] },
+]
+
+function GolfGame({ onClose }) {
+  const canvasRef = useRef(null)
+  const g = useRef({
+    hole: 0,
+    strokes: Array(9).fill(0),
+    state: 'aiming',
+    ball: { x: 50, y: 130, vx: 0, vy: 0 },
+    dragging: false,
+    aim: null,
+    frameId: null,
+  })
+  const [display, setDisplay] = useState({ hole: 0, strokes: Array(9).fill(0), state: 'aiming', showScore: false })
+
+  function initHole(idx) {
+    const h = HOLES[idx]
+    const gc = g.current
+    gc.hole = idx
+    gc.state = 'aiming'
+    gc.ball = { x: h.tee[0], y: h.tee[1], vx: 0, vy: 0 }
+    gc.dragging = false
+    gc.aim = null
+    setDisplay(d => ({ ...d, hole: idx, state: 'aiming', showScore: false }))
+  }
+
+  function draw() {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    const W = canvas.width, H = canvas.height
+    const gc = g.current
+    const h = HOLES[gc.hole]
+
+    ctx.fillStyle = '#2d6a4f'
+    ctx.fillRect(0, 0, W, H)
+    ctx.fillStyle = '#40916c'
+    ctx.fillRect(10, 10, W - 20, H - 20)
+
+    ctx.fillStyle = '#1b4332'
+    for (const w of h.walls) ctx.fillRect(w.x, w.y, w.w, w.h)
+
+    // Cup
+    ctx.beginPath(); ctx.arc(h.cup[0], h.cup[1], 11, 0, Math.PI * 2)
+    ctx.fillStyle = '#0a2010'; ctx.fill()
+    ctx.beginPath(); ctx.arc(h.cup[0], h.cup[1], 9, 0, Math.PI * 2)
+    ctx.fillStyle = '#111'; ctx.fill()
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5
+    ctx.beginPath(); ctx.moveTo(h.cup[0], h.cup[1]); ctx.lineTo(h.cup[0], h.cup[1] - 24); ctx.stroke()
+    ctx.fillStyle = '#E8722A'
+    ctx.beginPath(); ctx.moveTo(h.cup[0], h.cup[1] - 24); ctx.lineTo(h.cup[0] + 14, h.cup[1] - 18); ctx.lineTo(h.cup[0], h.cup[1] - 12); ctx.fill()
+
+    // Aim line
+    if (gc.dragging && gc.aim) {
+      const dx = gc.ball.x - gc.aim.x, dy = gc.ball.y - gc.aim.y
+      const power = Math.min(Math.hypot(dx, dy) / 80, 1)
+      ctx.save()
+      ctx.setLineDash([4, 4])
+      ctx.strokeStyle = `rgba(255,255,255,${0.3 + power * 0.5})`
+      ctx.lineWidth = 1.5
+      ctx.beginPath(); ctx.moveTo(gc.ball.x, gc.ball.y); ctx.lineTo(gc.ball.x + dx * 1.5, gc.ball.y + dy * 1.5); ctx.stroke()
+      ctx.restore()
+      ctx.beginPath(); ctx.arc(gc.ball.x, gc.ball.y, 8 + power * 8, 0, Math.PI * 2)
+      ctx.strokeStyle = power > 0.7 ? '#ff6b6b' : '#ffd166'; ctx.lineWidth = 2; ctx.stroke()
+    }
+
+    // Ball shadow
+    ctx.beginPath(); ctx.arc(gc.ball.x + 2, gc.ball.y + 2, 8, 0, Math.PI * 2)
+    ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fill()
+    // Ball
+    const grad = ctx.createRadialGradient(gc.ball.x - 2, gc.ball.y - 2, 1, gc.ball.x, gc.ball.y, 8)
+    grad.addColorStop(0, '#fff'); grad.addColorStop(1, '#ccc')
+    ctx.beginPath(); ctx.arc(gc.ball.x, gc.ball.y, 8, 0, Math.PI * 2)
+    ctx.fillStyle = grad; ctx.fill()
+
+    // HUD
+    ctx.fillStyle = 'rgba(0,0,0,0.5)'
+    ctx.fillRect(W - 130, 10, 120, 30)
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'right'
+    ctx.fillText(`Hole ${gc.hole + 1}/9  Par ${h.par}`, W - 14, 30)
+    ctx.fillRect(10, 10, 90, 30)
+    ctx.textAlign = 'left'; ctx.fillStyle = '#fff'
+    ctx.fillText(`Strokes: ${gc.strokes[gc.hole] || 0}`, 16, 30)
+  }
+
+  function update() {
+    const gc = g.current
+    if (gc.state !== 'rolling') return
+    const b = gc.ball
+    b.x += b.vx; b.y += b.vy
+    b.vx *= 0.984; b.vy *= 0.984
+    const W = 440, H = 260, R = 8
+    if (b.x < 10 + R) { b.x = 10 + R; b.vx = Math.abs(b.vx) * 0.7 }
+    if (b.x > W - 10 - R) { b.x = W - 10 - R; b.vx = -Math.abs(b.vx) * 0.7 }
+    if (b.y < 10 + R) { b.y = 10 + R; b.vy = Math.abs(b.vy) * 0.7 }
+    if (b.y > H - 10 - R) { b.y = H - 10 - R; b.vy = -Math.abs(b.vy) * 0.7 }
+    for (const w of HOLES[gc.hole].walls) {
+      if (b.x + R > w.x && b.x - R < w.x + w.w && b.y + R > w.y && b.y - R < w.y + w.h) {
+        const oL = (b.x + R) - w.x, oR = (w.x + w.w) - (b.x - R)
+        const oT = (b.y + R) - w.y, oB = (w.y + w.h) - (b.y - R)
+        const m = Math.min(oL, oR, oT, oB)
+        if (m === oL) { b.x -= oL; b.vx = -Math.abs(b.vx) * 0.7 }
+        else if (m === oR) { b.x += oR; b.vx = Math.abs(b.vx) * 0.7 }
+        else if (m === oT) { b.y -= oT; b.vy = -Math.abs(b.vy) * 0.7 }
+        else { b.y += oB; b.vy = Math.abs(b.vy) * 0.7 }
+      }
+    }
+    const cup = HOLES[gc.hole].cup
+    if (Math.hypot(b.x - cup[0], b.y - cup[1]) < 12) {
+      gc.state = 'holed'; b.vx = 0; b.vy = 0; b.x = cup[0]; b.y = cup[1]
+      setDisplay(d => ({ ...d, state: 'holed', strokes: [...gc.strokes] }))
+      return
+    }
+    if (Math.hypot(b.vx, b.vy) < 0.08) {
+      gc.state = 'aiming'; b.vx = 0; b.vy = 0
+      setDisplay(d => ({ ...d, state: 'aiming' }))
+    }
+  }
+
+  useEffect(() => {
+    initHole(0)
+    function loop() { update(); draw(); g.current.frameId = requestAnimationFrame(loop) }
+    g.current.frameId = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(g.current.frameId)
+  }, [])
+
+  function getPos(e) {
+    const r = canvasRef.current.getBoundingClientRect()
+    return { x: e.clientX - r.left, y: e.clientY - r.top }
+  }
+  function onMouseDown(e) {
+    const gc = g.current
+    if (gc.state !== 'aiming') return
+    const pos = getPos(e)
+    if (Math.hypot(pos.x - gc.ball.x, pos.y - gc.ball.y) < 24) {
+      gc.dragging = true; gc.aim = pos
+    }
+  }
+  function onMouseMove(e) { if (g.current.dragging) g.current.aim = getPos(e) }
+  function onMouseUp(e) {
+    const gc = g.current
+    if (!gc.dragging) return
+    gc.dragging = false
+    const pos = getPos(e)
+    const dx = gc.ball.x - pos.x, dy = gc.ball.y - pos.y
+    const power = Math.min(Math.hypot(dx, dy) / 80, 1)
+    if (power < 0.05) { gc.aim = null; return }
+    gc.ball.vx = dx * power * 0.18; gc.ball.vy = dy * power * 0.18
+    gc.strokes[gc.hole]++
+    gc.state = 'rolling'; gc.aim = null
+    setDisplay(d => ({ ...d, state: 'rolling', strokes: [...gc.strokes] }))
+  }
+
+  function nextHole() {
+    const gc = g.current
+    if (gc.hole >= 8) {
+      const board = JSON.parse(localStorage.getItem('golf_board') || '[]')
+      const total = gc.strokes.reduce((a, b) => a + b, 0)
+      board.push({ score: total, date: new Date().toLocaleDateString() })
+      board.sort((a, b) => a.score - b.score)
+      localStorage.setItem('golf_board', JSON.stringify(board.slice(0, 5)))
+      gc.state = 'done'
+      setDisplay(d => ({ ...d, state: 'done', showScore: true, strokes: [...gc.strokes] }))
+    } else {
+      initHole(gc.hole + 1)
+    }
+  }
+
+  function restartGame() {
+    g.current.strokes = Array(9).fill(0)
+    initHole(0)
+    setDisplay({ hole: 0, strokes: Array(9).fill(0), state: 'aiming', showScore: false })
+  }
+
+  const totalStrokes = display.strokes.reduce((a, b) => a + b, 0)
+  const totalPar = HOLES.reduce((a, h) => a + h.par, 0)
+  const score = totalStrokes - totalPar
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="bg-[#1a2f23] rounded-2xl shadow-2xl overflow-hidden" style={{ width: 460 }}>
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">⛳</span>
+            <span className="text-white font-bold text-sm">Mini Golf</span>
+            <span className="text-white/40 text-xs ml-2">Hole {display.hole + 1}/9 · Par {HOLES[display.hole].par}</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-white/50 text-xs font-mono">Strokes: {display.strokes[display.hole] || 0}</span>
+            <button onClick={onClose} className="text-white/40 hover:text-white/80 transition-colors"><Icon name="x" size={16} /></button>
+          </div>
+        </div>
+
+        <div className="relative">
+          <canvas
+            ref={canvasRef}
+            width={440}
+            height={260}
+            className="block cursor-crosshair"
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onMouseLeave={onMouseUp}
+          />
+
+          {display.state === 'holed' && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/55">
+              <div className="text-white font-bold text-2xl mb-1">
+                {(() => {
+                  const diff = display.strokes[display.hole] - HOLES[display.hole].par
+                  if (diff <= -2) return '🦅 Eagle!'
+                  if (diff === -1) return '🐦 Birdie!'
+                  if (diff === 0) return '✓ Par'
+                  if (diff === 1) return 'Bogey'
+                  return `+${diff} Over`
+                })()}
+              </div>
+              <div className="text-white/60 text-sm mb-4">{display.strokes[display.hole]} stroke{display.strokes[display.hole] !== 1 ? 's' : ''}</div>
+              <button onClick={nextHole} className="bg-[#E8722A] text-white font-bold px-6 py-2 rounded-xl text-sm hover:bg-[#d4651f]">
+                {display.hole >= 8 ? 'See Scorecard' : 'Next Hole →'}
+              </button>
+            </div>
+          )}
+
+          {display.showScore && (
+            <div className="absolute inset-0 bg-[#1a2f23] flex flex-col items-center justify-center p-5">
+              <div className="text-white font-bold text-xl mb-4">⛳ Scorecard</div>
+              <div className="w-full bg-black/20 rounded-xl p-3 mb-4 text-xs">
+                <div className="grid grid-cols-3 text-white/50 font-bold mb-2 uppercase tracking-wide">
+                  <span>Hole</span><span className="text-center">Par</span><span className="text-right">Score</span>
+                </div>
+                {HOLES.map((h, i) => (
+                  <div key={i} className="grid grid-cols-3 text-white py-0.5">
+                    <span>{i + 1}</span>
+                    <span className="text-center text-white/50">{h.par}</span>
+                    <span className={`text-right font-bold ${display.strokes[i] - h.par < 0 ? 'text-green-400' : display.strokes[i] - h.par > 0 ? 'text-red-400' : 'text-white/60'}`}>
+                      {display.strokes[i]}{display.strokes[i] - h.par !== 0 ? ` (${display.strokes[i] - h.par > 0 ? '+' : ''}${display.strokes[i] - h.par})` : ''}
+                    </span>
+                  </div>
+                ))}
+                <div className="border-t border-white/20 mt-2 pt-2 grid grid-cols-3 text-white font-bold">
+                  <span>Total</span>
+                  <span className="text-center text-white/50">{totalPar}</span>
+                  <span className={`text-right ${score < 0 ? 'text-green-400' : score > 0 ? 'text-red-400' : 'text-white'}`}>
+                    {totalStrokes} ({score > 0 ? '+' : ''}{score})
+                  </span>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={restartGame} className="bg-[#E8722A] text-white font-bold px-5 py-2 rounded-xl text-sm hover:bg-[#d4651f]">Play Again</button>
+                <button onClick={onClose} className="border border-white/20 text-white/60 font-bold px-5 py-2 rounded-xl text-sm hover:text-white">Close</button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="text-center text-white/30 text-xs py-2 border-t border-white/10">
+          {display.state === 'aiming' && 'Drag from the ball — pull back to set power'}
+          {display.state === 'rolling' && 'Ball in motion…'}
+          {display.state === 'holed' && ' '}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
 // Sidebar + Layout
 // ─────────────────────────────────────────
 const NAV = [
@@ -1421,6 +1756,7 @@ const NAV = [
 function AdminLayout({ onLogout }) {
   const [section, setSection] = useState('overview')
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [golfOpen, setGolfOpen] = useState(false)
 
   function nav(key) { setSection(key); setMobileOpen(false) }
 
@@ -1508,6 +1844,16 @@ function AdminLayout({ onLogout }) {
           {sections[section]}
         </main>
       </div>
+
+      {/* Mini Golf toggle */}
+      <button
+        onClick={() => setGolfOpen(true)}
+        className="fixed bottom-6 right-6 w-12 h-12 bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-full shadow-lg flex items-center justify-center text-xl z-40 transition-colors"
+        title="Mini Golf"
+      >
+        ⛳
+      </button>
+      {golfOpen && <GolfGame onClose={() => setGolfOpen(false)} />}
     </div>
   )
 }
