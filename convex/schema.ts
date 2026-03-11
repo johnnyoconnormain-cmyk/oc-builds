@@ -50,6 +50,7 @@ export default defineSchema({
     deadline: v.optional(v.string()),
     price: v.optional(v.number()),
     notes: v.optional(v.string()),
+    websiteUrl: v.optional(v.string()),
     tasks: v.array(v.object({ text: v.string(), done: v.boolean() })),
     createdAt: v.number(),
   }).index('by_status', ['status']).index('by_createdAt', ['createdAt']),
@@ -89,7 +90,7 @@ export default defineSchema({
     status: v.string(), // draft | scheduled | posted
     notes: v.optional(v.string()),
     createdAt: v.number(),
-  }).index('by_status', ['status']).index('by_scheduledDate', ['scheduledDate']),
+  }).index('by_status', ['status']).index('by_scheduledDate', ['scheduledDate']).index('by_createdAt', ['createdAt']),
 
   // ── AI chat history ──
   chats: defineTable({
