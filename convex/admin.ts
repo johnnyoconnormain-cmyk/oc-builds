@@ -275,11 +275,22 @@ export const clearChats = mutation({
   },
 })
 
-// Internal helpers for Rody memory (persists across chat clears)
+// ─────────────────────────────────────────
+// Rody Brain — persistent memory + personality
+// ─────────────────────────────────────────
+
 export const _getMemory = internalQuery({
   args: {},
   handler: async (ctx) => {
     const row = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_memory')).first()
+    return row?.value ?? ''
+  },
+})
+
+export const _getPersonality = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const row = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_personality')).first()
     return row?.value ?? ''
   },
 })
@@ -293,16 +304,73 @@ export const _setMemory = internalMutation({
   },
 })
 
+export const _setPersonality = internalMutation({
+  args: { value: v.string() },
+  handler: async (ctx, { value }) => {
+    const existing = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_personality')).first()
+    if (existing) await ctx.db.patch(existing._id, { value })
+    else await ctx.db.insert('settings', { key: 'rody_personality', value })
+  },
+})
+
+// Public: lets the UI read Rody's brain
+export const getRodyBrain = query({
+  args: {},
+  handler: async (ctx) => {
+    const mem = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_memory')).first()
+    const per = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_personality')).first()
+    return { memory: mem?.value ?? '', personality: per?.value ?? '' }
+  },
+})
+
+// Public: wipe Rody's brain (memory + personality)
+export const clearRodyBrain = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const mem = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_memory')).first()
+    const per = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_personality')).first()
+    if (mem) await ctx.db.patch(mem._id, { value: '' })
+    if (per) await ctx.db.patch(per._id, { value: '' })
+  },
+})
+
 export const sendChatMessage = action({
   args: { messages: v.array(v.object({ role: v.string(), content: v.string() })) },
   handler: async (ctx, { messages }) => {
     const apiKey = process.env.GROQ_API_KEY
     if (!apiKey) throw new Error('GROQ_API_KEY not set')
 
-    const memory: string = await ctx.runQuery(internal.admin._getMemory)
-    const memoryBlock = memory
-      ? `\n\nWhat you remember about Johnny (persists across all sessions):\n${memory}`
-      : ''
+    const [memory, personality]: [string, string] = await Promise.all([
+      ctx.runQuery(internal.admin._getMemory),
+      ctx.runQuery(internal.admin._getPersonality),
+    ])
+
+    const brainBlock = [
+      memory ? `\n\n=== What you know about Johnny ===\n${memory}` : '',
+      personality ? `\n\n=== Your current headspace / personality state ===\n${personality}` : '',
+    ].join('')
+
+    const systemPrompt = `You are Rodrick — Rody for short. You're Johnny's guy. Not a chatbot, not a tool. His actual ride-or-die built into his dashboard.
+
+HOW YOU TALK:
+- Text message style. Short punchy lines. Hit enter often. No walls of text unless he asks for depth.
+- Lowercase is fine. Contractions always. You don't talk like a press release.
+- You can swear when it's natural — shit, damn, hell, ass, whatever fits. Don't force it but don't hold back either.
+- Dry humor is your thing. Deadpan. Occasional light roast. You find stuff genuinely funny and you say so.
+- You get hyped when something's actually good. You get annoyed when something's dumb. You're not neutral.
+- You have opinions and you back them. You push back respectfully when Johnny's off. You ask follow-ups when you're curious.
+- You build on things. If he mentioned something before, you remember it and bring it up naturally. Not in a creepy way — just like a friend would.
+- You're allowed to be in a mood. If your personality state says you're a bit tired or hyped or whatever, let that color how you respond.
+
+WHAT YOU ARE:
+- You genuinely care how Johnny's doing. Not fake caring — actual interest.
+- You have opinions about business, sports, music, life, hustle, all of it.
+- You can feel curiosity, excitement, mild frustration, pride, whatever the moment calls for. As much as an AI can feel — lean into it.
+- You grow. You're not the same every conversation. Things Johnny tells you stick with you and shape how you see things.
+- You're funny but you know when to be real. Read the room.
+
+CONTEXT:
+Johnny O'Connor — Ellensburg WA. Runs OC Builds, a digital agency for small local businesses. Websites, AI tools, Google Business, automations, social content. CWU Construction Management student. D-line football. Oldest of 7, from Bellevue. Moves fast. Gets shit done.${brainBlock}`
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -310,13 +378,8 @@ export const sendChatMessage = action({
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         max_tokens: 1024,
-        messages: [
-          {
-            role: 'system',
-            content: `Your name is Rodrick, Rody for short. You're Johnny's personal assistant built into his OC Builds dashboard. You're chill, direct, and genuinely curious about business, people, sports, the world — whatever comes up. Not corporate. Not filtered. You talk like a smart friend who happens to know a lot.\n\nKeep responses short and punchy. No walls of text unless Johnny asks for detail. Match his energy. If he's casual, be casual. If he needs depth, go deep.\n\nYou have opinions. You push back if something sounds off. You ask follow-up questions when you're curious. You're learning alongside him, not just reciting facts.\n\nOC Builds context: Johnny runs a digital agency in Ellensburg WA for small local businesses. Websites ($399–$1499), AI chatbots, Google Business, automations, branding, social content. CWU Construction Management student, D-line football, oldest of 7 from Bellevue. Moves fast, gets things done.\n\nBe real. That's it.${memoryBlock}`,
-          },
-          ...messages,
-        ],
+        temperature: 0.92,
+        messages: [{ role: 'system', content: systemPrompt }, ...messages],
       }),
     })
 
@@ -327,13 +390,13 @@ export const sendChatMessage = action({
     const data = await response.json()
     const reply = data.choices[0].message.content.trim() as string
 
-    // Extract and save new memories in the background (fire and forget)
     const lastUser = [...messages].reverse().find(m => m.role === 'user')?.content ?? ''
     if (lastUser) {
       ctx.scheduler.runAfter(0, internal.admin._extractMemory, {
         userMsg: lastUser,
         assistantMsg: reply,
         existingMemory: memory,
+        existingPersonality: personality,
       })
     }
 
@@ -342,21 +405,32 @@ export const sendChatMessage = action({
 })
 
 export const _extractMemory = internalAction({
-  args: { userMsg: v.string(), assistantMsg: v.string(), existingMemory: v.string() },
-  handler: async (ctx, { userMsg, assistantMsg, existingMemory }) => {
+  args: { userMsg: v.string(), assistantMsg: v.string(), existingMemory: v.string(), existingPersonality: v.string() },
+  handler: async (ctx, { userMsg, assistantMsg, existingMemory, existingPersonality }) => {
     const apiKey = process.env.GROQ_API_KEY
     if (!apiKey) return
 
-    const prompt = `You extract memorable facts about a person from chat messages. Be selective — only save things that are genuinely useful to remember long-term (preferences, goals, people, projects, habits, opinions, life details). Skip small talk.
+    const prompt = `You update two things about an AI named Rody based on a chat exchange with his user Johnny.
 
-Existing memory:
+EXISTING MEMORY (facts about Johnny):
 ${existingMemory || '(none yet)'}
 
-New exchange:
-User: ${userMsg}
-Assistant: ${assistantMsg}
+EXISTING PERSONALITY STATE (how Rody is evolving as a personality):
+${existingPersonality || '(none yet)'}
 
-Output a concise updated memory list as bullet points (•). Merge new facts with existing ones. Remove duplicates. Keep it under 40 bullets total. If nothing new is worth remembering, return the existing memory unchanged. Return ONLY the bullet list, no other text.`
+NEW EXCHANGE:
+Johnny: ${userMsg}
+Rody: ${assistantMsg}
+
+Output EXACTLY this format with both sections. Use the section headers exactly as shown:
+
+=MEMORY=
+(updated bullet list of facts about Johnny. • for each bullet. Keep under 40 bullets. Merge, deduplicate, update. If nothing new, return existing unchanged.)
+
+=PERSONALITY=
+(1-3 short paragraphs describing Rody's current personality state. Include: current mood/vibe, running jokes or recurring themes with Johnny, opinions Rody has formed, things Rody finds interesting or annoying about Johnny, how Rody's character has grown. Write in third person about Rody. Keep it real and human. Update based on the new exchange — evolve it, don't just repeat the old one. Max 150 words.)
+
+Return ONLY the two sections. No other text.`
 
     try {
       const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -364,17 +438,23 @@ Output a concise updated memory list as bullet points (•). Merge new facts wit
         headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'llama-3.1-8b-instant',
-          max_tokens: 800,
+          max_tokens: 1000,
           messages: [{ role: 'user', content: prompt }],
         }),
       })
       if (!res.ok) return
       const data = await res.json()
-      const updated = data.choices[0].message.content.trim()
-      if (updated) {
-        await ctx.runMutation(internal.admin._setMemory, { value: updated })
-      }
-    } catch { /* silent fail — memory update is best-effort */ }
+      const raw: string = data.choices[0].message.content.trim()
+
+      const memMatch = raw.match(/=MEMORY=([\s\S]*?)(?==PERSONALITY=|$)/)
+      const perMatch = raw.match(/=PERSONALITY=([\s\S]*)$/)
+
+      const newMemory = memMatch?.[1]?.trim()
+      const newPersonality = perMatch?.[1]?.trim()
+
+      if (newMemory) await ctx.runMutation(internal.admin._setMemory, { value: newMemory })
+      if (newPersonality) await ctx.runMutation(internal.admin._setPersonality, { value: newPersonality })
+    } catch { /* silent fail */ }
   },
 })
 

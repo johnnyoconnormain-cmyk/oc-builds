@@ -1299,12 +1299,16 @@ function ContentPlanner() {
 // ─────────────────────────────────────────
 function AIChat() {
   const messages = useQuery(api.admin.listChats)
+  const brain = useQuery(api.admin.getRodyBrain)
   const saveChat = useMutation(api.admin.saveChat)
   const clearChats = useMutation(api.admin.clearChats)
+  const clearBrain = useMutation(api.admin.clearRodyBrain)
   const sendMessage = useAction(api.admin.sendChatMessage)
 
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [tab, setTab] = useState('chat') // 'chat' | 'brain'
+  const [confirmWipe, setConfirmWipe] = useState(false)
   const bottomRef = useRef(null)
 
   useEffect(() => {
@@ -1316,87 +1320,160 @@ function AIChat() {
     if (!text || loading) return
     setInput('')
     setLoading(true)
-
     await saveChat({ role: 'user', content: text })
-
     try {
       const history = [...(messages ?? []), { role: 'user', content: text }]
         .map(m => ({ role: m.role, content: m.content }))
-
       const reply = await sendMessage({ messages: history })
       await saveChat({ role: 'assistant', content: reply })
     } catch {
-      await saveChat({ role: 'assistant', content: "Something went wrong on my end. Try again in a sec — I'm Rody btw." })
+      await saveChat({ role: 'assistant', content: "nah something broke on my end lol try again" })
     } finally {
       setLoading(false)
     }
   }
 
+  const memoryBullets = brain?.memory
+    ? brain.memory.split('\n').filter(l => l.trim())
+    : []
+
   return (
     <div className="flex flex-col h-full" style={{ height: 'calc(100vh - 120px)' }}>
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-2xl font-bold text-[#1a1a1a]">Rodrick <span className="text-gray-400 font-normal text-lg">/ Rody</span></h1>
-          <p className="text-gray-400 text-sm mt-1">Your personal assistant. Ask him anything.</p>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-[#1a1a1a] flex items-center justify-center text-lg shrink-0">🤙</div>
+          <div>
+            <h1 className="text-xl font-bold text-[#1a1a1a] leading-none">Rodrick <span className="text-gray-400 font-normal text-base">/ Rody</span></h1>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {brain?.personality
+                ? brain.personality.split('.')[0].trim().slice(0, 60) + '…'
+                : 'your guy. ask him anything.'}
+            </p>
+          </div>
         </div>
-        <button onClick={() => clearChats()} className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500 font-semibold transition-colors border border-gray-200 px-3 py-2 rounded-xl">
-          <Icon name="refresh" size={13} /> Clear Chat
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => clearChats()} className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 font-semibold transition-colors border border-gray-200 px-2.5 py-1.5 rounded-lg">
+            <Icon name="refresh" size={12} /> Clear Chat
+          </button>
+        </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-4 mb-4">
-        {!messages || messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center text-gray-400 py-12">
-            <div className="w-14 h-14 bg-[#E8722A]/10 rounded-2xl flex items-center justify-center mb-4">
-              <Icon name="message" size={24} />
-            </div>
-            <p className="font-semibold text-[#1a1a1a] mb-1">Ask me anything</p>
-            <p className="text-sm max-w-xs">Business strategy, pricing, outreach scripts, content ideas, sports, whatever's on your mind.</p>
-          </div>
-        ) : (
-          messages.map(m => (
-            <div key={m._id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
-                m.role === 'user'
-                  ? 'bg-[#E8722A] text-white rounded-br-sm'
-                  : 'bg-gray-100 text-[#1a1a1a] rounded-bl-sm'
-              }`}>
-                {m.content}
+      {/* Tabs */}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit mb-3">
+        {[{ key: 'chat', label: '💬 Chat' }, { key: 'brain', label: '🧠 Brain' }].map(t => (
+          <button key={t.key} onClick={() => setTab(t.key)}
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-colors ${tab === t.key ? 'bg-white text-[#1a1a1a] shadow-sm' : 'text-gray-500'}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'chat' && (
+        <>
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-2 mb-3">
+            {!messages || messages.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center text-gray-400 py-12">
+                <div className="text-4xl mb-3">🤙</div>
+                <p className="font-bold text-[#1a1a1a] mb-1">what's good</p>
+                <p className="text-sm max-w-xs text-gray-400">hit me with whatever — business, sports, ideas, random shit. i'm here.</p>
               </div>
-            </div>
-          ))
-        )}
-        {loading && (
-          <div className="flex justify-start">
-            <div className="bg-gray-100 px-4 py-3 rounded-2xl rounded-bl-sm flex items-center gap-1.5">
-              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-            </div>
+            ) : (
+              messages.map(m => (
+                <div key={m._id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[78%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+                    m.role === 'user'
+                      ? 'bg-[#E8722A] text-white rounded-br-sm font-medium'
+                      : 'bg-[#f0f0f0] text-[#1a1a1a] rounded-bl-sm'
+                  }`}>
+                    {m.content}
+                  </div>
+                </div>
+              ))
+            )}
+            {loading && (
+              <div className="flex justify-start">
+                <div className="bg-[#f0f0f0] px-3.5 py-3 rounded-2xl rounded-bl-sm flex items-center gap-1.5">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
+            )}
+            <div ref={bottomRef} />
           </div>
-        )}
-        <div ref={bottomRef} />
-      </div>
 
-      {/* Input */}
-      <div className="flex gap-3">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-          placeholder="Ask anything..."
-          className={`${inp} flex-1`}
-          disabled={loading}
-        />
-        <button
-          onClick={send}
-          disabled={loading || !input.trim()}
-          className="bg-[#E8722A] hover:bg-[#d4651f] disabled:opacity-40 text-white px-4 py-2.5 rounded-xl transition-colors"
-        >
-          <Icon name="send" size={18} />
-        </button>
-      </div>
+          {/* Input */}
+          <div className="flex gap-2">
+            <input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
+              placeholder="say something..."
+              className="flex-1 bg-white border border-gray-200 rounded-2xl px-4 py-2.5 text-sm outline-none focus:border-[#E8722A]/50 transition-colors"
+              disabled={loading}
+            />
+            <button
+              onClick={send}
+              disabled={loading || !input.trim()}
+              className="bg-[#E8722A] hover:bg-[#d4651f] disabled:opacity-40 text-white px-4 py-2.5 rounded-2xl transition-colors"
+            >
+              <Icon name="send" size={16} />
+            </button>
+          </div>
+        </>
+      )}
+
+      {tab === 'brain' && (
+        <div className="flex-1 overflow-y-auto space-y-4">
+          {/* Personality card */}
+          <div className="bg-[#1a1a1a] rounded-2xl p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">🧠</span>
+              <span className="text-white font-bold text-sm">Rody's Headspace</span>
+              <span className="ml-auto text-white/30 text-xs">evolves with every convo</span>
+            </div>
+            {brain?.personality ? (
+              <p className="text-white/80 text-sm leading-relaxed">{brain.personality}</p>
+            ) : (
+              <p className="text-white/30 text-sm italic">nothing yet — start talking to him</p>
+            )}
+          </div>
+
+          {/* Memory card */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">📋</span>
+              <span className="text-[#1a1a1a] font-bold text-sm">What Rody Remembers</span>
+              <span className="ml-auto text-gray-400 text-xs">{memoryBullets.length} things</span>
+            </div>
+            {memoryBullets.length > 0 ? (
+              <ul className="space-y-1.5">
+                {memoryBullets.map((b, i) => (
+                  <li key={i} className="text-sm text-gray-600 leading-relaxed">{b}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-400 text-sm italic">no memories yet</p>
+            )}
+          </div>
+
+          {/* Wipe brain */}
+          <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
+            <p className="text-xs text-red-500 font-semibold mb-2">Danger Zone</p>
+            <p className="text-xs text-gray-500 mb-3">Wipe Rody's memory and personality. He'll start fresh — won't remember anything about you. Can't be undone.</p>
+            {confirmWipe ? (
+              <div className="flex gap-2">
+                <button onClick={() => { clearBrain(); setConfirmWipe(false) }} className="flex-1 bg-red-500 text-white text-xs font-bold py-2 rounded-xl hover:bg-red-600">Yeah, wipe it</button>
+                <button onClick={() => setConfirmWipe(false)} className="flex-1 border border-gray-200 text-gray-500 text-xs font-semibold py-2 rounded-xl hover:bg-gray-50">Cancel</button>
+              </div>
+            ) : (
+              <button onClick={() => setConfirmWipe(true)} className="text-xs text-red-500 font-bold hover:underline">Wipe Rody's Brain →</button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
