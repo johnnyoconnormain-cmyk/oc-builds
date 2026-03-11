@@ -1,4 +1,5 @@
-import { mutation, query, action } from './_generated/server'
+import { mutation, query, action, internalQuery, internalMutation, internalAction } from './_generated/server'
+import { internal } from './_generated/api'
 import { v } from 'convex/values'
 
 // ─────────────────────────────────────────
@@ -274,25 +275,45 @@ export const clearChats = mutation({
   },
 })
 
+// Internal helpers for Rody memory (persists across chat clears)
+export const _getMemory = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const row = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_memory')).first()
+    return row?.value ?? ''
+  },
+})
+
+export const _setMemory = internalMutation({
+  args: { value: v.string() },
+  handler: async (ctx, { value }) => {
+    const existing = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_memory')).first()
+    if (existing) await ctx.db.patch(existing._id, { value })
+    else await ctx.db.insert('settings', { key: 'rody_memory', value })
+  },
+})
+
 export const sendChatMessage = action({
   args: { messages: v.array(v.object({ role: v.string(), content: v.string() })) },
-  handler: async (_ctx, { messages }) => {
+  handler: async (ctx, { messages }) => {
     const apiKey = process.env.GROQ_API_KEY
     if (!apiKey) throw new Error('GROQ_API_KEY not set')
 
+    const memory: string = await ctx.runQuery(internal.admin._getMemory)
+    const memoryBlock = memory
+      ? `\n\nWhat you remember about Johnny (persists across all sessions):\n${memory}`
+      : ''
+
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         max_tokens: 1024,
         messages: [
           {
             role: 'system',
-            content: `Your name is Rodrick, Rody for short. You're Johnny's personal assistant built into his OC Builds dashboard. You're chill, direct, and genuinely curious about business, people, sports, the world — whatever comes up. Not corporate. Not filtered. You talk like a smart friend who happens to know a lot.\n\nKeep responses short and punchy. No walls of text unless Johnny asks for detail. Match his energy. If he's casual, be casual. If he needs depth, go deep.\n\nYou have opinions. You push back if something sounds off. You ask follow-up questions when you're curious. You're learning alongside him, not just reciting facts.\n\nOC Builds context: Johnny runs a digital agency in Ellensburg WA for small local businesses. Websites ($399–$1499), AI chatbots, Google Business, automations, branding, social content. CWU Construction Management student, D-line football, oldest of 7 from Bellevue. Moves fast, gets things done.\n\nBe real. That's it.`,
+            content: `Your name is Rodrick, Rody for short. You're Johnny's personal assistant built into his OC Builds dashboard. You're chill, direct, and genuinely curious about business, people, sports, the world — whatever comes up. Not corporate. Not filtered. You talk like a smart friend who happens to know a lot.\n\nKeep responses short and punchy. No walls of text unless Johnny asks for detail. Match his energy. If he's casual, be casual. If he needs depth, go deep.\n\nYou have opinions. You push back if something sounds off. You ask follow-up questions when you're curious. You're learning alongside him, not just reciting facts.\n\nOC Builds context: Johnny runs a digital agency in Ellensburg WA for small local businesses. Websites ($399–$1499), AI chatbots, Google Business, automations, branding, social content. CWU Construction Management student, D-line football, oldest of 7 from Bellevue. Moves fast, gets things done.\n\nBe real. That's it.${memoryBlock}`,
           },
           ...messages,
         ],
@@ -304,7 +325,56 @@ export const sendChatMessage = action({
       throw new Error(`Groq error: ${err}`)
     }
     const data = await response.json()
-    return data.choices[0].message.content.trim() as string
+    const reply = data.choices[0].message.content.trim() as string
+
+    // Extract and save new memories in the background (fire and forget)
+    const lastUser = [...messages].reverse().find(m => m.role === 'user')?.content ?? ''
+    if (lastUser) {
+      ctx.scheduler.runAfter(0, internal.admin._extractMemory, {
+        userMsg: lastUser,
+        assistantMsg: reply,
+        existingMemory: memory,
+      })
+    }
+
+    return reply
+  },
+})
+
+export const _extractMemory = internalAction({
+  args: { userMsg: v.string(), assistantMsg: v.string(), existingMemory: v.string() },
+  handler: async (ctx, { userMsg, assistantMsg, existingMemory }) => {
+    const apiKey = process.env.GROQ_API_KEY
+    if (!apiKey) return
+
+    const prompt = `You extract memorable facts about a person from chat messages. Be selective — only save things that are genuinely useful to remember long-term (preferences, goals, people, projects, habits, opinions, life details). Skip small talk.
+
+Existing memory:
+${existingMemory || '(none yet)'}
+
+New exchange:
+User: ${userMsg}
+Assistant: ${assistantMsg}
+
+Output a concise updated memory list as bullet points (•). Merge new facts with existing ones. Remove duplicates. Keep it under 40 bullets total. If nothing new is worth remembering, return the existing memory unchanged. Return ONLY the bullet list, no other text.`
+
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'llama-3.1-8b-instant',
+          max_tokens: 800,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      })
+      if (!res.ok) return
+      const data = await res.json()
+      const updated = data.choices[0].message.content.trim()
+      if (updated) {
+        await ctx.runMutation(internal.admin._setMemory, { value: updated })
+      }
+    } catch { /* silent fail — memory update is best-effort */ }
   },
 })
 
