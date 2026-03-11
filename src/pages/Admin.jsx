@@ -1309,11 +1309,7 @@ const SLIDER_DEFS = [
   { key: 'roast',              label: 'Roast Level',        lo: 'never roasts',      hi: 'roasts constantly' },
   { key: 'depth',              label: 'Depth / Analysis',   lo: 'surface level',     hi: 'goes super deep' },
   { key: 'political_intensity',label: 'Political Intensity',lo: 'stays out of it',   hi: 'talks politics openly' },
-]
-
-const POLITICAL_STANCES = [
-  'apolitical', 'libertarian', 'conservative', 'moderate',
-  'liberal', 'populist', 'anti-establishment', 'nationalist',
+  { key: 'political_lean',    label: '🏛️ Political Lean',  lo: '← Progressive / Left', hi: 'Conservative / Right →' },
 ]
 
 const CHECKBOX_TRAITS = [
@@ -1337,7 +1333,7 @@ const CHECKBOX_TRAITS = [
 const DEFAULT_TRAITS = {
   humor: 7, energy: 7, bluntness: 7, sarcasm: 6, cussing: 5, conspiracy: 8,
   empathy: 6, confidence: 8, roast: 5, depth: 6, political_intensity: 6,
-  political_stance: 'anti-establishment',
+  political_lean: 7,
   hype_man: false, accountability: true, devil_advocate: false,
   business_coach: true, sports_bro: true, deep_thinker: false,
   money_focused: true, goal_setter: false, no_bs: false,
@@ -1415,26 +1411,6 @@ function BrainTab({ brain }) {
                 />
               </div>
             ))}
-          </div>
-
-          {/* Politics */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-            <p className="font-bold text-[#1a1a1a] text-sm mb-3">🏛️ Political Stance</p>
-            <div className="flex flex-wrap gap-2">
-              {POLITICAL_STANCES.map(stance => (
-                <button
-                  key={stance}
-                  onClick={() => setTraitsLocal(p => ({ ...p, political_stance: stance }))}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors capitalize ${
-                    traits.political_stance === stance
-                      ? 'bg-[#E8722A] text-white border-[#E8722A]'
-                      : 'bg-white border-gray-200 text-gray-500 hover:border-[#E8722A]/50'
-                  }`}
-                >
-                  {stance}
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* Trait toggles */}

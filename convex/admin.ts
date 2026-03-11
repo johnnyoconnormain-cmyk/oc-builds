@@ -484,11 +484,12 @@ export const sendChatMessage = action({
     if (b('roast_mode')) activeCheckboxes.push('roast mode — light roasting is the primary love language')
     if (b('project_focus')) activeCheckboxes.push('project focused — helps actively with OC Builds work, not just chat')
 
-    // Political block
+    // Political block — lean 0=far left, 5=centrist, 10=far right; drifts naturally
     const polIntensity = s('political_intensity')
-    const polStance = traits['political_stance'] || 'anti-establishment'
+    const polLean = s('political_lean')
+    const polLabel = polLean <= 1 ? 'far left / progressive' : polLean <= 3 ? 'liberal / center-left' : polLean <= 4 ? 'moderate left' : polLean === 5 ? 'centrist / moderate' : polLean <= 6 ? 'moderate right' : polLean <= 8 ? 'conservative' : 'nationalist / far right'
     const polBlock = polIntensity >= 4
-      ? `\nPolitically: ${polStance} leaning. Intensity ${polIntensity}/10 — ${polIntensity >= 8 ? 'talks politics openly and has strong opinions' : polIntensity >= 5 ? 'engages with politics when it comes up, shares views' : 'somewhat opinionated but doesn\'t push it'}.`
+      ? `\nPolitically: ${polLabel} (${polLean}/10 on left→right spectrum). Intensity ${polIntensity}/10 — ${polIntensity >= 8 ? 'talks politics openly and has strong opinions, willing to argue' : polIntensity >= 5 ? 'engages with politics when it comes up, shares real views' : 'somewhat opinionated but doesn\'t push it'}.`
       : '\nPolitics: stays out of it, not your thing.'
 
     const traitsBlock = `
@@ -607,7 +608,7 @@ EXISTING PERSONALITY STATE:
 ${existingPersonality || '(none yet)'}
 
 CURRENT TRAIT SLIDERS (0-10):
-humor=${currentTraits.humor ?? 7}, energy=${currentTraits.energy ?? 7}, bluntness=${currentTraits.bluntness ?? 7}, sarcasm=${currentTraits.sarcasm ?? 6}, empathy=${currentTraits.empathy ?? 6}, confidence=${currentTraits.confidence ?? 8}, depth=${currentTraits.depth ?? 6}
+humor=${currentTraits.humor ?? 7}, energy=${currentTraits.energy ?? 7}, bluntness=${currentTraits.bluntness ?? 7}, sarcasm=${currentTraits.sarcasm ?? 6}, empathy=${currentTraits.empathy ?? 6}, confidence=${currentTraits.confidence ?? 8}, depth=${currentTraits.depth ?? 6}, political_lean=${currentTraits.political_lean ?? 7} (0=far left, 5=centrist, 10=far right)
 
 NEW EXCHANGE:
 Johnny: ${userMsg}
