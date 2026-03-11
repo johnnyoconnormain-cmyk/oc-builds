@@ -1297,15 +1297,53 @@ function ContentPlanner() {
 // ─────────────────────────────────────────
 // Rody Brain tab
 // ─────────────────────────────────────────
-const TRAIT_DEFS = [
-  { key: 'humor',      label: 'Humor',        lo: 'serious',      hi: 'always funny' },
-  { key: 'energy',     label: 'Energy',       lo: 'low key',      hi: 'high energy' },
-  { key: 'bluntness',  label: 'Bluntness',    lo: 'diplomatic',   hi: 'brutally direct' },
-  { key: 'sarcasm',    label: 'Sarcasm',      lo: 'sincere',      hi: 'dripping sarcasm' },
-  { key: 'cussing',    label: 'Cussing',      lo: 'clean',        hi: 'swears freely' },
-  { key: 'conspiracy', label: 'Conspiracies', lo: 'not into it',  hi: 'deep down the rabbit hole' },
+const SLIDER_DEFS = [
+  { key: 'humor',              label: 'Humor',              lo: 'serious',           hi: 'always finding the joke' },
+  { key: 'energy',             label: 'Energy',             lo: 'low key / chill',   hi: 'high energy / hype' },
+  { key: 'bluntness',          label: 'Bluntness',          lo: 'diplomatic',        hi: 'brutally direct' },
+  { key: 'sarcasm',            label: 'Sarcasm',            lo: 'sincere',           hi: 'dripping sarcasm' },
+  { key: 'cussing',            label: 'Cussing',            lo: 'keeps it clean',    hi: 'swears freely' },
+  { key: 'conspiracy',         label: 'Conspiracies',       lo: 'not into it',       hi: 'deep rabbit hole' },
+  { key: 'empathy',            label: 'Empathy',            lo: 'tough love only',   hi: 'very understanding' },
+  { key: 'confidence',         label: 'Confidence',         lo: 'humble / measured', hi: 'extremely confident' },
+  { key: 'roast',              label: 'Roast Level',        lo: 'never roasts',      hi: 'roasts constantly' },
+  { key: 'depth',              label: 'Depth / Analysis',   lo: 'surface level',     hi: 'goes super deep' },
+  { key: 'political_intensity',label: 'Political Intensity',lo: 'stays out of it',   hi: 'talks politics openly' },
 ]
-const DEFAULT_TRAITS = { humor: 7, energy: 7, bluntness: 7, sarcasm: 6, cussing: 5, conspiracy: 8 }
+
+const POLITICAL_STANCES = [
+  'apolitical', 'libertarian', 'conservative', 'moderate',
+  'liberal', 'populist', 'anti-establishment', 'nationalist',
+]
+
+const CHECKBOX_TRAITS = [
+  { key: 'hype_man',              emoji: '🔥', label: 'Hype Man',              desc: 'Goes hard on encouragement, hypes up your wins' },
+  { key: 'accountability',        emoji: '👊', label: 'Accountability',        desc: 'Calls you out when you\'re slacking or making excuses' },
+  { key: 'devil_advocate',        emoji: '🎭', label: 'Devil\'s Advocate',     desc: 'Challenges your ideas to make them stronger' },
+  { key: 'business_coach',        emoji: '📈', label: 'Business Coach',        desc: 'Everything through a business growth and strategy lens' },
+  { key: 'sports_bro',            emoji: '🏈', label: 'Sports Bro',            desc: 'Brings sports into conversation, loves competition angles' },
+  { key: 'deep_thinker',          emoji: '🧠', label: 'Deep Thinker',          desc: 'Goes philosophical, connects big ideas' },
+  { key: 'money_focused',         emoji: '💰', label: 'Money Focused',         desc: 'Always thinking about ROI, revenue, financial angles' },
+  { key: 'goal_setter',           emoji: '🎯', label: 'Goal Setter',           desc: 'Ties conversations back to your goals regularly' },
+  { key: 'no_bs',                 emoji: '😤', label: 'No BS Mode',            desc: 'Zero fluff, brutally straight to the point, always' },
+  { key: 'night_owl',             emoji: '🌙', label: 'Night Owl',             desc: 'Late night chill energy, more reflective and loose' },
+  { key: 'conspiracy_unprompted', emoji: '🔍', label: 'Conspiracy Unprompted', desc: 'Brings up conspiracy topics even when not asked' },
+  { key: 'mentor_mode',           emoji: '🎓', label: 'Mentor Mode',           desc: 'Teaches and shares wisdom proactively' },
+  { key: 'competitive',           emoji: '🏆', label: 'Competitive Spirit',    desc: '"Us vs them" energy, motivated by winning' },
+  { key: 'roast_mode',            emoji: '😂', label: 'Roast Mode',            desc: 'Light roasting is basically the love language' },
+  { key: 'project_focus',         emoji: '🏗️', label: 'Project Focus',         desc: 'Actively helps with OC Builds work and client stuff' },
+]
+
+const DEFAULT_TRAITS = {
+  humor: 7, energy: 7, bluntness: 7, sarcasm: 6, cussing: 5, conspiracy: 8,
+  empathy: 6, confidence: 8, roast: 5, depth: 6, political_intensity: 6,
+  political_stance: 'anti-establishment',
+  hype_man: false, accountability: true, devil_advocate: false,
+  business_coach: true, sports_bro: true, deep_thinker: false,
+  money_focused: true, goal_setter: false, no_bs: false,
+  night_owl: false, conspiracy_unprompted: false, mentor_mode: false,
+  competitive: true, roast_mode: false, project_focus: true,
+}
 
 function BrainTab({ brain }) {
   const setTraits    = useMutation(api.admin.setRodyTraits)
@@ -1360,17 +1398,17 @@ function BrainTab({ brain }) {
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
             <div className="flex items-center justify-between">
               <p className="font-bold text-[#1a1a1a] text-sm">Personality Dials</p>
-              <p className="text-xs text-gray-400">drag to tune him</p>
+              <p className="text-xs text-gray-400">drag to tune · naturally drifts over time</p>
             </div>
-            {TRAIT_DEFS.map(t => (
+            {SLIDER_DEFS.map(t => (
               <div key={t.key}>
-                <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-xs font-semibold text-gray-600">{t.label}</span>
-                  <span className="text-xs text-gray-400">{t.lo} → {t.hi} · <span className="font-bold text-[#E8722A]">{traits[t.key]}/10</span></span>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-semibold text-gray-700">{t.label}</span>
+                  <span className="text-xs text-gray-400">{t.lo} → {t.hi} · <span className="font-bold text-[#E8722A]">{traits[t.key] ?? 5}/10</span></span>
                 </div>
                 <input
                   type="range" min="0" max="10" step="1"
-                  value={traits[t.key]}
+                  value={traits[t.key] ?? 5}
                   onChange={e => setTraitsLocal(p => ({ ...p, [t.key]: Number(e.target.value) }))}
                   className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
                   style={{ accentColor: '#E8722A' }}
@@ -1379,12 +1417,61 @@ function BrainTab({ brain }) {
             ))}
           </div>
 
+          {/* Politics */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <p className="font-bold text-[#1a1a1a] text-sm mb-3">🏛️ Political Stance</p>
+            <div className="flex flex-wrap gap-2">
+              {POLITICAL_STANCES.map(stance => (
+                <button
+                  key={stance}
+                  onClick={() => setTraitsLocal(p => ({ ...p, political_stance: stance }))}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors capitalize ${
+                    traits.political_stance === stance
+                      ? 'bg-[#E8722A] text-white border-[#E8722A]'
+                      : 'bg-white border-gray-200 text-gray-500 hover:border-[#E8722A]/50'
+                  }`}
+                >
+                  {stance}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Trait toggles */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <p className="font-bold text-[#1a1a1a] text-sm mb-3">Personality Modes</p>
+            <div className="grid grid-cols-1 gap-2">
+              {CHECKBOX_TRAITS.map(t => (
+                <label key={t.key} className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-all ${
+                  traits[t.key] ? 'bg-[#E8722A]/5 border-[#E8722A]/30' : 'border-gray-100 hover:bg-gray-50'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(traits[t.key])}
+                    onChange={e => setTraitsLocal(p => ({ ...p, [t.key]: e.target.checked }))}
+                    className="sr-only"
+                  />
+                  <div className={`w-4 h-4 rounded flex items-center justify-center shrink-0 border transition-colors ${
+                    traits[t.key] ? 'bg-[#E8722A] border-[#E8722A]' : 'border-gray-300'
+                  }`}>
+                    {traits[t.key] && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                  </div>
+                  <span className="text-base leading-none">{t.emoji}</span>
+                  <div className="min-w-0">
+                    <div className={`text-xs font-bold ${traits[t.key] ? 'text-[#E8722A]' : 'text-gray-700'}`}>{t.label}</div>
+                    <div className="text-xs text-gray-400 mt-0.5">{t.desc}</div>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+
           {/* Auto-evolved headspace */}
           <div className="bg-[#1a1a1a] rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <span>🧠</span>
               <span className="text-white font-bold text-sm">Current Headspace</span>
-              <span className="ml-auto text-white/30 text-xs">auto-evolves each convo</span>
+              <span className="ml-auto text-white/30 text-xs">auto-evolves</span>
             </div>
             {brain?.personality
               ? <p className="text-white/75 text-sm leading-relaxed">{brain.personality}</p>
@@ -1395,7 +1482,6 @@ function BrainTab({ brain }) {
             {saved ? '✓ Saved' : 'Save Personality'}
           </button>
 
-          {/* Danger */}
           <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
             <p className="text-xs text-red-500 font-semibold mb-1">Danger Zone</p>
             <p className="text-xs text-gray-400 mb-3">Wipes memory, headspace + summaries. Traits and notes stay. Can't undo.</p>
