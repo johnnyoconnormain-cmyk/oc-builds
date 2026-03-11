@@ -1295,71 +1295,237 @@ function ContentPlanner() {
 }
 
 // ─────────────────────────────────────────
+// Rody Brain tab
+// ─────────────────────────────────────────
+const TRAIT_DEFS = [
+  { key: 'humor',      label: 'Humor',        lo: 'serious',      hi: 'always funny' },
+  { key: 'energy',     label: 'Energy',       lo: 'low key',      hi: 'high energy' },
+  { key: 'bluntness',  label: 'Bluntness',    lo: 'diplomatic',   hi: 'brutally direct' },
+  { key: 'sarcasm',    label: 'Sarcasm',      lo: 'sincere',      hi: 'dripping sarcasm' },
+  { key: 'cussing',    label: 'Cussing',      lo: 'clean',        hi: 'swears freely' },
+  { key: 'conspiracy', label: 'Conspiracies', lo: 'not into it',  hi: 'deep down the rabbit hole' },
+]
+const DEFAULT_TRAITS = { humor: 7, energy: 7, bluntness: 7, sarcasm: 6, cussing: 5, conspiracy: 8 }
+
+function BrainTab({ brain }) {
+  const setTraits    = useMutation(api.admin.setRodyTraits)
+  const setNotesMut  = useMutation(api.admin.setRodyNotes)
+  const addBullet    = useMutation(api.admin.addToMemory)
+  const clearBrain   = useMutation(api.admin.clearRodyBrain)
+
+  const [traits, setTraitsLocal] = useState(DEFAULT_TRAITS)
+  const [notes, setNotesLocal]   = useState('')
+  const [newBullet, setNewBullet] = useState('')
+  const [confirmWipe, setConfirmWipe] = useState(false)
+  const [saved, setSaved]        = useState(false)
+  const [subTab, setSubTab]      = useState('personality')
+
+  useEffect(() => {
+    if (brain?.traits) {
+      try { setTraitsLocal({ ...DEFAULT_TRAITS, ...JSON.parse(brain.traits) }) } catch { /* defaults */ }
+    }
+    if (brain?.customNotes !== undefined) setNotesLocal(brain.customNotes)
+  }, [brain])
+
+  async function saveAll() {
+    await Promise.all([setTraits({ traits: JSON.stringify(traits) }), setNotesMut({ notes })])
+    setSaved(true); setTimeout(() => setSaved(false), 2000)
+  }
+
+  async function handleAddBullet() {
+    if (!newBullet.trim()) return
+    await addBullet({ bullet: newBullet.trim() })
+    setNewBullet('')
+  }
+
+  const memBullets = brain?.memory ? brain.memory.split('\n').filter(l => l.trim()) : []
+  let summaries = []; try { summaries = JSON.parse(brain?.summaries || '[]') } catch {}
+
+  const SUB_TABS = [{ key: 'personality', label: '🎛️ Personality' }, { key: 'memory', label: '📋 Memory' }, { key: 'notes', label: '💡 Notes' }]
+
+  return (
+    <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
+        {SUB_TABS.map(t => (
+          <button key={t.key} onClick={() => setSubTab(t.key)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${subTab === t.key ? 'bg-white text-[#1a1a1a] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {subTab === 'personality' && (
+        <div className="space-y-4">
+          {/* Sliders */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-[#1a1a1a] text-sm">Personality Dials</p>
+              <p className="text-xs text-gray-400">drag to tune him</p>
+            </div>
+            {TRAIT_DEFS.map(t => (
+              <div key={t.key}>
+                <div className="flex justify-between items-center mb-1.5">
+                  <span className="text-xs font-semibold text-gray-600">{t.label}</span>
+                  <span className="text-xs text-gray-400">{t.lo} → {t.hi} · <span className="font-bold text-[#E8722A]">{traits[t.key]}/10</span></span>
+                </div>
+                <input
+                  type="range" min="0" max="10" step="1"
+                  value={traits[t.key]}
+                  onChange={e => setTraitsLocal(p => ({ ...p, [t.key]: Number(e.target.value) }))}
+                  className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                  style={{ accentColor: '#E8722A' }}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Auto-evolved headspace */}
+          <div className="bg-[#1a1a1a] rounded-2xl p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <span>🧠</span>
+              <span className="text-white font-bold text-sm">Current Headspace</span>
+              <span className="ml-auto text-white/30 text-xs">auto-evolves each convo</span>
+            </div>
+            {brain?.personality
+              ? <p className="text-white/75 text-sm leading-relaxed">{brain.personality}</p>
+              : <p className="text-white/30 text-sm italic">nothing yet — start talking to him</p>}
+          </div>
+
+          <button onClick={saveAll} className={`w-full font-bold py-2.5 rounded-xl text-sm transition-colors ${saved ? 'bg-green-500 text-white' : 'bg-[#E8722A] hover:bg-[#d4651f] text-white'}`}>
+            {saved ? '✓ Saved' : 'Save Personality'}
+          </button>
+
+          {/* Danger */}
+          <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
+            <p className="text-xs text-red-500 font-semibold mb-1">Danger Zone</p>
+            <p className="text-xs text-gray-400 mb-3">Wipes memory, headspace + summaries. Traits and notes stay. Can't undo.</p>
+            {confirmWipe
+              ? <div className="flex gap-2">
+                  <button onClick={() => { clearBrain(); setConfirmWipe(false) }} className="flex-1 bg-red-500 text-white text-xs font-bold py-2 rounded-xl hover:bg-red-600">Wipe it</button>
+                  <button onClick={() => setConfirmWipe(false)} className="flex-1 border border-gray-200 text-gray-500 text-xs font-bold py-2 rounded-xl">Cancel</button>
+                </div>
+              : <button onClick={() => setConfirmWipe(true)} className="text-xs text-red-500 font-bold hover:underline">Wipe Rody's Brain →</button>}
+          </div>
+        </div>
+      )}
+
+      {subTab === 'memory' && (
+        <div className="space-y-4">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <p className="font-bold text-[#1a1a1a] text-sm mb-3">Add a Memory</p>
+            <div className="flex gap-2">
+              <input
+                className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#E8722A]/50"
+                placeholder="e.g. my sister's name is Maggie"
+                value={newBullet}
+                onChange={e => setNewBullet(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleAddBullet()}
+              />
+              <button onClick={handleAddBullet} disabled={!newBullet.trim()} className="bg-[#E8722A] disabled:opacity-40 text-white text-xs font-bold px-3 rounded-xl hover:bg-[#d4651f]">Add</button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-3">
+              <p className="font-bold text-[#1a1a1a] text-sm">Stored Facts</p>
+              <span className="text-xs text-gray-400">{memBullets.length} bullets</span>
+            </div>
+            {memBullets.length > 0
+              ? <ul className="space-y-1.5">{memBullets.map((b, i) => <li key={i} className="text-sm text-gray-600 leading-relaxed">{b}</li>)}</ul>
+              : <p className="text-gray-400 text-sm italic">nothing stored yet</p>}
+          </div>
+
+          {summaries.length > 0 && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <p className="font-bold text-[#1a1a1a] text-sm mb-3">Past Conversation Summaries</p>
+              <div className="space-y-3">
+                {summaries.map((s, i) => (
+                  <div key={i} className="border-l-2 border-[#E8722A]/40 pl-3">
+                    <p className="text-xs text-gray-400 mb-0.5">{s.date}</p>
+                    <p className="text-sm text-gray-600 leading-relaxed">{s.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {subTab === 'notes' && (
+        <div className="space-y-4">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <p className="font-bold text-[#1a1a1a] text-sm mb-1">Direct Instructions for Rody</p>
+            <p className="text-xs text-gray-400 mb-3">Gets injected into his head every single message. Personality rules, goals, reminders — anything.</p>
+            <textarea
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-[#E8722A]/50 resize-none"
+              rows={9}
+              placeholder={'examples:\n- always ask how football practice went\n- my goal is $5k/month by July\n- remind me Fridays to follow up with leads\n- call me out when i\'m procrastinating'}
+              value={notes}
+              onChange={e => setNotesLocal(e.target.value)}
+            />
+          </div>
+          <button onClick={saveAll} className={`w-full font-bold py-2.5 rounded-xl text-sm transition-colors ${saved ? 'bg-green-500 text-white' : 'bg-[#E8722A] hover:bg-[#d4651f] text-white'}`}>
+            {saved ? '✓ Saved' : 'Save Notes'}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
 // AI Chat
 // ─────────────────────────────────────────
 function AIChat() {
   const messages = useQuery(api.admin.listChats)
-  const brain = useQuery(api.admin.getRodyBrain)
+  const brain    = useQuery(api.admin.getRodyBrain)
   const saveChat = useMutation(api.admin.saveChat)
-  const clearChats = useMutation(api.admin.clearChats)
-  const clearBrain = useMutation(api.admin.clearRodyBrain)
+  const summarizeAndClear = useAction(api.admin.summarizeAndClearChat)
   const sendMessage = useAction(api.admin.sendChatMessage)
 
-  const [input, setInput] = useState('')
+  const [input, setInput]   = useState('')
   const [loading, setLoading] = useState(false)
-  const [tab, setTab] = useState('chat') // 'chat' | 'brain'
-  const [confirmWipe, setConfirmWipe] = useState(false)
+  const [clearing, setClearing] = useState(false)
+  const [tab, setTab]         = useState('chat')
   const bottomRef = useRef(null)
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, loading])
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, loading])
 
   async function send() {
     const text = input.trim()
     if (!text || loading) return
-    setInput('')
-    setLoading(true)
+    setInput(''); setLoading(true)
     await saveChat({ role: 'user', content: text })
     try {
-      const history = [...(messages ?? []), { role: 'user', content: text }]
-        .map(m => ({ role: m.role, content: m.content }))
+      const history = [...(messages ?? []), { role: 'user', content: text }].map(m => ({ role: m.role, content: m.content }))
       const reply = await sendMessage({ messages: history })
       await saveChat({ role: 'assistant', content: reply })
     } catch {
       await saveChat({ role: 'assistant', content: "nah something broke on my end lol try again" })
-    } finally {
-      setLoading(false)
-    }
+    } finally { setLoading(false) }
   }
 
-  const memoryBullets = brain?.memory
-    ? brain.memory.split('\n').filter(l => l.trim())
-    : []
+  async function handleClear() {
+    setClearing(true)
+    try { await summarizeAndClear() } finally { setClearing(false) }
+  }
 
   return (
     <div className="flex flex-col h-full" style={{ height: 'calc(100vh - 120px)' }}>
-      {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-[#1a1a1a] flex items-center justify-center text-lg shrink-0">🤙</div>
           <div>
             <h1 className="text-xl font-bold text-[#1a1a1a] leading-none">Rodrick <span className="text-gray-400 font-normal text-base">/ Rody</span></h1>
-            <p className="text-xs text-gray-400 mt-0.5">
-              {brain?.personality
-                ? brain.personality.split('.')[0].trim().slice(0, 60) + '…'
-                : 'your guy. ask him anything.'}
-            </p>
+            <p className="text-xs text-gray-400 mt-0.5">{brain?.personality ? brain.personality.split('.')[0].trim().slice(0, 65) + '…' : 'your guy. ask him anything.'}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => clearChats()} className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 font-semibold transition-colors border border-gray-200 px-2.5 py-1.5 rounded-lg">
-            <Icon name="refresh" size={12} /> Clear Chat
-          </button>
-        </div>
+        <button onClick={handleClear} disabled={clearing || !messages?.length}
+          className="flex items-center gap-1 text-xs text-gray-400 hover:text-[#E8722A] disabled:opacity-40 font-semibold transition-colors border border-gray-200 px-2.5 py-1.5 rounded-lg">
+          <Icon name="refresh" size={12} /> {clearing ? 'Saving…' : 'Clear Chat'}
+        </button>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit mb-3">
         {[{ key: 'chat', label: '💬 Chat' }, { key: 'brain', label: '🧠 Brain' }].map(t => (
           <button key={t.key} onClick={() => setTab(t.key)}
@@ -1371,7 +1537,6 @@ function AIChat() {
 
       {tab === 'chat' && (
         <>
-          {/* Messages */}
           <div className="flex-1 overflow-y-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-2 mb-3">
             {!messages || messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center text-gray-400 py-12">
@@ -1379,19 +1544,13 @@ function AIChat() {
                 <p className="font-bold text-[#1a1a1a] mb-1">what's good</p>
                 <p className="text-sm max-w-xs text-gray-400">hit me with whatever — business, sports, ideas, random shit. i'm here.</p>
               </div>
-            ) : (
-              messages.map(m => (
-                <div key={m._id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[78%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
-                    m.role === 'user'
-                      ? 'bg-[#E8722A] text-white rounded-br-sm font-medium'
-                      : 'bg-[#f0f0f0] text-[#1a1a1a] rounded-bl-sm'
-                  }`}>
-                    {m.content}
-                  </div>
-                </div>
-              ))
-            )}
+            ) : messages.map(m => (
+              <div key={m._id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[78%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+                  m.role === 'user' ? 'bg-[#E8722A] text-white rounded-br-sm font-medium' : 'bg-[#f0f0f0] text-[#1a1a1a] rounded-bl-sm'
+                }`}>{m.content}</div>
+              </div>
+            ))}
             {loading && (
               <div className="flex justify-start">
                 <div className="bg-[#f0f0f0] px-3.5 py-3 rounded-2xl rounded-bl-sm flex items-center gap-1.5">
@@ -1403,77 +1562,18 @@ function AIChat() {
             )}
             <div ref={bottomRef} />
           </div>
-
-          {/* Input */}
           <div className="flex gap-2">
-            <input
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-              placeholder="say something..."
-              className="flex-1 bg-white border border-gray-200 rounded-2xl px-4 py-2.5 text-sm outline-none focus:border-[#E8722A]/50 transition-colors"
-              disabled={loading}
-            />
-            <button
-              onClick={send}
-              disabled={loading || !input.trim()}
-              className="bg-[#E8722A] hover:bg-[#d4651f] disabled:opacity-40 text-white px-4 py-2.5 rounded-2xl transition-colors"
-            >
+            <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
+              placeholder="say something..." disabled={loading}
+              className="flex-1 bg-white border border-gray-200 rounded-2xl px-4 py-2.5 text-sm outline-none focus:border-[#E8722A]/50 transition-colors" />
+            <button onClick={send} disabled={loading || !input.trim()} className="bg-[#E8722A] hover:bg-[#d4651f] disabled:opacity-40 text-white px-4 py-2.5 rounded-2xl transition-colors">
               <Icon name="send" size={16} />
             </button>
           </div>
         </>
       )}
 
-      {tab === 'brain' && (
-        <div className="flex-1 overflow-y-auto space-y-4">
-          {/* Personality card */}
-          <div className="bg-[#1a1a1a] rounded-2xl p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-lg">🧠</span>
-              <span className="text-white font-bold text-sm">Rody's Headspace</span>
-              <span className="ml-auto text-white/30 text-xs">evolves with every convo</span>
-            </div>
-            {brain?.personality ? (
-              <p className="text-white/80 text-sm leading-relaxed">{brain.personality}</p>
-            ) : (
-              <p className="text-white/30 text-sm italic">nothing yet — start talking to him</p>
-            )}
-          </div>
-
-          {/* Memory card */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-lg">📋</span>
-              <span className="text-[#1a1a1a] font-bold text-sm">What Rody Remembers</span>
-              <span className="ml-auto text-gray-400 text-xs">{memoryBullets.length} things</span>
-            </div>
-            {memoryBullets.length > 0 ? (
-              <ul className="space-y-1.5">
-                {memoryBullets.map((b, i) => (
-                  <li key={i} className="text-sm text-gray-600 leading-relaxed">{b}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-400 text-sm italic">no memories yet</p>
-            )}
-          </div>
-
-          {/* Wipe brain */}
-          <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
-            <p className="text-xs text-red-500 font-semibold mb-2">Danger Zone</p>
-            <p className="text-xs text-gray-500 mb-3">Wipe Rody's memory and personality. He'll start fresh — won't remember anything about you. Can't be undone.</p>
-            {confirmWipe ? (
-              <div className="flex gap-2">
-                <button onClick={() => { clearBrain(); setConfirmWipe(false) }} className="flex-1 bg-red-500 text-white text-xs font-bold py-2 rounded-xl hover:bg-red-600">Yeah, wipe it</button>
-                <button onClick={() => setConfirmWipe(false)} className="flex-1 border border-gray-200 text-gray-500 text-xs font-semibold py-2 rounded-xl hover:bg-gray-50">Cancel</button>
-              </div>
-            ) : (
-              <button onClick={() => setConfirmWipe(true)} className="text-xs text-red-500 font-bold hover:underline">Wipe Rody's Brain →</button>
-            )}
-          </div>
-        </div>
-      )}
+      {tab === 'brain' && <BrainTab brain={brain} />}
     </div>
   )
 }

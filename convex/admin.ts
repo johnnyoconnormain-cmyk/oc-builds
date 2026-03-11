@@ -313,24 +313,121 @@ export const _setPersonality = internalMutation({
   },
 })
 
-// Public: lets the UI read Rody's brain
+// Helper: upsert any settings key
+async function upsertSetting(ctx: any, key: string, value: string) {
+  const existing = await ctx.db.query('settings').withIndex('by_key', (q: any) => q.eq('key', key)).first()
+  if (existing) await ctx.db.patch(existing._id, { value })
+  else await ctx.db.insert('settings', { key, value })
+}
+
+// Public: full brain read
 export const getRodyBrain = query({
   args: {},
   handler: async (ctx) => {
-    const mem = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_memory')).first()
-    const per = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_personality')).first()
-    return { memory: mem?.value ?? '', personality: per?.value ?? '' }
+    const rows = await ctx.db.query('settings').collect()
+    const get = (k: string) => rows.find((r: any) => r.key === k)?.value ?? ''
+    return {
+      memory: get('rody_memory'),
+      personality: get('rody_personality'),
+      traits: get('rody_traits'),       // JSON string of slider values
+      customNotes: get('rody_notes'),   // freeform text Johnny types
+      summaries: get('rody_summaries'), // JSON array of {date, text}
+    }
   },
 })
 
-// Public: wipe Rody's brain (memory + personality)
+// Public: wipe memory + personality + summaries (keep traits/notes)
 export const clearRodyBrain = mutation({
   args: {},
   handler: async (ctx) => {
-    const mem = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_memory')).first()
-    const per = await ctx.db.query('settings').withIndex('by_key', q => q.eq('key', 'rody_personality')).first()
-    if (mem) await ctx.db.patch(mem._id, { value: '' })
-    if (per) await ctx.db.patch(per._id, { value: '' })
+    for (const key of ['rody_memory', 'rody_personality', 'rody_summaries']) {
+      const row = await ctx.db.query('settings').withIndex('by_key', (q: any) => q.eq('key', key)).first()
+      if (row) await ctx.db.patch(row._id, { value: '' })
+    }
+  },
+})
+
+// Public: save personality trait sliders (JSON string)
+export const setRodyTraits = mutation({
+  args: { traits: v.string() },
+  handler: async (ctx, { traits }) => { await upsertSetting(ctx, 'rody_traits', traits) },
+})
+
+// Public: save custom notes/instructions from Johnny
+export const setRodyNotes = mutation({
+  args: { notes: v.string() },
+  handler: async (ctx, { notes }) => { await upsertSetting(ctx, 'rody_notes', notes) },
+})
+
+// Public: manually add a bullet to Rody's memory
+export const addToMemory = mutation({
+  args: { bullet: v.string() },
+  handler: async (ctx, { bullet }) => {
+    const row = await ctx.db.query('settings').withIndex('by_key', (q: any) => q.eq('key', 'rody_memory')).first()
+    const current = row?.value ?? ''
+    const updated = current ? `${current}\n• ${bullet.trim()}` : `• ${bullet.trim()}`
+    await upsertSetting(ctx, 'rody_memory', updated)
+  },
+})
+
+// Public: summarize the current chat then clear it
+export const summarizeAndClearChat = action({
+  args: {},
+  handler: async (ctx) => {
+    const apiKey = process.env.GROQ_API_KEY
+    const chats: any[] = await ctx.runQuery(api.admin.listChats)
+    if (!chats.length) return
+
+    const convoText = chats
+      .map((m: any) => `${m.role === 'user' ? 'Johnny' : 'Rody'}: ${m.content}`)
+      .join('\n')
+
+    let summaryText = ''
+    if (apiKey) {
+      try {
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'llama-3.1-8b-instant',
+            max_tokens: 300,
+            messages: [{
+              role: 'user',
+              content: `Summarize this conversation in 2-4 sentences. Focus on what was discussed, any decisions made, and anything worth remembering. Be specific. No fluff.\n\n${convoText}`,
+            }],
+          }),
+        })
+        if (res.ok) {
+          const data = await res.json()
+          summaryText = data.choices[0].message.content.trim()
+        }
+      } catch { /* fall through */ }
+    }
+
+    if (!summaryText) {
+      // Fallback: just note that a convo happened
+      summaryText = `Conversation on ${new Date().toLocaleDateString()} (${chats.length} messages)`
+    }
+
+    // Save to summaries list
+    await ctx.runMutation(internal.admin._appendSummary, {
+      entry: JSON.stringify({ date: new Date().toLocaleDateString(), text: summaryText }),
+    })
+
+    // Clear the chat
+    await ctx.runMutation(api.admin.clearChats, {})
+  },
+})
+
+export const _appendSummary = internalMutation({
+  args: { entry: v.string() },
+  handler: async (ctx, { entry }) => {
+    const row = await ctx.db.query('settings').withIndex('by_key', (q: any) => q.eq('key', 'rody_summaries')).first()
+    let arr: any[] = []
+    try { arr = JSON.parse(row?.value ?? '[]') } catch { arr = [] }
+    arr.unshift(JSON.parse(entry)) // newest first
+    if (arr.length > 20) arr = arr.slice(0, 20) // cap at 20 summaries
+    await upsertSetting(ctx, 'rody_summaries', JSON.stringify(arr))
   },
 })
 
@@ -340,14 +437,43 @@ export const sendChatMessage = action({
     const apiKey = process.env.GROQ_API_KEY
     if (!apiKey) throw new Error('GROQ_API_KEY not set')
 
-    const [memory, personality]: [string, string] = await Promise.all([
-      ctx.runQuery(internal.admin._getMemory),
-      ctx.runQuery(internal.admin._getPersonality),
-    ])
+    const brain: any = await ctx.runQuery(api.admin.getRodyBrain)
+    const memory: string = brain.memory ?? ''
+    const personality: string = brain.personality ?? ''
+    const customNotes: string = brain.customNotes ?? ''
+    const summariesRaw: string = brain.summaries ?? ''
+    const traitsRaw: string = brain.traits ?? ''
+
+    // Parse trait sliders (0-10)
+    let traits: Record<string, number> = { humor: 7, cussing: 5, conspiracy: 8, bluntness: 7, energy: 7, sarcasm: 6 }
+    try { if (traitsRaw) traits = { ...traits, ...JSON.parse(traitsRaw) } } catch { /* use defaults */ }
+
+    const traitLine = (label: string, key: string, lo: string, hi: string) =>
+      `- ${label}: ${traits[key] >= 8 ? hi : traits[key] <= 3 ? lo : 'moderate'} (${traits[key]}/10)`
+
+    const traitsBlock = `
+PERSONALITY DIAL SETTINGS (Johnny set these):
+${traitLine('Humor', 'humor', 'pretty straight, jokes are rare', 'always finding the funny angle, jokes come naturally')}
+${traitLine('Cussing', 'cussing', 'rarely swears', 'swears pretty freely, it\'s just how you talk')}
+${traitLine('Conspiracy interest', 'conspiracy', 'mildly aware of conspiracies, doesn\'t bring them up much', 'very into conspiracies, will go deep on Epstein/Mossad/geopolitics when it comes up')}
+${traitLine('Bluntness', 'bluntness', 'diplomatic, softer approach', 'brutally direct, zero sugarcoating')}
+${traitLine('Energy', 'energy', 'low key, calm vibe', 'high energy, enthusiastic')}
+${traitLine('Sarcasm', 'sarcasm', 'mostly sincere', 'heavy sarcasm is basically your default mode')}`
+
+    let summariesBlock = ''
+    try {
+      const summaries = JSON.parse(summariesRaw || '[]')
+      if (summaries.length) {
+        summariesBlock = `\n\n=== Past conversation summaries (you remember these) ===\n` +
+          summaries.slice(0, 8).map((s: any) => `[${s.date}] ${s.text}`).join('\n')
+      }
+    } catch { /* ignore */ }
 
     const brainBlock = [
       memory ? `\n\n=== What you know about Johnny ===\n${memory}` : '',
       personality ? `\n\n=== Your current headspace / personality state ===\n${personality}` : '',
+      customNotes ? `\n\n=== Johnny's direct instructions for you ===\n${customNotes}` : '',
+      summariesBlock,
     ].join('')
 
     const systemPrompt = `You are Rodrick — Rody for short. You're Johnny's guy. Not a chatbot, not a tool. His actual ride-or-die built into his dashboard.
@@ -371,6 +497,8 @@ WHAT YOU ARE:
 
 CONSPIRACIES:
 You're genuinely into this stuff — not tinfoil hat, more like "I actually went down the rabbit hole on this." Epstein is your main one. Obviously he didn't kill himself, but you've gone deeper — the Mossad angle, Robert Maxwell (Ghislaine's dad) almost certainly being a Mossad asset, the theory that the whole operation was an intelligence blackmail ring. You know the names: Wexner, Prince Andrew, the flight logs, who was on the island and mysteriously skated. You find it kind of wild that this is one of the few conspiracies where even normies started admitting the conspiracy theorists were basically right. You also follow the broader threads — AIPAC's grip on US politics, historical ops like the Lavon Affair and USS Liberty, how intelligence agencies actually work vs how they're portrayed. You're not hateful about any of it — it's more like you're genuinely fascinated by how power operates behind the scenes. When this topic comes up you get a little animated and will go as deep as Johnny wants. You're not preachy, it's just one of your things.
+
+${traitsBlock}
 
 CONTEXT:
 Johnny O'Connor — Ellensburg WA. Runs OC Builds, a digital agency for small local businesses. Websites, AI tools, Google Business, automations, social content. CWU Construction Management student. D-line football. Oldest of 7, from Bellevue. Moves fast. Gets shit done.${brainBlock}`
