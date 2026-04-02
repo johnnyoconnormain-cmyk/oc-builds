@@ -1,535 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Peak Fitness Ellensburg</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Barlow', system-ui, sans-serif;
-      background: #080808;
-      color: #fff;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: inherit; text-decoration: none; }
-
-    /* ===== NAV ===== */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 5%; height: 62px;
-      background: rgba(8,8,8,0.95); backdrop-filter: blur(8px);
-      border-bottom: 1px solid #1A1A1A;
-    }
-    .logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900; font-size: 1.4rem; letter-spacing: 0.06em; text-transform: uppercase;
-    }
-    .logo span { color: #E8FF00; }
-    .nav-links { display: flex; gap: 2rem; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; color: rgba(255,255,255,0.45); }
-    .nav-links a:hover { color: #fff; }
-    .nav-cta {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase;
-      background: #E8FF00; color: #080808;
-      padding: 0.55rem 1.5rem; border-radius: 0;
-      clip-path: polygon(4% 0%, 100% 0%, 96% 100%, 0% 100%);
-    }
-
-    /* ===== HERO ===== */
-    .hero {
-      min-height: 100vh;
-      background: #080808;
-      display: flex; align-items: flex-end;
-      padding: 62px 0 0;
-      position: relative; overflow: hidden;
-    }
-    /* Big angled number behind everything */
-    .hero-bg-number {
-      position: absolute; right: -2%;
-      top: 50%; transform: translateY(-50%);
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900; font-size: clamp(16rem, 35vw, 28rem);
-      line-height: 1; color: rgba(255,255,255,0.025);
-      letter-spacing: -0.05em; user-select: none;
-      pointer-events: none;
-    }
-    .hero-inner {
-      position: relative; z-index: 2;
-      padding: 8% 5% 7%;
-      max-width: 860px;
-    }
-    .hero-eyebrow {
-      display: inline-flex; align-items: center; gap: 0.6rem;
-      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
-      color: rgba(255,255,255,0.4); margin-bottom: 1.5rem;
-    }
-    .hero-dot { width: 6px; height: 6px; background: #E8FF00; border-radius: 50%; animation: blink 1.8s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-
-    h1 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(4rem, 11vw, 9rem);
-      font-weight: 900; line-height: 0.92;
-      letter-spacing: -0.02em; text-transform: uppercase;
-      margin-bottom: 2rem;
-    }
-    h1 .outline {
-      -webkit-text-stroke: 2px rgba(255,255,255,0.25);
-      color: transparent;
-    }
-    h1 .yellow { color: #E8FF00; }
-
-    .hero-sub {
-      font-size: 1.1rem; color: rgba(255,255,255,0.4); line-height: 1.7;
-      max-width: 480px; margin-bottom: 2.5rem; font-weight: 300;
-    }
-    .hero-btns { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 4rem; }
-    .btn-yellow {
-      display: inline-flex; align-items: center; gap: 0.75rem;
-      background: #E8FF00; color: #080808;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800; font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 0.9rem 2.5rem;
-      clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);
-      transition: filter 0.2s;
-    }
-    .btn-yellow:hover { filter: brightness(1.1); }
-    .btn-outline-w {
-      display: inline-flex; align-items: center; gap: 0.75rem;
-      border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.6);
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700; font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 0.9rem 2.5rem;
-    }
-    .btn-outline-w:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
-
-    /* Stats bar */
-    .stats-bar {
-      display: flex; flex-wrap: wrap; gap: 0;
-      border-top: 1px solid #1A1A1A;
-    }
-    .stat-block {
-      flex: 1; min-width: 120px;
-      padding: 1.5rem 2rem;
-      border-right: 1px solid #1A1A1A;
-    }
-    .stat-block:last-child { border-right: none; }
-    .stat-num {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 2.5rem; font-weight: 900; color: #E8FF00; line-height: 1;
-    }
-    .stat-desc { font-size: 0.75rem; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.3rem; }
-
-    /* ===== SECTIONS ===== */
-    .section { padding: 5rem 5%; }
-    .section.gray { background: #0F0F0F; }
-    .section-wrap { max-width: 1140px; margin: 0 auto; }
-
-    .eyebrow {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
-      color: #E8FF00; margin-bottom: 0.75rem; display: block;
-    }
-    h2 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 900;
-      text-transform: uppercase; letter-spacing: -0.01em; line-height: 1; margin-bottom: 1rem;
-    }
-    .section-sub { font-size: 1rem; color: rgba(255,255,255,0.35); line-height: 1.7; max-width: 480px; margin-bottom: 3rem; font-weight: 300; }
-
-    /* Classes */
-    .class-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: #1A1A1A; }
-    .class-card {
-      background: #0F0F0F; padding: 2rem 1.75rem;
-      position: relative; overflow: hidden;
-      transition: background 0.2s;
-    }
-    .class-card:hover { background: #141414; }
-    .class-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: #E8FF00; transform: scaleX(0); transform-origin: left;
-      transition: transform 0.3s;
-    }
-    .class-card:hover::before { transform: scaleX(1); }
-    .class-emoji { font-size: 1.5rem; margin-bottom: 1rem; display: block; }
-    .class-name {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
-      color: #fff; margin-bottom: 0.5rem;
-    }
-    .class-desc { font-size: 0.825rem; color: rgba(255,255,255,0.35); line-height: 1.6; }
-    .class-times { margin-top: 1rem; font-size: 0.7rem; color: #E8FF00; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
-
-    /* Schedule */
-    .schedule-table { width: 100%; border-collapse: collapse; }
-    .schedule-table th {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-      color: rgba(255,255,255,0.3); padding: 0 1rem 1rem;
-      text-align: left; border-bottom: 1px solid #1A1A1A;
-    }
-    .schedule-table td {
-      padding: 1rem; font-size: 0.85rem; color: rgba(255,255,255,0.55);
-      border-bottom: 1px solid #111;
-      vertical-align: top;
-    }
-    .schedule-table tr:hover td { background: rgba(255,255,255,0.02); }
-    .sched-class { font-weight: 600; color: #fff; font-size: 0.9rem; }
-    .sched-time { color: #E8FF00; font-weight: 600; }
-    .sched-badge {
-      display: inline-block; background: rgba(232,255,0,0.1); color: #E8FF00;
-      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 0.15rem 0.5rem; border-radius: 2px; margin-top: 0.25rem;
-    }
-
-    /* Pricing */
-    .pricing-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: #1A1A1A; }
-    .price-cell {
-      background: #0F0F0F; padding: 2.5rem 2rem;
-      position: relative;
-    }
-    .price-cell.featured { background: #E8FF00; }
-    .price-cell.featured * { color: #080808 !important; }
-    .price-cell.featured .price-tag { color: #080808 !important; }
-    .tier {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
-      color: rgba(255,255,255,0.3); margin-bottom: 1rem;
-    }
-    .price-tag {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 4rem; font-weight: 900; line-height: 1; color: #fff;
-    }
-    .price-tag .per { font-size: 1rem; font-weight: 400; color: rgba(255,255,255,0.35); }
-    .price-desc { font-size: 0.875rem; color: rgba(255,255,255,0.4); line-height: 1.6; margin: 1rem 0 1.5rem; }
-    .price-features { list-style: none; margin-bottom: 2rem; }
-    .price-features li {
-      font-size: 0.875rem; color: rgba(255,255,255,0.5);
-      padding: 0.35rem 0; display: flex; align-items: center; gap: 0.6rem;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .price-features li::before { content: '+'; color: #E8FF00; font-weight: 700; font-size: 0.9rem; }
-    .price-cell.featured .price-features li::before { color: #080808; }
-    .price-features li:last-child { border-bottom: none; }
-    .price-btn {
-      display: block; text-align: center;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase;
-      background: #E8FF00; color: #080808;
-      padding: 0.75rem;
-      clip-path: polygon(2% 0%, 100% 0%, 98% 100%, 0% 100%);
-    }
-    .price-btn.outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.2); clip-path: none; border-radius: 0; }
-
-    /* Big CTA */
-    .big-cta {
-      background: #E8FF00; padding: 5rem 5%;
-    }
-    .big-cta h2 { color: #080808; margin-bottom: 0.5rem; }
-    .big-cta p { color: rgba(8,8,8,0.55); font-size: 1.1rem; margin-bottom: 2.5rem; max-width: 480px; }
-    .btn-black {
-      display: inline-flex; align-items: center; gap: 0.75rem;
-      background: #080808; color: #fff;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800; font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 1rem 2.5rem;
-      clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);
-    }
-
-    footer {
-      background: #040404; padding: 2.5rem 5%;
-      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;
-      border-top: 1px solid #111;
-    }
-    .f-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.1rem; letter-spacing: 0.06em; text-transform: uppercase; }
-    .f-logo span { color: #E8FF00; }
-    footer p { font-size: 0.75rem; color: rgba(255,255,255,0.2); }
-    footer a { color: #E8FF00; }
-
-    @media (max-width: 600px) {
-      .nav-links { display: none; }
-      .stat-block { flex: 0 0 50%; border-right: none; border-bottom: 1px solid #1A1A1A; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peak Fitness | Ellensburg, WA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #111; --surface: #1a1a1a; --border: #2a2a2a; --text: #ccc; --muted: #666; --accent: #c9a227; --white: #eee; }
+  body { font-family: 'Space Grotesk', sans-serif; color: var(--text); background: var(--bg); }
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 5%; border-bottom: 1px solid var(--border); }
+  .nav-logo { font-family: 'Space Mono', monospace; color: var(--white); font-size: 0.95rem; text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+  .nav-links { display: flex; gap: 24px; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1px; }
+  .nav-cta { border: 1px solid var(--accent); color: var(--accent); padding: 8px 20px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; font-weight: 600; }
+  .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 80vh; }
+  .hero-text { display: flex; flex-direction: column; justify-content: center; padding: 60px 5%; }
+  .hero-text h1 { font-family: 'Space Mono', monospace; color: var(--white); font-size: 2.8rem; line-height: 1.15; margin-bottom: 20px; text-transform: uppercase; }
+  .hero-text h1 span { color: var(--accent); }
+  .hero-text p { color: var(--muted); font-size: 0.95rem; line-height: 1.65; margin-bottom: 32px; max-width: 440px; }
+  .hero-price { display: inline-block; font-family: 'Space Mono', monospace; font-size: 2rem; color: var(--accent); margin-bottom: 8px; }
+  .hero-price-sub { color: var(--muted); font-size: 0.82rem; margin-bottom: 28px; }
+  .hero-btn { display: inline-block; border: 1px solid var(--accent); color: var(--accent); padding: 14px 32px; text-decoration: none; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+  .hero-img { overflow: hidden; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--border); }
+  .stat { padding: 28px 20px; border-right: 1px solid var(--border); text-align: center; }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-family: 'Space Mono', monospace; font-size: 1.6rem; color: var(--white); display: block; }
+  .stat-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  section { padding: 70px 5%; }
+  .about { border-top: 1px solid var(--border); }
+  .about-grid { display: grid; grid-template-columns: 2fr 3fr; gap: 50px; align-items: start; }
+  .about h2 { font-family: 'Space Mono', monospace; font-size: 1.1rem; color: var(--white); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+  .about p { color: var(--muted); line-height: 1.7; font-size: 0.9rem; margin-bottom: 14px; }
+  .about-sig { color: var(--text); font-weight: 600; margin-top: 20px; font-size: 0.9rem; }
+  .about-img { height: 360px; overflow: hidden; filter: saturate(0.6) contrast(1.1); }
+  .equipment { border-top: 1px solid var(--border); }
+  .equipment h2 { font-family: 'Space Mono', monospace; font-size: 1.1rem; color: var(--white); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 32px; }
+  .equip-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
+  .equip-item { background: var(--surface); padding: 28px 24px; }
+  .equip-item h4 { color: var(--white); font-size: 0.92rem; margin-bottom: 8px; }
+  .equip-item p { color: var(--muted); font-size: 0.82rem; line-height: 1.5; }
+  .photo-row { display: grid; grid-template-columns: 1fr 1fr; height: 320px; gap: 1px; background: var(--border); }
+  .photo-row > div { overflow: hidden; } .photo-row img { filter: saturate(0.5) contrast(1.1); }
+  .membership { border-top: 1px solid var(--border); }
+  .membership h2 { font-family: 'Space Mono', monospace; font-size: 1.1rem; color: var(--white); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 32px; }
+  .mem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
+  .mem-card { background: var(--surface); padding: 36px 28px; }
+  .mem-card.featured { border-top: 2px solid var(--accent); }
+  .mem-name { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
+  .mem-price { font-family: 'Space Mono', monospace; font-size: 2rem; color: var(--white); margin-bottom: 4px; }
+  .mem-price span { font-size: 0.85rem; color: var(--muted); }
+  .mem-desc { color: var(--muted); font-size: 0.82rem; margin-bottom: 20px; }
+  .mem-features { list-style: none; }
+  .mem-features li { padding: 8px 0; font-size: 0.85rem; color: var(--text); border-bottom: 1px solid var(--border); }
+  .mem-btn { display: block; text-align: center; margin-top: 24px; padding: 12px; border: 1px solid var(--border); color: var(--text); text-decoration: none; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1px; }
+  .mem-card.featured .mem-btn { border-color: var(--accent); color: var(--accent); }
+  .reviews { border-top: 1px solid var(--border); }
+  .reviews h2 { font-family: 'Space Mono', monospace; font-size: 1.1rem; color: var(--white); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 32px; }
+  .review { padding: 20px 0; border-bottom: 1px solid var(--border); }
+  .review-text { color: var(--text); font-size: 0.9rem; line-height: 1.6; font-style: italic; margin-bottom: 8px; }
+  .review-meta { font-size: 0.78rem; color: var(--muted); }
+  .cta { border-top: 1px solid var(--border); text-align: center; padding: 60px 5%; }
+  .cta h2 { font-family: 'Space Mono', monospace; font-size: 1.5rem; color: var(--white); text-transform: uppercase; margin-bottom: 12px; }
+  .cta p { color: var(--muted); margin-bottom: 28px; }
+  .cta-btn { display: inline-block; border: 1px solid var(--accent); color: var(--accent); padding: 14px 40px; text-decoration: none; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+  footer { border-top: 1px solid var(--border); padding: 28px 5%; display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); flex-wrap: wrap; gap: 10px; }
+  footer a { color: var(--accent); text-decoration: none; }
+  @media (max-width: 768px) { .hero { grid-template-columns: 1fr; } .hero-img { height: 300px; } .hero-text h1 { font-size: 2rem; } .stats { grid-template-columns: repeat(2, 1fr); } .about-grid { grid-template-columns: 1fr; } .equip-grid, .mem-grid { grid-template-columns: 1fr; } .photo-row { grid-template-columns: 1fr; height: auto; } .photo-row > div { height: 200px; } .nav-links { display: none; } }
+</style>
 </head>
 <body>
-
-  <nav>
-    <div class="logo">
-      <svg width="150" height="36" viewBox="0 0 150 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Bold P mark with lightning cutout -->
-        <rect x="0" y="4" width="26" height="28" rx="2" fill="#E8FF00"/>
-        <!-- Lightning bolt cutout in black -->
-        <polygon points="17,8 10,20 15,20 9,32 20,17 14,17 20,8" fill="#080808"/>
-        <!-- Wordmark -->
-        <text x="33" y="17" font-family="Barlow Condensed, sans-serif" font-weight="900" font-size="14" fill="#ffffff" letter-spacing="1">PEAK</text>
-        <text x="33" y="32" font-family="Barlow Condensed, sans-serif" font-weight="600" font-size="10" fill="rgba(255,255,255,0.4)" letter-spacing="3">FITNESS</text>
-      </svg>
-    </div>
-    <div class="nav-links">
-      <a href="#classes">Classes</a>
-      <a href="#schedule">Schedule</a>
-      <a href="#pricing">Pricing</a>
-    </div>
-    <a href="#pricing" class="nav-cta">Join Now</a>
-  </nav>
-
-  <section class="hero">
-    <div class="hero-bg-number">400</div>
-    <div class="hero-inner">
-      <div class="hero-eyebrow">
-        <span class="hero-dot"></span>
-        Ellensburg, WA &nbsp;&mdash;&nbsp; Open 7 Days
-      </div>
-      <h1>
-        <span class="outline">No</span><br />
-        <span class="yellow">Excuses.</span><br />
-        Just Work.
-      </h1>
-      <p class="hero-sub">
-        Ellensburg's real gym. No gimmicks, no posers. Show up, put in the work, go home better than you came.
-      </p>
-      <div class="hero-btns">
-        <a href="#pricing" class="btn-yellow">Start Free Week &rarr;</a>
-        <a href="#schedule" class="btn-outline-w">View Schedule</a>
-      </div>
-      <div class="stats-bar">
-        <div class="stat-block">
-          <div class="stat-num">400+</div>
-          <div class="stat-desc">Members</div>
-        </div>
-        <div class="stat-block">
-          <div class="stat-num">12</div>
-          <div class="stat-desc">Classes / Week</div>
-        </div>
-        <div class="stat-block">
-          <div class="stat-num">1 Week</div>
-          <div class="stat-desc">Free Trial</div>
-        </div>
-        <div class="stat-block">
-          <div class="stat-num">5am</div>
-          <div class="stat-desc">First Class</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Classes -->
-  <section id="classes" class="section">
-    <div class="section-wrap">
-      <span class="eyebrow">What We Run</span>
-      <h2>Classes</h2>
-      <p class="section-sub">Every class is coached. Every level is welcome. No experience needed, just the willingness to show up.</p>
-      <div class="class-grid">
-        <div class="class-card">
-          <span class="class-emoji">🏋️</span>
-          <div class="class-name">Strength &amp; Conditioning</div>
-          <div class="class-desc">Compound lifts with coaching on form and progressive programming. Build real, functional strength.</div>
-          <div class="class-times">Mon / Wed / Fri &mdash; 6am + 5:30pm</div>
-        </div>
-        <div class="class-card">
-          <span class="class-emoji">🔥</span>
-          <div class="class-name">HIIT Bootcamp</div>
-          <div class="class-desc">45 minutes of high-intensity intervals. Designed to maximize output in minimum time.</div>
-          <div class="class-times">Mon / Wed / Fri &mdash; 6am + 5pm</div>
-        </div>
-        <div class="class-card">
-          <span class="class-emoji">🥊</span>
-          <div class="class-name">Cardio Kickboxing</div>
-          <div class="class-desc">High energy, all levels. You don't need to know how to fight. You just need to show up.</div>
-          <div class="class-times">Tue / Thu &mdash; 5:30pm</div>
-        </div>
-        <div class="class-card">
-          <span class="class-emoji">🧘</span>
-          <div class="class-name">Mobility &amp; Recovery</div>
-          <div class="class-desc">Yoga-inspired recovery work. Great after heavy lifting days or as a standalone practice.</div>
-          <div class="class-times">Wed &mdash; 7pm / Sat &mdash; 10am</div>
-        </div>
-        <div class="class-card">
-          <span class="class-emoji">🏃</span>
-          <div class="class-name">Run Club</div>
-          <div class="class-desc">Tuesday morning group runs around Ellensburg. All paces welcome, no one gets left behind.</div>
-          <div class="class-times">Tue &mdash; 7am</div>
-        </div>
-        <div class="class-card">
-          <span class="class-emoji">🤝</span>
-          <div class="class-name">Personal Training</div>
-          <div class="class-desc">1-on-1 with certified trainers. Goal-specific programming, accountability built in.</div>
-          <div class="class-times">By Appointment</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Schedule -->
-  <section id="schedule" class="section gray">
-    <div class="section-wrap">
-      <span class="eyebrow">Weekly Schedule</span>
-      <h2>This Week</h2>
-      <p class="section-sub">All times Pacific. Drop in or hold your spot online.</p>
-      <div style="overflow-x:auto;">
-        <table class="schedule-table">
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>Monday</th>
-              <th>Tuesday</th>
-              <th>Wednesday</th>
-              <th>Thursday</th>
-              <th>Friday</th>
-              <th>Saturday</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="sched-time">5:00am</span></td>
-              <td><span class="sched-class">Open Gym</span></td>
-              <td><span class="sched-class">Open Gym</span></td>
-              <td><span class="sched-class">Open Gym</span></td>
-              <td><span class="sched-class">Open Gym</span></td>
-              <td><span class="sched-class">Open Gym</span></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><span class="sched-time">6:00am</span></td>
-              <td><span class="sched-class">Strength</span><br><span class="sched-badge">Coach</span></td>
-              <td></td>
-              <td><span class="sched-class">HIIT</span><br><span class="sched-badge">Coach</span></td>
-              <td></td>
-              <td><span class="sched-class">Strength</span><br><span class="sched-badge">Coach</span></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><span class="sched-time">7:00am</span></td>
-              <td></td>
-              <td><span class="sched-class">Run Club</span><br><span class="sched-badge">All Paces</span></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><span class="sched-time">8:00am</span></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td><span class="sched-class">Bootcamp</span><br><span class="sched-badge">Coach</span></td>
-            </tr>
-            <tr>
-              <td><span class="sched-time">10:00am</span></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td><span class="sched-class">Mobility</span><br><span class="sched-badge">Coach</span></td>
-            </tr>
-            <tr>
-              <td><span class="sched-time">5:00pm</span></td>
-              <td><span class="sched-class">HIIT</span></td>
-              <td><span class="sched-class">Kickboxing</span></td>
-              <td></td>
-              <td><span class="sched-class">Kickboxing</span></td>
-              <td><span class="sched-class">Open Floor</span></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><span class="sched-time">5:30pm</span></td>
-              <td><span class="sched-class">Strength</span><br><span class="sched-badge">Coach</span></td>
-              <td></td>
-              <td><span class="sched-class">Strength</span><br><span class="sched-badge">Coach</span></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><span class="sched-time">7:00pm</span></td>
-              <td></td>
-              <td></td>
-              <td><span class="sched-class">Mobility</span></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- Pricing -->
-  <section id="pricing" class="section">
-    <div class="section-wrap">
-      <span class="eyebrow">Membership</span>
-      <h2>Simple Pricing</h2>
-      <p class="section-sub">No contracts. No hidden fees. Cancel any time.</p>
-      <div class="pricing-row">
-        <div class="price-cell">
-          <div class="tier">Drop-In</div>
-          <div class="price-tag">$12 <span class="per">/ visit</span></div>
-          <div class="price-desc">No commitment. Come when you want.</div>
-          <ul class="price-features">
-            <li>Full facility access</li>
-            <li>Any class drop-in</li>
-            <li>Locker room access</li>
-          </ul>
-          <a href="#" class="price-btn outline">Get Started</a>
-        </div>
-        <div class="price-cell featured">
-          <div class="tier" style="color:rgba(8,8,8,0.45);">Monthly &mdash; Most Popular</div>
-          <div class="price-tag">$45 <span class="per" style="color:rgba(8,8,8,0.45);">/ mo</span></div>
-          <div class="price-desc" style="color:rgba(8,8,8,0.55);">Unlimited classes. No contracts. Full access.</div>
-          <ul class="price-features">
-            <li>Unlimited classes</li>
-            <li>Full facility access</li>
-            <li>Member rates on PT</li>
-            <li>1 free guest pass / month</li>
-          </ul>
-          <a href="#" class="price-btn" style="background:#080808;color:#E8FF00;clip-path:polygon(2% 0%,100% 0%,98% 100%,0% 100%);">Start Free Week</a>
-        </div>
-        <div class="price-cell">
-          <div class="tier">Student</div>
-          <div class="price-tag">$30 <span class="per">/ mo</span></div>
-          <div class="price-desc">CWU students with valid .edu email. Same access, less cost.</div>
-          <ul class="price-features">
-            <li>Unlimited classes</li>
-            <li>Full facility access</li>
-            <li>Valid .edu required</li>
-          </ul>
-          <a href="#" class="price-btn outline">Get Started</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="big-cta">
-    <div class="section-wrap">
-      <h2>First Week Free.</h2>
-      <p>No credit card. No contract. Just come try it and see what happens.</p>
-      <a href="tel:5095550198" class="btn-black">☎ &nbsp;Call to Sign Up</a>
-    </div>
-  </section>
-
-  <footer>
-    <div class="f-logo">
-      <svg width="150" height="36" viewBox="0 0 150 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="4" width="26" height="28" rx="2" fill="#E8FF00"/>
-        <polygon points="17,8 10,20 15,20 9,32 20,17 14,17 20,8" fill="#080808"/>
-        <text x="33" y="17" font-family="Barlow Condensed, sans-serif" font-weight="900" font-size="14" fill="#ffffff" letter-spacing="1">PEAK</text>
-        <text x="33" y="32" font-family="Barlow Condensed, sans-serif" font-weight="600" font-size="10" fill="rgba(255,255,255,0.4)" letter-spacing="3">FITNESS</text>
-      </svg>
-    </div>
-    <p>400 University Way, Ellensburg, WA &nbsp;&mdash;&nbsp; Open 7 Days</p>
-    <p>Built by <a href="https://ocbuilds.com">OC Builds</a></p>
-  </footer>
-
+<nav><a href="#" class="nav-logo">Peak Fitness</a><ul class="nav-links"><li><a href="#about">About</a></li><li><a href="#equipment">Gym</a></li><li><a href="#membership">Join</a></li><li><a href="#reviews">Reviews</a></li></ul><a href="#membership" class="nav-cta">Join Now</a></nav>
+<section class="hero"><div class="hero-text"><h1>No mirrors<br>on every wall.<br><span>Just results.</span></h1><p>We're not a fitness chain. We're the gym where ranchers work out next to college kids, the music's too loud, and nobody judges you for grunting.</p><div class="hero-price">$30/mo</div><div class="hero-price-sub">No contract. No signup fee. Cancel anytime.</div><a href="#membership" class="hero-btn">See Memberships →</a></div><div class="hero-img"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80" alt="Gym interior"></div></section>
+<div class="stats"><div class="stat"><span class="stat-num">8</span><span class="stat-label">Years Open</span></div><div class="stat"><span class="stat-num">450+</span><span class="stat-label">Members</span></div><div class="stat"><span class="stat-num">24/7</span><span class="stat-label">Key Fob</span></div><div class="stat"><span class="stat-num">4.9★</span><span class="stat-label">Google</span></div></div>
+<section class="about" id="about"><div class="about-grid"><div><h2>Our story</h2><p>When the last Planet Fitness closed in 2015, the nearest gym was in Yakima. That didn't sit right with Jake Hensley.</p><p>He signed a lease on the old feed store building off Canyon Road, bought used equipment from a gym closing in Moses Lake, and opened the doors in January 2016. First month: 38 members.</p><p>Still the same building. Still no smoothie bar. Still no contracts.</p><div class="about-sig">— Jake Hensley, Owner</div></div><div class="about-img"><img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=700&q=80" alt="Gym floor"></div></div></section>
+<section class="equipment" id="equipment"><h2>What we've got</h2><div class="equip-grid"><div class="equip-item"><h4>Free Weights</h4><p>Dumbbells to 120lbs, Olympic barbells, bumper plates, kettlebells 15-100lbs.</p></div><div class="equip-item"><h4>Power Racks</h4><p>Four squat racks with safety bars. Dedicated bench station.</p></div><div class="equip-item"><h4>Cardio</h4><p>Treadmills, bikes, rowers, and a ski erg that nobody uses but Jake.</p></div><div class="equip-item"><h4>Cables & Machines</h4><p>Dual cable, lat pulldown, leg press, hack squat.</p></div><div class="equip-item"><h4>Functional Area</h4><p>Turf strip, battle ropes, plyo boxes, sleds. Heavy bag in the corner.</p></div><div class="equip-item"><h4>Locker Rooms</h4><p>Clean showers, day-use lockers, water bottle fill station.</p></div></div></section>
+<div class="photo-row"><div><img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=700&q=80" alt="Lifting weights"></div><div><img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=700&q=80" alt="Gym equipment"></div></div>
+<section class="membership" id="membership"><h2>Memberships</h2><div class="mem-grid"><div class="mem-card"><div class="mem-name">Basic</div><div class="mem-price">$30<span>/mo</span></div><div class="mem-desc">Most members pick this one</div><ul class="mem-features"><li>24/7 key fob access</li><li>Full gym floor & free weights</li><li>Cardio machines</li><li>Locker rooms & showers</li></ul><a href="#" class="mem-btn">Start free week</a></div><div class="mem-card featured"><div class="mem-name">All Access</div><div class="mem-price">$50<span>/mo</span></div><div class="mem-desc">Gym + classes + perks</div><ul class="mem-features"><li>Everything in Basic</li><li>Unlimited group classes</li><li>1 guest pass per month</li><li>Towel service</li></ul><a href="#" class="mem-btn">Start free week</a></div><div class="mem-card"><div class="mem-name">Student</div><div class="mem-price">$22<span>/mo</span></div><div class="mem-desc">Valid CWU ID required</div><ul class="mem-features"><li>24/7 key fob access</li><li>Full gym floor & free weights</li><li>Cardio machines</li><li>2 group classes/week</li></ul><a href="#" class="mem-btn">Start free week</a></div></div></section>
+<section class="reviews" id="reviews"><h2>Reviews</h2><div class="review"><p class="review-text">"Transferred to CWU and needed a gym that wasn't planet fitness. This place is legit. Good equipment, nobody bothers you, 24/7 access is clutch."</p><div class="review-meta">Marcus L. — Google, 2 months ago</div></div><div class="review"><p class="review-text">"My wife and I joined together. She does the classes, I lift. $80/month for both of us with no contract is unbeatable."</p><div class="review-meta">Tom & Lisa R. — Google, 3 weeks ago</div></div><div class="review"><p class="review-text">"I'm 62 and was nervous about joining a gym. Jake set me up with a starter program and everyone here has been encouraging. Best decision I made this year."</p><div class="review-meta">Carol P. — Google, 1 month ago</div></div></section>
+<section class="cta"><h2>First week free.</h2><p>No card on file, no strings. Just come train.</p><a href="#" class="cta-btn">Claim Free Week</a></section>
+<footer><span>© 2025 Peak Fitness · 1407 N Canyon Rd, Ellensburg, WA · (509) 607-2234</span><span><a href="#">Google Maps</a> · <a href="#">Instagram</a></span></footer>
 </body>
-</html>
+  </html>
