@@ -1,245 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Valley Grille — Ellensburg, WA</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Jost', sans-serif; background: #0C0804; color: #F0E8D8; -webkit-font-smoothing: antialiased; }
-    a { color: inherit; text-decoration: none; }
-
-    /* NAV */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-      padding: 0 7%; height: 72px;
-      display: flex; align-items: center; justify-content: space-between;
-      background: linear-gradient(to bottom, rgba(12,8,4,0.95), transparent);
-    }
-    .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #F0E8D8; }
-    .logo em { color: #D97706; font-style: normal; }
-    .nav-links { display: flex; gap: 2.5rem; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(240,232,216,0.45); }
-    .nav-links a:hover { color: #F0E8D8; }
-    .nav-reserve { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #0C0804; background: #D97706; padding: 0.6rem 1.6rem; border-radius: 0; }
-
-    /* HERO */
-    .hero {
-      min-height: 100vh;
-      background: #0C0804;
-      position: relative; overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-      text-align: center;
-    }
-    .hero-bg {
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse at 50% 60%, rgba(217,119,6,0.12) 0%, transparent 55%),
-        repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(217,119,6,0.015) 80px, rgba(217,119,6,0.015) 81px),
-        repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(217,119,6,0.015) 80px, rgba(217,119,6,0.015) 81px);
-    }
-    .hero-content { position: relative; z-index: 2; max-width: 680px; padding: 0 2rem; }
-    .hero-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: #D97706; margin-bottom: 1.8rem; display: flex; align-items: center; justify-content: center; gap: 1rem; }
-    .hero-eyebrow::before, .hero-eyebrow::after { content: ''; flex: 1; max-width: 60px; height: 1px; background: #D97706; opacity: 0.4; }
-    .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 600; line-height: 0.95; letter-spacing: -0.01em; color: #F0E8D8; margin-bottom: 1.2rem; }
-    .hero h1 em { color: #D97706; font-style: italic; }
-    .hero-sub { font-size: 0.9rem; letter-spacing: 0.08em; color: rgba(240,232,216,0.45); margin-bottom: 2.8rem; text-transform: uppercase; }
-    .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .btn-primary { background: #D97706; color: #0C0804; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; padding: 1rem 2.5rem; border: none; cursor: pointer; }
-    .btn-outline { background: transparent; color: #F0E8D8; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.95rem 2.5rem; border: 1px solid rgba(240,232,216,0.25); cursor: pointer; }
-    .hero-hours { margin-top: 3.5rem; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(240,232,216,0.3); }
-
-    /* MARQUEE STRIP */
-    .marquee-strip {
-      background: #D97706; color: #0C0804;
-      padding: 0.75rem 0; overflow: hidden;
-      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
-      white-space: nowrap;
-    }
-    .marquee-inner { display: inline-block; animation: marquee 18s linear infinite; }
-    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-    .marquee-dot { display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: rgba(12,8,4,0.4); margin: 0 1.8rem; vertical-align: middle; }
-
-    /* MENU SECTION */
-    .menu { padding: 8rem 7% 6rem; background: #0F0B07; }
-    .section-label { font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase; color: #D97706; margin-bottom: 1rem; }
-    .menu h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 600; color: #F0E8D8; margin-bottom: 3.5rem; line-height: 1.1; }
-    .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid rgba(240,232,216,0.07); }
-    .menu-item { padding: 2rem 1.8rem; border-right: 1px solid rgba(240,232,216,0.07); border-bottom: 1px solid rgba(240,232,216,0.07); }
-    .menu-item:nth-child(3n) { border-right: none; }
-    .menu-category { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: #D97706; margin-bottom: 0.6rem; }
-    .menu-name { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; color: #F0E8D8; margin-bottom: 0.4rem; }
-    .menu-desc { font-size: 0.82rem; color: rgba(240,232,216,0.4); line-height: 1.6; margin-bottom: 0.8rem; }
-    .menu-price { font-size: 0.9rem; font-weight: 600; color: #D97706; }
-
-    /* RESERVE SECTION */
-    .reserve { padding: 7rem 7%; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; background: #0C0804; }
-    .reserve-text .section-label { margin-bottom: 0.8rem; }
-    .reserve-text h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 600; color: #F0E8D8; line-height: 1.15; margin-bottom: 1.2rem; }
-    .reserve-text p { font-size: 0.9rem; color: rgba(240,232,216,0.45); line-height: 1.8; margin-bottom: 2rem; }
-    .hours-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .hours-row { display: flex; justify-content: space-between; font-size: 0.82rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(240,232,216,0.07); color: rgba(240,232,216,0.5); }
-    .hours-row strong { color: #F0E8D8; font-weight: 500; }
-    .reserve-form { background: #15100A; border: 1px solid rgba(240,232,216,0.07); padding: 2.5rem; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-    .form-group label { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(240,232,216,0.4); }
-    .form-group input, .form-group select { background: rgba(240,232,216,0.04); border: 1px solid rgba(240,232,216,0.1); padding: 0.8rem 1rem; color: #F0E8D8; font-family: 'Jost', sans-serif; font-size: 0.9rem; outline: none; }
-    .form-group input::placeholder { color: rgba(240,232,216,0.2); }
-    .form-submit { width: 100%; background: #D97706; color: #0C0804; font-family: 'Jost', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; padding: 1rem; border: none; cursor: pointer; margin-top: 0.5rem; }
-
-    /* FOOTER */
-    footer { background: #080503; padding: 3rem 7%; display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: rgba(240,232,216,0.2); border-top: 1px solid rgba(240,232,216,0.05); }
-    footer strong { color: #D97706; font-weight: 500; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valley Grille | Ellensburg, WA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Karla:wght@400;500;600&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --olive: #4A5240; --olive-dark: #333D2B; --terracotta: #A0715A; --linen: #F4EFE7; --paper: #FDFBF7; --stone: #7A7566; --ink: #2F2E2A; }
+  body { font-family: 'Karla', sans-serif; color: var(--ink); background: var(--paper); }
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 18px 6%; background: var(--paper); border-bottom: 1px solid rgba(47,46,42,0.08); }
+  .nav-logo { font-family: 'Cormorant Garamond', serif; color: var(--olive-dark); font-size: 1.4rem; text-decoration: none; font-weight: 600; }
+  .nav-links { display: flex; gap: 24px; list-style: none; }
+  .nav-links a { color: var(--stone); text-decoration: none; font-size: 0.85rem; font-weight: 500; }
+  .nav-phone { color: var(--terracotta); font-weight: 600; font-size: 0.88rem; text-decoration: none; }
+  .hero { position: relative; height: 70vh; min-height: 460px; overflow: hidden; }
+  .hero img { position: absolute; inset: 0; filter: saturate(0.8) brightness(0.85); }
+  .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(47,46,42,0.7) 0%, rgba(47,46,42,0.1) 60%); }
+  .hero-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 50px 6%; }
+  .hero h1 { font-family: 'Cormorant Garamond', serif; color: var(--linen); font-size: 3rem; font-weight: 400; line-height: 1.2; margin-bottom: 12px; font-style: italic; }
+  .hero p { color: rgba(244,239,231,0.75); font-size: 0.95rem; max-width: 440px; }
+  .intro { padding: 60px 6%; max-width: 680px; margin: 0 auto; text-align: center; }
+  .intro h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 400; color: var(--olive-dark); margin-bottom: 16px; line-height: 1.35; }
+  .intro p { color: var(--stone); line-height: 1.7; font-size: 0.93rem; }
+  section { padding: 60px 6%; }
+  .about { background: var(--linen); }
+  .about-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 48px; align-items: start; max-width: 950px; margin: 0 auto; }
+  .about h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 400; color: var(--olive-dark); margin-bottom: 16px; }
+  .about p { color: var(--stone); line-height: 1.7; font-size: 0.92rem; margin-bottom: 12px; }
+  .about-img { height: 340px; overflow: hidden; border-radius: 3px; } .about-img img { filter: saturate(0.75); }
+  .menu { background: var(--paper); }
+  .menu-header { text-align: center; margin-bottom: 40px; }
+  .menu-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 400; color: var(--olive-dark); margin-bottom: 8px; }
+  .menu-header p { color: var(--stone); font-size: 0.88rem; }
+  .menu-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 850px; margin: 0 auto; }
+  .menu-section-title { color: var(--terracotta); margin-bottom: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.78rem; }
+  .menu-item { padding: 12px 0; border-bottom: 1px solid rgba(47,46,42,0.06); }
+  .menu-item-top { display: flex; justify-content: space-between; align-items: baseline; }
+  .menu-item-name { font-weight: 600; font-size: 0.92rem; color: var(--ink); }
+  .menu-item-price { color: var(--stone); font-size: 0.88rem; }
+  .menu-item-desc { color: var(--stone); font-size: 0.82rem; margin-top: 4px; line-height: 1.4; }
+  .food-photos { display: grid; grid-template-columns: 2fr 1fr 1fr; height: 300px; gap: 4px; }
+  .food-photos > div { overflow: hidden; } .food-photos img { filter: saturate(0.7) brightness(0.95); }
+  .specials { background: var(--olive-dark); color: var(--linen); }
+  .specials-inner { max-width: 750px; margin: 0 auto; }
+  .specials h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 400; margin-bottom: 28px; text-align: center; }
+  .special-row { display: flex; gap: 20px; padding: 14px 0; border-bottom: 1px solid rgba(244,239,231,0.1); align-items: baseline; }
+  .special-day { color: var(--terracotta); font-weight: 600; font-size: 0.82rem; width: 90px; flex-shrink: 0; text-transform: uppercase; }
+  .special-name { color: var(--linen); font-weight: 600; font-size: 0.92rem; }
+  .special-desc { color: rgba(244,239,231,0.5); font-size: 0.85rem; margin-left: auto; }
+  .reviews { background: var(--linen); }
+  .reviews-inner { max-width: 700px; margin: 0 auto; }
+  .reviews h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 400; color: var(--olive-dark); margin-bottom: 28px; text-align: center; }
+  .review { padding: 20px 0; border-bottom: 1px solid rgba(47,46,42,0.08); }
+  .review-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.05rem; color: var(--ink); line-height: 1.6; margin-bottom: 8px; }
+  .review-meta { font-size: 0.78rem; color: var(--stone); }
+  .info { background: var(--paper); }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; max-width: 900px; margin: 0 auto; }
+  .info-block h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; color: var(--olive-dark); margin-bottom: 14px; font-weight: 600; }
+  .info-block p { color: var(--stone); font-size: 0.88rem; line-height: 1.6; margin-bottom: 8px; }
+  .info-block .time { color: var(--olive-dark); font-weight: 500; }
+  footer { background: var(--olive-dark); color: rgba(244,239,231,0.4); padding: 28px 6%; display: flex; justify-content: space-between; font-size: 0.78rem; flex-wrap: wrap; gap: 8px; }
+  footer a { color: var(--terracotta); text-decoration: none; }
+  @media (max-width: 768px) { .hero h1 { font-size: 2.2rem; } .about-grid, .menu-columns { grid-template-columns: 1fr; } .food-photos { grid-template-columns: 1fr; height: auto; } .food-photos > div { height: 200px; } .info-grid { grid-template-columns: 1fr; } .nav-links { display: none; } .special-desc { display: none; } }
+</style>
 </head>
 <body>
-
-<nav>
-  <div class="logo">Valley <em>Grille</em></div>
-  <div class="nav-links">
-    <a href="#">Menu</a>
-    <a href="#">About</a>
-    <a href="#">Catering</a>
-    <a href="#">Contact</a>
-  </div>
-  <a href="#reserve" class="nav-reserve">Reserve a Table</a>
-</nav>
-
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-content">
-    <div class="hero-eyebrow">Ellensburg, Washington</div>
-    <h1>Valley<br><em>Grille</em></h1>
-    <p class="hero-sub">Farm-to-table · Local Ingredients · Est. 2019</p>
-    <div class="hero-ctas">
-      <button class="btn-primary">View Our Menu</button>
-      <a href="#reserve" class="btn-outline">Reserve a Table</a>
-    </div>
-    <p class="hero-hours">Open Daily &nbsp;·&nbsp; Lunch 11am–3pm &nbsp;·&nbsp; Dinner 5pm–9pm</p>
-  </div>
-</section>
-
-<div class="marquee-strip">
-  <span class="marquee-inner">
-    Farm-to-Table Dining <span class="marquee-dot"></span>
-    Local Ingredients <span class="marquee-dot"></span>
-    Seasonal Menu <span class="marquee-dot"></span>
-    Private Events <span class="marquee-dot"></span>
-    Craft Cocktails <span class="marquee-dot"></span>
-    Ellensburg, WA <span class="marquee-dot"></span>
-    Farm-to-Table Dining <span class="marquee-dot"></span>
-    Local Ingredients <span class="marquee-dot"></span>
-    Seasonal Menu <span class="marquee-dot"></span>
-    Private Events <span class="marquee-dot"></span>
-    Craft Cocktails <span class="marquee-dot"></span>
-    Ellensburg, WA <span class="marquee-dot"></span>
-  </span>
-</div>
-
-<section class="menu">
-  <p class="section-label">Featured Dishes</p>
-  <h2>What's<br>on the menu</h2>
-  <div class="menu-grid">
-    <div class="menu-item">
-      <div class="menu-category">Starters</div>
-      <div class="menu-name">Valley Bruschetta</div>
-      <div class="menu-desc">Grilled sourdough, heirloom tomato, basil oil, aged balsamic</div>
-      <div class="menu-price">$11</div>
-    </div>
-    <div class="menu-item">
-      <div class="menu-category">Starters</div>
-      <div class="menu-name">Elk Meatballs</div>
-      <div class="menu-desc">Local elk, smoked tomato, fresh herbs, crusty bread</div>
-      <div class="menu-price">$14</div>
-    </div>
-    <div class="menu-item">
-      <div class="menu-category">Starters</div>
-      <div class="menu-name">Charcuterie Board</div>
-      <div class="menu-desc">Pacific Northwest cured meats, local cheeses, honeycomb</div>
-      <div class="menu-price">$22</div>
-    </div>
-    <div class="menu-item">
-      <div class="menu-category">Mains</div>
-      <div class="menu-name">Grass-Fed Ribeye</div>
-      <div class="menu-desc">12oz local ranch ribeye, roasted garlic butter, seasonal veg</div>
-      <div class="menu-price">$38</div>
-    </div>
-    <div class="menu-item">
-      <div class="menu-category">Mains</div>
-      <div class="menu-name">Cedar Salmon</div>
-      <div class="menu-desc">Wild-caught Pacific salmon, lemon caper sauce, wild rice</div>
-      <div class="menu-price">$32</div>
-    </div>
-    <div class="menu-item">
-      <div class="menu-category">Mains</div>
-      <div class="menu-name">Harvest Pasta</div>
-      <div class="menu-desc">House-made pappardelle, roasted mushrooms, truffle cream</div>
-      <div class="menu-price">$24</div>
-    </div>
-  </div>
-</section>
-
-<section class="reserve" id="reserve">
-  <div class="reserve-text">
-    <p class="section-label">Reservations</p>
-    <h2>Join us for<br>dinner tonight</h2>
-    <p>Walk-ins welcome, but we recommend reserving your table — especially on weekends. Large parties of 8 or more, call us directly.</p>
-    <div class="hours-list">
-      <div class="hours-row"><strong>Mon–Thu</strong> <span>11am – 9pm</span></div>
-      <div class="hours-row"><strong>Fri–Sat</strong> <span>11am – 10pm</span></div>
-      <div class="hours-row"><strong>Sunday</strong> <span>10am – 8pm (Brunch)</span></div>
-    </div>
-  </div>
-  <div class="reserve-form">
-    <div class="form-row">
-      <div class="form-group">
-        <label>Your Name</label>
-        <input type="text" placeholder="John Smith" />
-      </div>
-      <div class="form-group">
-        <label>Phone</label>
-        <input type="text" placeholder="(509) 000-0000" />
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Date</label>
-        <input type="date" />
-      </div>
-      <div class="form-group">
-        <label>Party Size</label>
-        <select>
-          <option>2 guests</option>
-          <option>3 guests</option>
-          <option>4 guests</option>
-          <option>5–6 guests</option>
-          <option>7+ guests</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group" style="margin-bottom:1rem">
-      <label>Preferred Time</label>
-      <select>
-        <option>5:00 PM</option>
-        <option>5:30 PM</option>
-        <option>6:00 PM</option>
-        <option>6:30 PM</option>
-        <option>7:00 PM</option>
-        <option>7:30 PM</option>
-        <option>8:00 PM</option>
-      </select>
-    </div>
-    <button class="form-submit">Request Reservation</button>
-  </div>
-</section>
-
-<footer>
-  <span>© 2025 Valley Grille &nbsp;·&nbsp; 123 Canyon Rd, Ellensburg, WA</span>
-  <span>Website by <strong>OC Builds</strong></span>
-</footer>
-
+<nav><a href="#" class="nav-logo">Valley Grille</a><ul class="nav-links"><li><a href="#about">About</a></li><li><a href="#menu">Menu</a></li><li><a href="#specials">Specials</a></li><li><a href="#info">Visit</a></li></ul><a href="tel:5099620147" class="nav-phone">(509) 962-0147</a></nav>
+<section class="hero"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1400&q=80" alt="Restaurant food"><div class="hero-overlay"></div><div class="hero-content"><h1>Good food from people<br>who actually care.</h1><p>Breakfast at 7, last call at 9. Homemade everything, local ingredients, and a patio that faces the mountains.</p></div></section>
+<div class="intro"><h2>A family restaurant in downtown Ellensburg.</h2><p>Lisa and Tran Nguyen opened Valley Grille in 2011. The menu changes with the seasons, but the biscuits are always the same recipe — Lisa's grandmother's, from a handwritten card taped inside the pantry door.</p></div>
+<section class="about" id="about"><div class="about-grid"><div><h3>Started as a breakfast spot with 8 tables.</h3><p>Lisa spent 15 years managing restaurants in Seattle before deciding she was done cooking for other people's bottom line. They moved to Ellensburg because Tran grew up on a farm outside Thorp.</p><p>Word got around. By 2014 they'd expanded into dinner service, added the patio in 2018, and their daughter Mai joined as sous chef after culinary school in Portland.</p><p>We source from Kittitas Valley farms when we can: Kittitas Meats, Iron Horse Bakery, Thorp fruit stands in summer.</p></div><div class="about-img"><img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80" alt="Chef in kitchen"></div></div></section>
+<div class="food-photos"><div><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80" alt="Food"></div><div><img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80" alt="Pancakes"></div><div><img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&q=80" alt="Restaurant"></div></div>
+<section class="menu" id="menu"><div class="menu-header"><h2>From the kitchen</h2><p>Prices as of March 2025. Seasonal items rotate.</p></div><div class="menu-columns"><div><div class="menu-section-title">Breakfast (7–11am)</div><div class="menu-item"><div class="menu-item-top"><span class="menu-item-name">The Valley Scramble</span><span class="menu-item-price">$13.50</span></div><div class="menu-item-desc">Three eggs, roasted peppers, local sausage, cheddar, home fries.</div></div><div class="menu-item"><div class="menu-item-top"><span class="menu-item-name">Biscuits & Gravy</span><span class="menu-item-price">$11.00</span></div><div class="menu-item-desc">Two house-made biscuits, sausage gravy.</div></div><div class="menu-item"><div class="menu-item-top"><span class="menu-item-name">Huckleberry Pancakes</span><span class="menu-item-price">$12.00</span></div><div class="menu-item-desc">Short stack with real huckleberries when in season.</div></div><div class="menu-item"><div class="menu-item-top"><span class="menu-item-name">Huevos Rancheros</span><span class="menu-item-price">$14.00</span></div><div class="menu-item-desc">Corn tortillas, black beans, eggs over easy, salsa verde, crema.</div></div></div><div><div class="menu-section-title">Lunch & Dinner</div><div class="menu-item"><div class="menu-item-top"><span class="menu-item-name">Valley Burger</span><span class="menu-item-price">$15.00</span></div><div class="menu-item-desc">Smash patty, aged cheddar, house pickles, brioche bun, fries.</div></div><div class="menu-item"><div class="menu-item-top"><span class="menu-item-name">Pan-Seared Salmon</span><span class="menu-item-price">$22.00</span></div><div class="menu-item-desc">Wild-caught, seasonal veg, lemon butter, rice pilaf.</div></div><div class="menu-item"><div class="menu-item-top"><span class="menu-item-name">Grilled Chicken Sandwich</span><span class="menu-item-price">$14.50</span></div><div class="menu-item-desc">Marinated chicken, avocado, arugula, garlic aioli, sourdough.</div></div><div class="menu-item"><div class="menu-item-top"><span class="menu-item-name">Seasonal Pasta</span><span class="menu-item-price">$17.00</span></div><div class="menu-item-desc">Changes weekly. Ask your server what Mai's got going.</div></div></div></div></section>
+<section class="specials" id="specials"><div class="specials-inner"><h2>Weekly specials</h2><div class="special-row"><span class="special-day">Monday</span><span class="special-name">Half-Price Apps</span><span class="special-desc">After 5pm</span></div><div class="special-row"><span class="special-day">Tuesday</span><span class="special-name">Taco Tuesday</span><span class="special-desc">$3 street tacos</span></div><div class="special-row"><span class="special-day">Wednesday</span><span class="special-name">Burger Night</span><span class="special-desc">$12 burger + beer</span></div><div class="special-row"><span class="special-day">Thursday</span><span class="special-name">Date Night</span><span class="special-desc">2 entrees + wine, $55</span></div><div class="special-row"><span class="special-day">Friday</span><span class="special-name">Live Music</span><span class="special-desc">Patio, 6–8pm</span></div><div class="special-row"><span class="special-day">Sat & Sun</span><span class="special-name">Brunch</span><span class="special-desc">8am–2pm</span></div></div></section>
+<section class="reviews" id="reviews"><div class="reviews-inner"><h2>What people say</h2><div class="review"><p class="review-text">"We eat here at least twice a month. The biscuits and gravy are non-negotiable. Staff remembers our names now."</p><div class="review-meta">Rachel & Dan W. — Google, 3 weeks ago</div></div><div class="review"><p class="review-text">"Stopped in on a road trip through Ellensburg. The huevos rancheros were better than anything I've had in Seattle."</p><div class="review-meta">Alex P. — Yelp, 1 month ago</div></div><div class="review"><p class="review-text">"Thursday date night is the best kept secret in the valley. Great wine, perfect salmon, and the price is incredibly fair."</p><div class="review-meta">Jennifer L. — Google, 2 months ago</div></div></div></section>
+<section class="info" id="info"><div class="info-grid"><div class="info-block"><h3>Hours</h3><p>Mon–Fri <span class="time">7am – 9pm</span></p><p>Saturday <span class="time">8am – 9pm</span></p><p>Sunday <span class="time">8am – 3pm</span></p><p style="font-size:0.8rem;margin-top:8px;color:#999;">Kitchen closes 30 min before.</p></div><div class="info-block"><h3>Find us</h3><p><strong>418 N Main St</strong><br>Ellensburg, WA 98926</p><p>Corner of Main and 5th. Green awning.</p></div><div class="info-block"><h3>Reservations</h3><p>Breakfast/lunch — just walk in.</p><p>Dinner Thu–Sat — call ahead for 4+.</p><p><strong>(509) 962-0147</strong></p></div></div></section>
+<footer><span>© 2025 Valley Grille · Ellensburg, WA</span><span><a href="#">Google Maps</a> · <a href="#">Yelp</a> · <a href="#">Instagram</a></span></footer>
 </body>
-</html>
+  </html>
